@@ -3,16 +3,19 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Nail Salon Management System Backend - API Documentation</title>
+  <title>Tài liệu API Backend Nail Salon</title>
   <style>
     :root {
-      --bg: #f6f8fb;
+      --bg: #f5f7fb;
       --panel: #ffffff;
       --ink: #17202a;
       --muted: #5d6b7a;
-      --line: #d8e0ea;
+      --line: #d9e2ec;
       --brand: #0f766e;
-      --brand-soft: #e6f5f3;
+      --brand-soft: #e7f6f3;
+      --warn: #8a4b00;
+      --warn-soft: #fff4df;
+      --code-bg: #eef5fb;
       --code: #123a52;
     }
     * { box-sizing: border-box; }
@@ -21,11 +24,11 @@
       color: var(--ink);
       background: var(--bg);
       font-family: Inter, "Segoe UI", Arial, sans-serif;
-      line-height: 1.55;
+      line-height: 1.58;
     }
     .layout {
       display: grid;
-      grid-template-columns: minmax(220px, 290px) minmax(0, 1fr);
+      grid-template-columns: minmax(230px, 300px) minmax(0, 1fr);
       min-height: 100vh;
     }
     aside {
@@ -33,69 +36,85 @@
       top: 0;
       height: 100vh;
       overflow: auto;
-      padding: 24px 18px;
+      padding: 22px 16px;
       border-right: 1px solid var(--line);
       background: #fbfcfe;
     }
     aside strong {
       display: block;
-      margin-bottom: 14px;
+      margin: 0 8px 12px;
       color: var(--brand);
-      font-size: 14px;
+      font-size: 13px;
       text-transform: uppercase;
       letter-spacing: .04em;
     }
     aside a {
       display: block;
-      padding: 7px 8px;
+      padding: 7px 9px;
       color: var(--muted);
       text-decoration: none;
       border-radius: 6px;
       font-size: 14px;
     }
-    aside a:hover { background: var(--brand-soft); color: var(--brand); }
-    .toc-level-3 { padding-left: 20px; font-size: 13px; }
+    aside a:hover { color: var(--brand); background: var(--brand-soft); }
     main {
-      width: min(1280px, 100%);
+      width: min(1360px, 100%);
       padding: 32px clamp(18px, 4vw, 56px) 80px;
     }
     h1 {
-      margin: 0 0 20px;
+      margin: 0 0 10px;
       color: #0b3d3a;
-      font-size: clamp(30px, 4vw, 48px);
+      font-size: clamp(30px, 4vw, 46px);
       line-height: 1.1;
     }
     h2 {
-      margin-top: 38px;
-      padding-top: 12px;
+      margin-top: 40px;
+      padding-top: 16px;
       border-top: 1px solid var(--line);
       color: #102a43;
       font-size: 26px;
     }
-    h3 { margin-top: 30px; color: #183b56; font-size: 21px; }
+    h3 { margin-top: 28px; color: #183b56; font-size: 21px; }
+    h4 { margin: 18px 0 8px; color: #1f3f50; font-size: 17px; }
     p, li { color: var(--ink); }
+    .lead { max-width: 980px; color: #26384a; font-size: 17px; }
+    .note {
+      margin: 16px 0;
+      padding: 13px 15px;
+      border: 1px solid #f2d399;
+      border-radius: 8px;
+      color: #4d3100;
+      background: var(--warn-soft);
+    }
+    .ok {
+      margin: 16px 0;
+      padding: 13px 15px;
+      border: 1px solid #b7e4d5;
+      border-radius: 8px;
+      background: #eefbf7;
+    }
     code {
       padding: 2px 5px;
       border-radius: 5px;
       color: var(--code);
-      background: #eaf2f7;
+      background: var(--code-bg);
       font-family: Consolas, "SFMono-Regular", monospace;
       font-size: .92em;
     }
     pre {
       overflow: auto;
-      padding: 16px;
-      border: 1px solid var(--line);
+      padding: 14px 16px;
+      border: 1px solid #203044;
       border-radius: 8px;
       background: #0f172a;
     }
     pre code { padding: 0; color: #dbeafe; background: transparent; }
     table {
       width: 100%;
-      margin: 16px 0 26px;
+      margin: 14px 0 24px;
       border-collapse: collapse;
-      background: var(--panel);
       border: 1px solid var(--line);
+      background: var(--panel);
       font-size: 14px;
     }
     th, td {
@@ -104,15 +123,27 @@
       border: 1px solid var(--line);
     }
     th {
-      position: sticky;
-      top: 0;
-      z-index: 1;
       color: #0f3f3a;
       background: var(--brand-soft);
       text-align: left;
     }
     tr:nth-child(even) td { background: #fbfdff; }
-    @media (max-width: 900px) {
+    .method {
+      display: inline-block;
+      min-width: 48px;
+      padding: 2px 6px;
+      border-radius: 5px;
+      color: white;
+      font-weight: 700;
+      text-align: center;
+      font-size: 12px;
+    }
+    .get { background: #1d4ed8; }
+    .post { background: #047857; }
+    .patch { background: #b45309; }
+    .delete { background: #b91c1c; }
+    .small { color: var(--muted); font-size: 13px; }
+    @media (max-width: 920px) {
       .layout { display: block; }
       aside { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--line); }
       main { padding-top: 24px; }
@@ -123,297 +154,374 @@
 <body>
   <div class="layout">
     <aside>
-      <strong>Mục lục API</strong>
-      <a class="toc-level-2" href="#1-ph-m-vi">1. Phạm vi</a>
-<a class="toc-level-2" href="#2-middleware-v-header-chung">2. Middleware và header chung</a>
-<a class="toc-level-2" href="#3-auth-role-v-rate-limit">3. Auth, role và rate limit</a>
-<a class="toc-level-2" href="#4-format-l-i-chung">4. Format lỗi chung</a>
-<a class="toc-level-2" href="#5-schema-d-ng-chung">5. Schema dùng chung</a>
-<a class="toc-level-3" href="#5-1-signin-response">5.1. Signin response</a>
-<a class="toc-level-3" href="#5-2-branch-request-response">5.2. Branch request/response</a>
-<a class="toc-level-3" href="#5-3-service-request-response">5.3. Service request/response</a>
-<a class="toc-level-3" href="#5-4-employee-request-response">5.4. Employee request/response</a>
-<a class="toc-level-3" href="#5-5-attendance-input">5.5. Attendance input</a>
-<a class="toc-level-3" href="#5-6-settlement-close-work-day-body">5.6. Settlement close-work-day body</a>
-<a class="toc-level-3" href="#5-7-weekly-report-item">5.7. Weekly report item</a>
-<a class="toc-level-2" href="#6-endpoint-matrix">6. Endpoint matrix</a>
-<a class="toc-level-3" href="#6-1-monitoring">6.1. Monitoring</a>
-<a class="toc-level-3" href="#6-2-authentication">6.2. Authentication</a>
-<a class="toc-level-3" href="#6-3-account">6.3. Account</a>
-<a class="toc-level-3" href="#6-4-shop-branch-service">6.4. Shop - branch/service</a>
-<a class="toc-level-3" href="#6-5-employee-attendance-settlement-report">6.5. Employee, attendance, settlement, report</a>
-<a class="toc-level-3" href="#6-6-notifications">6.6. Notifications</a>
-<a class="toc-level-3" href="#6-7-weekly-report">6.7. Weekly report</a>
-<a class="toc-level-2" href="#7-endpoint-ngo-i-api-v1">7. Endpoint ngoài `/api/v1`</a>
-<a class="toc-level-2" href="#8-ghi-ch-ki-m-th-contract">8. Ghi chú kiểm thử contract</a>
-<a class="toc-level-2" href="#9-ngu-n-tham-kh-o">9. Nguồn tham khảo</a>
+      <strong>Mục lục</strong>
+      <a href="#tong-quan">1. Tổng quan</a>
+      <a href="#cach-goi-api">2. Cách gọi API</a>
+      <a href="#xac-thuc">3. Đăng nhập và token</a>
+      <a href="#tu-dien">4. Từ điển biến và bí danh</a>
+      <a href="#db-contract">5. Giải thích dữ liệu DB</a>
+      <a href="#ham-xu-ly">6. Hàm xử lý chính</a>
+      <a href="#luong-nghiep-vu">7. Luồng nghiệp vụ</a>
+      <a href="#mau-goi">8. Mẫu gọi API</a>
+      <a href="#danh-sach-api">9. Danh sách API</a>
+      <a href="#kiem-thu">10. Kiểm thử khi đấu nối</a>
+      <a href="#nguon">11. Nguồn tham khảo</a>
     </aside>
     <main>
-      <h1>Nail Salon Management System Backend - API Documentation</h1><p>Ngày cập nhật: 2026-06-05</p><p>Tài liệu này mô tả các API đang được mount trong backend TypeScript/Express hiện tại. Nội dung được tổng hợp lại từ <code>src/app.ts</code>, các router trong <code>src/business/*/index.ts</code>, auth/session helper, response helper, middleware auth/cache/idempotency/rate-limit và đối chiếu bằng GitNexus. Bố cục tham khảo phong cách tài liệu API theo nhóm endpoint, bảng tham số, response mẫu và mã lỗi như Nhanh.vn API v3 và Zalo Developers Social API.</p><h2 id="1-ph-m-vi">1. Phạm vi</h2><ul><li>Base path chính: <code>{{baseUrl}}/api/v1</code>.</li><li>Tổng số endpoint <code>/api/v1</code> đang được mount: 55 endpoint.</li><li>Root endpoint ngoài API: <code>GET /</code>.</li><li>Tài liệu chỉ ghi nhận route thật sự được đăng ký trong <code>src/app.ts</code> và router index. File handler tồn tại nhưng không mount route sẽ không được coi là API public.</li><li>Auth hiện có <code>accessToken</code> và <code>refreshToken</code>. <code>jwtToken</code> vẫn được giữ như alias cũ của <code>accessToken</code> để HRM/module cũ không vỡ contract.</li><li>Weekly report hiện tại chỉ mount 3 route: list, detail, generate. Các route regenerate/delete từng xuất hiện trong tài liệu protocol cũ không có trong <code>weekly-report-index.ts</code> hiện tại.</li></ul><h2 id="2-middleware-v-header-chung">2. Middleware và header chung</h2><table><thead><tr><th>Thành phần</th><th>Áp dụng</th><th>Ghi chú</th></tr></thead><tbody>
-<tr><td>Helmet/CORS</td><td>Toàn app</td><td>CORS mặc định cho localhost dev và GitHub Pages; production có thể dùng <code>CORS_ALLOWED_ORIGINS</code>.</td></tr>
-<tr><td>Global rate limit</td><td><code>/api/*</code></td><td>180 request/phút. Fingerprint theo JWT session nếu decode được, fallback IP.</td></tr>
-<tr><td>Content-Type guard</td><td><code>POST/PATCH/PUT/DELETE</code> có body</td><td>Nếu <code>Content-Length &gt; 0</code>, request phải là <code>application/json</code> hoặc <code>application/x-www-form-urlencoded</code>; sai trả <code>415 /request/unsupported-media-type</code>.</td></tr>
-<tr><td>JSON parser</td><td>Mặc định</td><td>512KB. Riêng <code>/api/v1/account/avatar</code> và <code>/api/v1/shop/service/image</code> dùng 8MB.</td></tr>
-<tr><td>No-store default</td><td><code>/api/v1/*</code></td><td>Set no-store trước router; các endpoint dùng <code>sendCacheableJson</code> sẽ override bằng private cache và ETag.</td></tr>
-<tr><td>Monitoring router</td><td><code>/api/v1/monitoring/*</code></td><td>Mount trước App Check, không cần JWT/App Check.</td></tr>
-<tr><td>Firebase App Check</td><td><code>/api/v1/*</code> trừ monitoring</td><td>Tùy <code>APP_CHECK_MODE</code>: <code>off</code>, <code>monitor</code>, <code>required</code>.</td></tr>
-<tr><td>Idempotency</td><td><code>POST/PATCH/DELETE</code></td><td>Optional <code>X-Idempotency-Key</code>, tối đa 200 ký tự, TTL 5 phút. Cùng key + cùng body replay response; cùng key + khác body trả <code>409 /request/idempotency-conflict</code>.</td></tr>
-</tbody></table><table><thead><tr><th>Header</th><th>Bắt buộc</th><th>Mô tả</th></tr></thead><tbody>
-<tr><td><code>Authorization: Bearer &lt;firebaseIdToken&gt;</code></td><td>Tùy endpoint</td><td>Dùng cho <code>/admin/signin</code>, <code>/auth/signin</code>, <code>/auth/change-password</code>. Token verify qua Firebase Auth.</td></tr>
-<tr><td><code>Authorization: Bearer &lt;accessToken&gt;</code></td><td>Tùy endpoint</td><td>Dùng cho hầu hết API protected sau signin. <code>jwtToken</code> là alias legacy của <code>accessToken</code> và vẫn dùng được.</td></tr>
-<tr><td><code>refreshToken</code> trong body</td><td>Chỉ endpoint refresh</td><td>Dùng ở <code>POST /api/v1/auth/refresh-token</code> để cấp access token mới khi access token hết hạn. Không gửi refresh token lên GitHub Pages hoặc trong header Authorization của API business.</td></tr>
-<tr><td><code>X-Firebase-AppCheck</code></td><td>Có nếu App Check required</td><td>Mọi <code>/api/v1</code> trừ monitoring. Mode monitor chỉ log lỗi và vẫn cho qua.</td></tr>
-<tr><td><code>Content-Type: application/json</code></td><td>Có với body JSON</td><td>Bắt buộc cho mutating request có body JSON.</td></tr>
-<tr><td><code>X-Idempotency-Key</code></td><td>Không</td><td>Dùng cho POST/PATCH/DELETE để chống double submit.</td></tr>
-<tr><td><code>If-None-Match</code></td><td>Không</td><td>Dùng với endpoint có ETag; nếu khớp trả <code>304 Not Modified</code>.</td></tr>
-<tr><td><code>X-Request-Id</code></td><td>Không</td><td>Có thể gửi từ client; backend expose lại request/trace headers.</td></tr>
-</tbody></table><h2 id="3-auth-role-v-rate-limit">3. Auth, role và rate limit</h2><table><thead><tr><th>Role</th><th>Ý nghĩa</th><th>Scope chính</th></tr></thead><tbody>
-<tr><td><code>admin</code></td><td>Platform admin</td><td>Đăng nhập admin, tạo owner.</td></tr>
-<tr><td><code>owner</code></td><td>Chủ shop</td><td>Quản lý branch, service, employee, attendance, settlement, salary, report.</td></tr>
-<tr><td><code>employees</code></td><td>Nhân viên</td><td>Bị scope theo <code>branchId</code>; đọc/ghi attendance tự branch/self.</td></tr>
-</tbody></table><table><thead><tr><th>Policy</th><th>Limit</th><th>Window</th><th>Nhóm endpoint</th></tr></thead><tbody>
-<tr><td>Global API</td><td>180</td><td>60 giây</td><td>Tất cả <code>/api/*</code>.</td></tr>
-<tr><td>Strict auth</td><td>8</td><td>60 giây</td><td>Admin signin, admin register owner, owner register, signin.</td></tr>
-<tr><td>OTP request</td><td>IP 10, email 3</td><td>10 phút</td><td>Request forgot password OTP.</td></tr>
-<tr><td>OTP action</td><td>IP 20, email 6</td><td>10 phút</td><td>Verify/reset OTP.</td></tr>
-<tr><td>Session auth</td><td>15</td><td>60 giây</td><td>Logout, refresh-token, change password.</td></tr>
-<tr><td>Read</td><td>90</td><td>60 giây</td><td>List/detail/bootstrap nhẹ.</td></tr>
-<tr><td>Heavy read</td><td>24</td><td>60 giây</td><td>Settlement preview, report, salary, weekly report generate.</td></tr>
-<tr><td>Write</td><td>24</td><td>60 giây</td><td>Create/update/delete business data.</td></tr>
-<tr><td>Upload</td><td>6</td><td>10 phút</td><td>Avatar/service image.</td></tr>
-</tbody></table><h2 id="4-format-l-i-chung">4. Format lỗi chung</h2><p>Mọi lỗi public trả JSON:</p><pre><code>{
-  &quot;type&quot;: &quot;/namespace/error-code&quot;,
-  &quot;message&quot;: &quot;Human readable message&quot;
-}</code></pre><p>Các lỗi chung:</p><ul><li><code>401 API Header Error</code>: thiếu <code>Authorization</code>, sai scheme <code>Bearer</code>, access token không hợp lệ hoặc token đã revoke.</li><li><code>401 /auth/token-expired</code>: access token backend hết hạn.</li><li><code>401 /auth/invalid-refresh-token</code>, <code>401 /auth/refresh-token-expired</code>, <code>401 /auth/refresh-token-revoked</code>: lỗi khi gọi refresh token.</li><li><code>401 /auth/app-check-required</code>, <code>401 /auth/app-check-invalid</code>: App Check bật <code>required</code>.</li><li><code>400 /request/invalid-idempotency-key</code>: idempotency key dài hơn 200 ký tự.</li><li><code>409 /request/idempotency-conflict</code>: cùng key nhưng body khác.</li><li><code>413 /request/payload-too-large</code>: payload vượt giới hạn parser.</li><li><code>415 /request/unsupported-media-type</code>: body không phải JSON/form-urlencoded.</li><li><code>429 /request/rate-limit</code>: vượt rate limit.</li><li><code>404 /request/not-found</code>: route không tồn tại.</li><li><code>500 /internal-server-error</code>: lỗi không được handler chuyển thành public business error.</li></ul><h2 id="5-schema-d-ng-chung">5. Schema dùng chung</h2><h3 id="5-1-signin-response">5.1. Signin response</h3><pre><code>{
-  &quot;jwtToken&quot;: &quot;Bearer &lt;backend-access-token&gt;&quot;,
-  &quot;accessToken&quot;: &quot;Bearer &lt;backend-access-token&gt;&quot;,
-  &quot;refreshToken&quot;: &quot;Bearer &lt;backend-refresh-token&gt;&quot;,
-  &quot;tokenType&quot;: &quot;Bearer&quot;,
-  &quot;sessionId&quot;: &quot;session-id&quot;,
-  &quot;expiresAt&quot;: 1790000000000,
-  &quot;accessTokenExpiresAt&quot;: 1790000000000,
-  &quot;refreshTokenExpiresAt&quot;: 1792592000000,
-  &quot;permissions&quot;: [&quot;shop:read&quot;, &quot;attendance:write&quot;],
-  &quot;user&quot;: {
-    &quot;uid&quot;: &quot;user-1&quot;,
-    &quot;email&quot;: &quot;user@example.com&quot;,
-    &quot;shopId&quot;: &quot;shop-1&quot;,
-    &quot;role&quot;: &quot;owner&quot;,
-    &quot;branchId&quot;: &quot;branch-1&quot;,
-    &quot;name&quot;: &quot;Owner Name&quot;,
-    &quot;displayName&quot;: &quot;Owner Name&quot;,
-    &quot;avatarUrl&quot;: &quot;&quot;
-  },
-  &quot;scope&quot;: {
-    &quot;shopId&quot;: &quot;shop-1&quot;,
-    &quot;branchId&quot;: &quot;branch-1&quot;
+      <h1>Tài liệu API Backend Nail Salon</h1>
+      <p class="lead">Bản bàn giao cho team đấu nối platform. Tài liệu ưu tiên tiếng Việt dễ hiểu, chỉ giữ nguyên tên biến, đường dẫn và giá trị trong code vì đó là hợp đồng kỹ thuật mà frontend, HRM hoặc module khác phải gọi đúng.</p>
+      <p class="small">Ngày cập nhật: 2026-06-06. Nguồn đối chiếu: route backend trong <code>NailSalonManagementSystem-Backend/src</code>, Postman collection, GitNexus và cách trình bày API tham khảo từ Nhanh.vn/Zalo Developers.</p>
+
+      <section id="tong-quan">
+        <h2>1. Tổng quan</h2>
+        <table>
+          <thead><tr><th>Nội dung</th><th>Giá trị hiện tại</th><th>Giải thích</th></tr></thead>
+          <tbody>
+            <tr><td>Đường dẫn gốc</td><td><code>{{baseUrl}}/api/v1</code></td><td>Mọi API nghiệp vụ đều bắt đầu bằng đường dẫn này.</td></tr>
+            <tr><td>Số API chính</td><td>55 API trong <code>/api/v1</code> + <code>GET /</code></td><td>Đếm theo route đang được mount trong backend.</td></tr>
+            <tr><td>Vai trò người dùng</td><td><code>admin</code>, <code>owner</code>, <code>employees</code></td><td>Chỉ dùng ba role này. Khi nói tiếng Việt có thể gọi <code>employees</code> là “nhân viên”, nhưng giá trị lưu DB/API vẫn là <code>employees</code>.</td></tr>
+            <tr><td>Tiền tệ</td><td><code>EUR</code></td><td>Backend đang chuẩn hóa tiền theo Euro. Với tiền, luôn tính bằng số nguyên nhỏ nhất ở helper nội bộ để tránh sai số thập phân.</td></tr>
+            <tr><td>Collection báo cáo tuần</td><td><code>weekly-report</code></td><td>Collection cấp cao, cùng cấp với <code>shop</code>, <code>user</code>, <code>admin</code>. Báo cáo tháng cộng các báo cáo tuần thay vì quét toàn bộ chấm công.</td></tr>
+          </tbody>
+        </table>
+        <div class="note">Không lưu access token hoặc refresh token thật trong GitHub Pages, Postman public, ảnh chụp màn hình hoặc tài liệu bàn giao. GitHub Pages chỉ là trang đọc tài liệu, không cấp token.</div>
+      </section>
+
+      <section id="cach-goi-api">
+        <h2>2. Cách gọi API</h2>
+        <table>
+          <thead><tr><th>Thành phần</th><th>Dùng khi nào</th><th>Giải thích dễ hiểu</th></tr></thead>
+          <tbody>
+            <tr><td><code>Authorization: Bearer &lt;accessToken&gt;</code></td><td>Gần như mọi API sau khi đăng nhập.</td><td><code>accessToken</code> giống vé vào cửa ngắn hạn. Hết hạn thì lấy vé mới bằng refresh token.</td></tr>
+            <tr><td><code>Authorization: Bearer &lt;firebaseIdToken&gt;</code></td><td>Chỉ dùng khi gọi <code>/admin/signin</code>, <code>/auth/signin</code>, <code>/auth/change-password</code>.</td><td>Đây là token do Firebase cấp sau khi người dùng đăng nhập Firebase.</td></tr>
+            <tr><td><code>X-Firebase-AppCheck</code></td><td>Khi backend bật App Check ở chế độ bắt buộc.</td><td>Dùng để chứng minh request đến từ app hợp lệ, không phải script ngoài.</td></tr>
+            <tr><td><code>X-Idempotency-Key</code></td><td>Khi gọi API ghi dữ liệu: tạo/sửa/xóa.</td><td>Giúp tránh tạo trùng nếu người dùng bấm gửi hai lần hoặc mạng retry.</td></tr>
+            <tr><td><code>If-None-Match</code></td><td>Khi endpoint trả <code>ETag</code>.</td><td>Nếu dữ liệu chưa đổi, backend trả <code>304</code> để giảm tải.</td></tr>
+          </tbody>
+        </table>
+        <h3>Giới hạn số lần gọi</h3>
+        <table>
+          <thead><tr><th>Nhóm</th><th>Giới hạn</th><th>Áp dụng</th></tr></thead>
+          <tbody>
+            <tr><td>Toàn bộ API</td><td>180 lần/phút</td><td>Tất cả đường dẫn bắt đầu bằng <code>/api/*</code>.</td></tr>
+            <tr><td>Đăng nhập</td><td>12 lần/phút</td><td><code>/auth/signin</code>, <code>/admin/signin</code>.</td></tr>
+            <tr><td>Quên mật khẩu</td><td>6 lần/10 phút</td><td>Gửi OTP, xác thực OTP, đổi mật khẩu bằng OTP.</td></tr>
+            <tr><td>Session/token</td><td>15 lần/phút</td><td>Đăng xuất, đổi mật khẩu, lấy access token mới.</td></tr>
+            <tr><td>API đọc nặng</td><td>24 lần/phút</td><td>Báo cáo, lương tháng, settlement preview, generate weekly report.</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="xac-thuc">
+        <h2>3. Đăng nhập và token</h2>
+        <h3>Luồng đúng</h3>
+        <ol>
+          <li>App đăng nhập Firebase để có <code>firebaseIdToken</code>.</li>
+          <li>Gọi <code>POST /api/v1/auth/signin</code> hoặc <code>POST /api/v1/admin/signin</code>.</li>
+          <li>Backend trả <code>accessToken</code> và <code>refreshToken</code>.</li>
+          <li>Gọi API nghiệp vụ bằng <code>Authorization: Bearer &lt;accessToken&gt;</code>.</li>
+          <li>Khi access token hết hạn, gọi <code>POST /api/v1/auth/refresh-token</code> với body chứa <code>refreshToken</code> để lấy access token mới.</li>
+        </ol>
+        <pre><code>{
+  "jwtToken": "Bearer &lt;backend-access-token&gt;",
+  "accessToken": "Bearer &lt;backend-access-token&gt;",
+  "refreshToken": "Bearer &lt;backend-refresh-token&gt;",
+  "tokenType": "Bearer",
+  "sessionId": "sess_...",
+  "expiresAt": 1790000000000,
+  "accessTokenExpiresAt": 1790000000000,
+  "refreshTokenExpiresAt": 1792592000000,
+  "user": {
+    "uid": "user_...",
+    "email": "owner@example.com",
+    "role": "owner",
+    "shopId": "shop_..."
   }
-}</code></pre><p><strong>Token lifecycle cho HRM/module đấu nối:</strong> GitHub Pages chỉ host tài liệu HTML, không cấp token và không được lưu token thật. Module HRM đăng nhập Firebase để lấy Firebase ID token, gọi <code>POST /api/v1/auth/signin</code> để nhận <code>accessToken</code> và <code>refreshToken</code>. Mọi API protected dùng <code>Authorization: Bearer &lt;accessToken&gt;</code>. Khi access token hết hạn, gọi <code>POST /api/v1/auth/refresh-token</code> bằng body <code>{ &quot;refreshToken&quot;: &quot;Bearer ...&quot; }</code> để nhận access token mới. Refresh token không dùng để gọi API business.</p><table><thead><tr><th>Flow</th><th>Firestore reads</th><th>Firestore writes</th><th>Ghi chú</th></tr></thead><tbody><tr><td><code>/auth/signin</code></td><td>Khoảng 1</td><td>Khoảng 1</td><td>Đọc user Firestore và update <code>lastLoginAt</code>.</td></tr><tr><td>Gọi API bằng access token</td><td>0 do auth</td><td>0 do auth</td><td>Reads nằm ở business API phía sau, không nằm ở verify token.</td></tr><tr><td><code>/auth/refresh-token</code></td><td>0</td><td>0</td><td>Verify refresh token local + kiểm tra cache revoke.</td></tr><tr><td>GitHub Pages documentation</td><td>0</td><td>0</td><td>Chỉ static HTML, không có token thật.</td></tr></tbody></table><h3 id="5-2-branch-request-response">5.2. Branch request/response</h3><table><thead><tr><th>Trường</th><th>Request create</th><th>Request update</th><th>Kiểu/validate</th><th>Response</th><th>Ghi chú</th></tr></thead><tbody>
-<tr><td><code>name</code></td><td>Bắt buộc</td><td>Optional</td><td>string 1..100</td><td>Có</td><td>Tên chi nhánh.</td></tr>
-<tr><td><code>code</code></td><td>Optional</td><td>Optional</td><td>string &lt;=30</td><td>Optional</td><td>Response <code>storeId</code> ưu tiên lấy từ <code>code</code>, fallback <code>id</code>.</td></tr>
-<tr><td><code>phone</code></td><td>Optional</td><td>Optional</td><td>string &lt;=30</td><td>Optional</td><td>Số điện thoại.</td></tr>
-<tr><td><code>email</code></td><td>Optional</td><td>Optional</td><td>string &lt;=100</td><td>Optional</td><td>Email chi nhánh.</td></tr>
-<tr><td><code>manager</code></td><td>Optional</td><td>Optional</td><td>string &lt;=100</td><td>Optional</td><td>Quản lý.</td></tr>
-<tr><td><code>businessType</code></td><td>Optional</td><td>Optional</td><td>string &lt;=100</td><td>Optional</td><td>Loại hình.</td></tr>
-<tr><td><code>website</code></td><td>Optional</td><td>Optional</td><td>string &lt;=255</td><td>Optional</td><td>Website.</td></tr>
-<tr><td><code>openTime</code>, <code>closeTime</code></td><td>Optional</td><td>Optional</td><td>string &lt;=20</td><td>Optional</td><td>Text giờ mở/đóng cửa.</td></tr>
-<tr><td><code>settlementCutoffTime</code></td><td>Optional</td><td>Optional</td><td><code>HH:mm</code></td><td>Có</td><td>Normalize qua helper business-day; dùng để tính workDate.</td></tr>
-<tr><td><code>foundedDate</code></td><td>Optional</td><td>Optional</td><td>string &lt;=50</td><td>Optional</td><td>Ngày thành lập dạng text.</td></tr>
-<tr><td><code>address</code></td><td>Optional</td><td>Optional</td><td>object</td><td>Optional</td><td><code>{ line1, city, state, zipCode, country }</code>, từng field optional.</td></tr>
-<tr><td><code>status</code></td><td>Optional, default <code>active</code></td><td>Optional</td><td><code>active</code> hoặc <code>disabled</code></td><td>Có</td><td>Trạng thái branch.</td></tr>
-<tr><td><code>id</code>, <code>shopId</code>, <code>storeId</code>, <code>addressText</code>, <code>label</code>, <code>value</code></td><td>Không nhận</td><td>Không nhận</td><td>mixed</td><td>Có</td><td>Field convenience trong response.</td></tr>
-<tr><td><code>employeeCount</code></td><td>Không nhận</td><td>Không nhận</td><td>number</td><td>Optional</td><td>Có khi query <code>includeEmployeeCounts=true</code>.</td></tr>
-</tbody></table><h3 id="5-3-service-request-response">5.3. Service request/response</h3><table><thead><tr><th>Trường</th><th>Request create</th><th>Request update</th><th>Kiểu/validate</th><th>Response</th><th>Ghi chú</th></tr></thead><tbody>
-<tr><td><code>branchId</code></td><td>Bắt buộc</td><td>Không nhận</td><td>string min1</td><td>Có</td><td>Create yêu cầu branch active.</td></tr>
-<tr><td><code>name</code></td><td>Bắt buộc</td><td>Optional</td><td>string 1..100</td><td>Có</td><td>Tên dịch vụ.</td></tr>
-<tr><td><code>description</code></td><td>Optional</td><td>Optional</td><td>string &lt;=500</td><td>Có</td><td>Create lưu <code>&quot;&quot;</code> nếu thiếu.</td></tr>
-<tr><td><code>price</code> hoặc <code>amount</code></td><td>Bắt buộc một trong hai</td><td>Optional</td><td>positive money number/string</td><td><code>price</code>, <code>amount</code></td><td><code>amount</code> là alias FE dạng string.</td></tr>
-<tr><td><code>category</code> hoặc <code>groupService</code></td><td>Bắt buộc một trong hai</td><td>Optional</td><td><code>nail</code>, <code>pedicure</code>, <code>manicure</code>, <code>design</code>, <code>other</code> hoặc string</td><td><code>category</code>, <code>groupService</code></td><td><code>groupService</code> được map về category nếu thiếu category.</td></tr>
-<tr><td><code>imageUrls</code> hoặc <code>images</code></td><td>Optional</td><td>Optional</td><td>URL array max 10</td><td><code>imageUrls</code>, <code>images</code></td><td><code>images</code> là alias FE.</td></tr>
-<tr><td><code>image</code></td><td>Optional</td><td>Optional</td><td>URL string</td><td><code>image</code></td><td>Single URL thành phần tử đầu của <code>imageUrls</code>.</td></tr>
-<tr><td><code>duration</code> hoặc <code>durationMin</code> + <code>durationMax</code></td><td>Bắt buộc</td><td>Optional</td><td>positive integer/string</td><td><code>durationMin</code>, <code>durationMax</code>, <code>duration</code>, <code>time</code></td><td><code>durationMax</code> không được nhỏ hơn <code>durationMin</code>.</td></tr>
-<tr><td><code>type</code>, <code>branchName</code>, <code>storeName</code></td><td>Không nhận</td><td>Không nhận</td><td>string</td><td>Optional</td><td>Có trong response list/create/update.</td></tr>
-</tbody></table><h3 id="5-4-employee-request-response">5.4. Employee request/response</h3><table><thead><tr><th>Trường</th><th>Create</th><th>Update</th><th>Kiểu/validate</th><th>Response</th><th>Ghi chú</th></tr></thead><tbody>
-<tr><td><code>email</code></td><td>Bắt buộc</td><td>Không nhận</td><td>email</td><td>Có</td><td>Dùng tạo Firebase user.</td></tr>
-<tr><td><code>password</code></td><td>Bắt buộc</td><td>Optional</td><td>string min6</td><td>Không</td><td>Update password sẽ revoke sessions.</td></tr>
-<tr><td><code>name</code></td><td>Bắt buộc</td><td>Optional</td><td>string 2..100</td><td><code>name</code>, <code>displayName</code></td><td>Đồng bộ Firebase displayName.</td></tr>
-<tr><td><code>branchId</code></td><td>Bắt buộc</td><td>Optional</td><td>string min1</td><td><code>branchId</code>, <code>storeId</code>, <code>branchName</code>, <code>storeName</code></td><td>Owner phải có quyền branch.</td></tr>
-<tr><td><code>role</code></td><td>Bắt buộc</td><td>Optional</td><td><code>employees</code></td><td><code>employees</code></td><td>Chỉ ghi role chuẩn <code>employees</code>.</td></tr>
-<tr><td><code>phone</code>, <code>position</code></td><td>Optional</td><td>Optional</td><td>string &lt;=20/100</td><td>Có</td><td>Field profile.</td></tr>
-<tr><td><code>gender</code></td><td>Optional</td><td>Optional</td><td><code>male</code>, <code>female</code>, <code>other</code></td><td>Optional</td><td>Field profile.</td></tr>
-<tr><td><code>avatarUrl</code></td><td>Optional</td><td>Optional</td><td>URL</td><td><code>avatar</code>, <code>avatarUrl</code></td><td>Avatar nhân viên.</td></tr>
-<tr><td><code>employeeStatus</code></td><td>Optional default <code>active</code></td><td>Optional</td><td><code>active</code>, <code>pending</code>, <code>inactive</code></td><td><code>status</code></td><td>Quyết định active nếu không override.</td></tr>
-<tr><td><code>active</code></td><td>Optional</td><td>Optional</td><td>boolean</td><td>Có</td><td>Đồng bộ disabled Firebase.</td></tr>
-<tr><td><code>compensationModel</code></td><td>Optional</td><td>Optional</td><td><code>commission</code>, <code>hourly</code></td><td>Có</td><td>Mô hình lương.</td></tr>
-<tr><td><code>commissionRate</code></td><td>Optional</td><td>Optional</td><td>number 0..100</td><td>Optional</td><td>Tỷ lệ nhân viên hưởng.</td></tr>
-<tr><td><code>hourlyRate</code></td><td>Optional</td><td>Optional</td><td>money &gt;=0</td><td>Optional</td><td>Lương giờ.</td></tr>
-<tr><td><code>payType</code></td><td>Optional</td><td>Optional</td><td><code>commission</code>, <code>fixed</code></td><td>Có</td><td><code>fixed</code> tương ứng hourly.</td></tr>
-<tr><td><code>ownerCommissionRate</code></td><td>Optional</td><td>Optional</td><td>number 0..100</td><td>Có với commission</td><td>Nếu gửi, <code>commissionRate = 100 - ownerCommissionRate</code>.</td></tr>
-<tr><td><code>label</code>, <code>value</code>, <code>kpi</code>, <code>salary</code>, <code>absent</code>, <code>shiftsCompleted</code></td><td>Không nhận</td><td>Không nhận</td><td>mixed</td><td>Có</td><td>Field convenience cho UI.</td></tr>
-</tbody></table><h3 id="5-5-attendance-input">5.5. Attendance input</h3><p>Backend hỗ trợ 2 body format cho create/update attendance.</p><p>Legacy format:</p><pre><code>{
-  &quot;workDate&quot;: &quot;2026-06-01&quot;,
-  &quot;branchId&quot;: &quot;branch-1&quot;,
-  &quot;branchName&quot;: &quot;Main Store&quot;,
-  &quot;startTime&quot;: 540,
-  &quot;endTime&quot;: 600,
-  &quot;customerName&quot;: &quot;Linh&quot;,
-  &quot;service&quot;: {
-    &quot;mode&quot;: &quot;existing&quot;,
-    &quot;serviceId&quot;: &quot;service-1&quot;,
-    &quot;name&quot;: &quot;Gel Manicure&quot;,
-    &quot;category&quot;: &quot;manicure&quot;,
-    &quot;price&quot;: 35,
-    &quot;duration&quot;: 60
-  },
-  &quot;assignees&quot;: [
-    { &quot;employeeUserId&quot;: &quot;employees-1&quot;, &quot;percentage&quot;: 100 }
-  ],
-  &quot;discount&quot;: {
-    &quot;allocationMode&quot;: &quot;attendance&quot;,
-    &quot;type&quot;: &quot;amount&quot;,
-    &quot;value&quot;: 5,
-    &quot;splitMode&quot;: &quot;all_assignees&quot;,
-    &quot;ownerCoverageRate&quot;: 0
-  }
-}</code></pre><p>Legacy rules:</p><ul><li>Bắt buộc <code>workDate</code>, <code>branchId</code>, <code>branchName</code>, <code>startTime</code>, <code>endTime</code>, <code>assignees</code>.</li><li>Cung cấp đúng một trong <code>service</code> hoặc <code>services</code> length 1.</li><li><code>endTime</code> phải lớn hơn <code>startTime</code>.</li><li><code>assignees</code> tối đa 20, không trùng <code>employeeUserId</code>.</li><li>Nếu một assignee có <code>percentage</code>, tất cả assignee phải có <code>percentage</code> và tổng không vượt 100.</li><li><code>discount.type</code>: <code>amount</code> hoặc <code>percentage</code>; <code>splitMode</code>: <code>all_assignees</code> hoặc <code>selected_assignees</code>; <code>ownerCoverageRate</code>: <code>0</code>, <code>50</code>, <code>100</code>.</li></ul><p>Frontend format:</p><pre><code>{
-  &quot;date&quot;: &quot;2026-06-01T09:00:00.000Z&quot;,
-  &quot;endDate&quot;: &quot;2026-06-01T10:00:00.000Z&quot;,
-  &quot;branchId&quot;: &quot;branch-1&quot;,
-  &quot;customerName&quot;: &quot;Linh&quot;,
-  &quot;services&quot;: [
-    {
-      &quot;id&quot;: &quot;line-1&quot;,
-      &quot;sourceServiceId&quot;: &quot;service-1&quot;,
-      &quot;name&quot;: &quot;Gel Manicure&quot;,
-      &quot;category&quot;: &quot;manicure&quot;,
-      &quot;price&quot;: 35,
-      &quot;duration&quot;: 60,
-      &quot;employees&quot;: [
-        { &quot;employeeId&quot;: &quot;employees-1&quot;, &quot;percentage&quot;: 100 }
-      ]
-    }
-  ],
-  &quot;discountAmount&quot;: 5
-}</code></pre><p>Frontend rules:</p><ul><li>Bắt buộc <code>date</code>, <code>services</code>, và một trong <code>branchId</code> hoặc <code>storeId</code>.</li><li><code>services</code>: 1..50 item.</li><li>Mỗi service cần <code>id</code>, <code>name</code>, <code>price</code>. <code>category</code>, <code>sourceServiceId</code>, <code>duration</code>, <code>durationMin</code>, <code>durationMax</code>, <code>time</code>, <code>imageUrls</code>, <code>images</code>, <code>amount</code> optional.</li><li><code>employees</code>: tối đa 20 item, dùng <code>employeeId</code>; có thể gửi <code>percentage</code>, <code>shareAmount</code>.</li><li>Có thể dùng <code>createdAt/endDate</code> hoặc <code>startTimestamp/endTimestamp</code>.</li><li>Nếu service không có employees, backend có thể default assignee là creator nếu creator là employee active trong branch.</li></ul><p>Attendance response rút gọn:</p><pre><code>{
-  &quot;id&quot;: &quot;attendance-1&quot;,
-  &quot;workDate&quot;: &quot;2026-06-01&quot;,
-  &quot;rolledToNextWorkDate&quot;: false,
-  &quot;subtotalAmount&quot;: 35,
-  &quot;discountAmount&quot;: 5,
-  &quot;totalAmount&quot;: 30,
-  &quot;status&quot;: &quot;open&quot;,
-  &quot;attendance&quot;: {
-    &quot;id&quot;: &quot;attendance-1&quot;,
-    &quot;shopId&quot;: &quot;shop-1&quot;,
-    &quot;branchId&quot;: &quot;branch-1&quot;,
-    &quot;branchName&quot;: &quot;Main Store&quot;,
-    &quot;workDate&quot;: &quot;2026-06-01&quot;,
-    &quot;startTime&quot;: 540,
-    &quot;endTime&quot;: 600,
-    &quot;assignees&quot;: [
-      { &quot;employeeUserId&quot;: &quot;employees-1&quot;, &quot;percentage&quot;: 100, &quot;shareAmount&quot;: 35 }
-    ],
-    &quot;services&quot;: [],
-    &quot;subtotalAmount&quot;: 35,
-    &quot;totalAmount&quot;: 30,
-    &quot;status&quot;: &quot;open&quot;
-  },
-  &quot;item&quot;: {
-    &quot;id&quot;: &quot;attendance-1&quot;,
-    &quot;date&quot;: &quot;2026-06-01T09:00:00.000&quot;,
-    &quot;endDate&quot;: &quot;2026-06-01T10:00:00.000&quot;,
-    &quot;services&quot;: [],
-    &quot;totalAmount&quot;: 30,
-    &quot;storeId&quot;: &quot;branch-1&quot;,
-    &quot;branchId&quot;: &quot;branch-1&quot;
-  }
-}</code></pre><h3 id="5-6-settlement-close-work-day-body">5.6. Settlement close-work-day body</h3><table><thead><tr><th>Trường</th><th>Bắt buộc</th><th>Kiểu/validate</th><th>Ghi chú</th></tr></thead><tbody>
-<tr><td><code>branchId</code> hoặc <code>storeId</code></td><td>Có</td><td>string/number</td><td>Branch cần chốt.</td></tr>
-<tr><td><code>workDate</code> hoặc <code>date</code></td><td>Có</td><td><code>YYYY-MM-DD</code> hoặc date string parse được</td><td>Ngày công.</td></tr>
-<tr><td><code>ownerCommissionRate</code></td><td>Không</td><td>number 0..100</td><td>Mặc định 75.</td></tr>
-<tr><td><code>ownerDiscountCoverageRate</code> hoặc <code>ownerDiscountSharePercent</code></td><td>Không</td><td><code>0</code>, <code>50</code>, <code>100</code></td><td>Mặc định V2 là 50 khi chưa có closing/rate.</td></tr>
-<tr><td><code>discountMethod</code> hoặc <code>discountAllocationMethod</code></td><td>Không</td><td><code>equal</code>, <code>selected</code>, <code>per_order</code>, <code>revenue_share</code></td><td>Mặc định V2 là <code>revenue_share</code>. <code>selected</code> normalize thành method <code>equal</code> + scope <code>selected</code>. <code>revenue_share</code> chia phần discount nhân viên theo tỷ trọng doanh thu trong ngày; backend cũng nhận alias <code>percentage</code>/<code>percent</code>.</td></tr>
-<tr><td><code>discountEmployeeScope</code></td><td>Không</td><td><code>all</code>, <code>selected</code></td><td>Scope nhân viên chịu discount.</td></tr>
-<tr><td><code>selectedEmployeeIds</code> hoặc <code>selectedEmployeeUserIds</code></td><td>Không</td><td>string array</td><td>Bắt buộc có phần tử nếu scope selected.</td></tr>
-<tr><td><code>attendanceDiscountOwnerShares</code></td><td>Không</td><td>object</td><td>Map <code>attendanceId -&gt; 0/50/100</code>, chỉ dùng khi <code>per_order</code>.</td></tr>
-<tr><td>Lương cứng trong discount</td><td>Contract</td><td><code>fixed</code>/<code>hourly</code></td><td>Đơn của thợ lương cứng vẫn tính vào doanh thu chốt ngày. Nếu thợ lương cứng nằm trong phần chia discount, phần đó không dồn sang thợ ăn chia mà chuyển thành <code>ownerDiscountSupported</code> và cộng vào discount chủ chịu.</td></tr>
-<tr><td>Salary snapshot</td><td>Contract</td><td><code>services[].employees[]</code>, <code>assignees[]</code></td><td>Khi tạo/sửa attendance, backend lưu snapshot <code>compensationModel</code>, <code>payType</code>, <code>salaryType</code>, <code>commissionRate</code>/<code>hourlyRate</code>. Settlement ưu tiên snapshot này trước user hiện tại để tránh đổi loại lương sau đó làm lệch chốt sổ cũ.</td></tr>
-<tr><td><code>closedAt</code></td><td>Không</td><td>positive integer ms</td><td>Override thời điểm chốt.</td></tr>
-</tbody></table><h3 id="5-7-weekly-report-item">5.7. Weekly report item</h3><table><thead><tr><th>Trường</th><th>Kiểu</th><th>Mô tả</th></tr></thead><tbody>
-<tr><td><code>id</code>, <code>shopId</code>, <code>branchId</code></td><td>string</td><td>Định danh report.</td></tr>
-<tr><td><code>weekStartDate</code>, <code>weekEndDate</code></td><td><code>YYYY-MM-DD</code></td><td><code>weekStartDate</code> phải là thứ Hai.</td></tr>
-<tr><td><code>year</code>, <code>weekNumber</code>, <code>isPartial</code></td><td>number/boolean</td><td>Metadata tuần.</td></tr>
-<tr><td><code>currency</code>, <code>moneyScale</code></td><td>string/number</td><td>Mặc định từ money helper nếu record cũ thiếu.</td></tr>
-<tr><td><code>summary</code></td><td>object</td><td>Tổng attendances, revenue, discount, net revenue, owner commission, employee earnings, average ticket, working days.</td></tr>
-<tr><td><code>dailyMetrics</code></td><td>array</td><td>Breakdown theo ngày.</td></tr>
-<tr><td><code>employeeBreakdowns</code>, <code>dailyEmployeeBreakdowns</code></td><td>array</td><td>Breakdown nhân viên theo tuần/ngày.</td></tr>
-<tr><td><code>serviceBreakdowns</code></td><td>array</td><td>Breakdown dịch vụ.</td></tr>
-<tr><td><code>generatedAt</code>, <code>generatedByUserId</code>, <code>sourceClosingIds</code>, <code>revision</code>, <code>createdAt</code>, <code>updatedAt</code></td><td>mixed</td><td>Metadata materialized view.</td></tr>
-</tbody></table><h2 id="6-endpoint-matrix">6. Endpoint matrix</h2><h3 id="6-1-monitoring">6.1. Monitoring</h3><table><thead><tr><th>ID</th><th>Method</th><th>Endpoint</th><th>Auth/role</th><th>Request</th><th>Success response</th><th>Lỗi và side effect</th></tr></thead><tbody>
-<tr><td>API-01</td><td>GET</td><td><code>/api/v1/monitoring/health</code></td><td>Không cần App Check/JWT.</td><td>Không có path/query/body.</td><td><code>200</code> JSON <code>{ status, service, uptimeSec, timestamp, version }</code>.</td><td>Không side effect. Lỗi runtime trả <code>500 /internal-server-error</code>.</td></tr>
-<tr><td>API-02</td><td>GET</td><td><code>/api/v1/monitoring/ready</code></td><td>Không cần App Check/JWT.</td><td>Không có path/query/body.</td><td><code>200</code> nếu ready, <code>503</code> nếu not ready. Body <code>{ status: &quot;ready&quot; hoặc &quot;not_ready&quot;, checks: { env, firestore, cache }, timestamp }</code>.</td><td>Không side effect.</td></tr>
-<tr><td>API-03</td><td>GET</td><td><code>/api/v1/monitoring/metrics</code></td><td>Không cần App Check/JWT.</td><td>Không có path/query/body.</td><td><code>200</code> text Prometheus metrics, Content-Type từ <code>prom-client</code>.</td><td>Không side effect.</td></tr>
-</tbody></table><h3 id="6-2-authentication">6.2. Authentication</h3><table><thead><tr><th>ID</th><th>Method</th><th>Endpoint</th><th>Auth/role</th><th>Request fields</th><th>Success response</th><th>Lỗi và side effect</th></tr></thead><tbody>
-<tr><td>API-04</td><td>POST</td><td><code>/api/v1/admin/signin</code></td><td>Firebase ID token. Firestore user phải <code>role=admin</code>, <code>active=true</code>.</td><td>Header <code>Authorization: Bearer &lt;firebaseAdminToken&gt;</code>. Không body.</td><td><code>201</code> signin response: <code>jwtToken</code>, <code>accessToken</code>, <code>refreshToken</code>, <code>tokenType</code>, <code>sessionId</code>, <code>expiresAt</code>, <code>accessTokenExpiresAt</code>, <code>refreshTokenExpiresAt</code>, <code>permissions</code>, <code>user</code>, <code>scope</code>.</td><td><code>403 /admin/forbidden-role</code>, <code>403 /admin/user-disabled</code>, auth header errors. Side effect: update <code>lastLoginAt</code>, issue access/refresh token pair.</td></tr>
-<tr><td>API-05</td><td>POST</td><td><code>/api/v1/admin/register-owner</code></td><td>JWT session backend. Chỉ <code>admin</code>.</td><td>Body bắt buộc: <code>email</code> email, <code>name</code> string 2..100, <code>password</code> min6. Không đọc <code>shopName</code> trong code hiện tại.</td><td><code>201</code> <code>{ uid, email, shopId }</code>.</td><td><code>400 /auth/invalid-request</code>, <code>403 /admin/forbidden-role</code>, <code>409 /auth/email-already-in-use</code>, <code>500 /auth/firebase-user-creation-failed</code>, <code>500 /auth/owner-registration-failed</code>. Side effect: tạo Firebase user, shop <code>active</code>, user owner, audit <code>owner_registered</code>; rollback Firebase nếu Firestore fail.</td></tr>
-<tr><td>API-06</td><td>POST</td><td><code>/api/v1/auth/register-owner</code></td><td>Public nhưng vẫn qua App Check nếu bật.</td><td>Body bắt buộc: <code>email</code>, <code>name</code>, <code>password</code>. Không cần Authorization.</td><td><code>201</code> <code>{ uid, email, shopId }</code>.</td><td><code>400 /auth/invalid-request</code>, <code>409 /auth/email-already-in-use</code>, server errors như trên. Side effect: tạo Firebase user, shop <code>draft</code>, user owner, audit.</td></tr>
-<tr><td>API-07</td><td>POST</td><td><code>/api/v1/auth/signin</code></td><td>Firebase ID token. Role được phép: <code>owner</code>, <code>employees</code>; user active.</td><td>Header <code>Authorization: Bearer &lt;firebaseUserToken&gt;</code>. Không body.</td><td><code>201</code> signin response. <code>jwtToken</code> bằng <code>accessToken</code>. Role trả về theo contract chuẩn <code>owner</code> hoặc <code>employees</code>.</td><td><code>403 /auth/forbidden-role</code>, <code>403 /auth/user-disabled</code>, <code>409 /auth/branch-not-configured</code>, auth header errors. Side effect: update <code>lastLoginAt</code>, issue access/refresh token pair.</td></tr>
-<tr><td>API-08</td><td>POST</td><td><code>/api/v1/auth/logout</code></td><td>JWT session backend.</td><td>Header Authorization. Không body.</td><td><code>200</code> <code>{ success: true }</code>.</td><td>Auth header errors, <code>/auth/token-expired</code>. Side effect: revoke <code>sessionId</code>.</td></tr>
-<tr><td>API-08A</td><td>POST</td><td><code>/api/v1/auth/refresh-token</code></td><td>Không cần access token; cần refresh token hợp lệ trong body. Vẫn qua App Check nếu bật.</td><td>Body bắt buộc: <code>{ refreshToken: &quot;Bearer &lt;backend-refresh-token&gt;&quot; }</code>. Không cần gửi access token cũ trong Authorization.</td><td><code>200</code> <code>{ jwtToken, accessToken, refreshToken, tokenType, sessionId, expiresAt, accessTokenExpiresAt, refreshTokenExpiresAt, permissions, scope }</code>. Response giữ lại refresh token hiện tại; chưa rotate refresh token.</td><td><code>400 /auth/invalid-request</code>, <code>401 /auth/invalid-refresh-token</code>, <code>401 /auth/refresh-token-expired</code>, <code>401 /auth/refresh-token-revoked</code>. Firestore reads/writes: 0; chỉ verify JWT local và kiểm tra cache revoke.</td></tr>
-<tr><td>API-09</td><td>POST</td><td><code>/api/v1/auth/change-password</code></td><td>Firebase ID token, yêu cầu <code>auth_time</code> trong 5 phút.</td><td>Body bắt buộc: <code>newPassword</code> string min8. Code hiện tại không nhận <code>currentPassword</code>.</td><td><code>200</code> <code>{ success: true }</code>.</td><td><code>400 /auth/invalid-request</code>, <code>401 /auth/recent-signin-required</code>, <code>403 /auth/user-disabled</code>. Side effect: update Firebase password, revoke refresh tokens, invalidate session cũ.</td></tr>
-<tr><td>API-10</td><td>POST</td><td><code>/api/v1/auth/forgot-password/request-otp</code></td><td>Public + App Check nếu bật.</td><td>Body bắt buộc: <code>email</code> email.</td><td><code>200</code> <code>{ success, email, otpLength, expiresInMs, resendCooldownMs, delivery? }</code>; non-production có thể thêm <code>debugOtpCode</code>.</td><td><code>400 /auth/invalid-request</code>, <code>429 /auth/otp-resend-too-soon</code>, <code>503 /auth/otp-delivery-unavailable</code>. Side effect: tạo OTP session, gửi email nếu user active; response generic để không lộ email tồn tại.</td></tr>
-<tr><td>API-11</td><td>POST</td><td><code>/api/v1/auth/forgot-password/verify-otp</code></td><td>Public + App Check nếu bật.</td><td>Body bắt buộc: <code>email</code>, <code>otp</code> regex <code>^\d{6}$</code>.</td><td><code>200</code> <code>{ success: true, resetToken }</code>, resetToken hết hạn 15 phút.</td><td><code>400 /auth/invalid-request</code>, <code>400 /auth/otp-invalid</code>, <code>410 /auth/otp-expired</code>, <code>429 /auth/otp-too-many-attempts</code>. Side effect: tăng failed attempts hoặc xóa session khi hết hạn/vượt attempts.</td></tr>
-<tr><td>API-12</td><td>POST</td><td><code>/api/v1/auth/forgot-password/reset-password</code></td><td>Public + App Check nếu bật.</td><td>Một trong hai format: <code>{ resetToken, password }</code> hoặc <code>{ email, otp, password }</code>; <code>password</code> min6.</td><td><code>200</code> <code>{ success: true }</code>.</td><td><code>400 /auth/invalid-request</code>, <code>400 /auth/otp-invalid</code>, <code>410 /auth/otp-expired</code>, <code>429 /auth/otp-too-many-attempts</code>. Side effect: update Firebase password, revoke refresh tokens, invalidate JWT sessions, xóa OTP session, audit <code>password_reset_completed</code> nếu lookup user thành công.</td></tr>
-</tbody></table><h3 id="6-3-account">6.3. Account</h3><table><thead><tr><th>ID</th><th>Method</th><th>Endpoint</th><th>Auth/role</th><th>Request fields</th><th>Success response</th><th>Lỗi và side effect</th></tr></thead><tbody>
-<tr><td>API-13</td><td>GET</td><td><code>/api/v1/account/profile</code></td><td>JWT session backend.</td><td>Không path/query/body.</td><td><code>200</code> <code>{ user }</code> theo schema account profile: <code>uid</code>, <code>email</code>, <code>shopId</code>, <code>role</code>, <code>active</code>, optional <code>branchId</code>, <code>name</code>, <code>displayName</code>, <code>phone</code>, <code>position</code>, <code>gender</code>, <code>address</code>, <code>bankAccount</code>, <code>taxCode</code>, <code>avatarUrl</code>, <code>lastLoginAt</code>.</td><td>Auth errors. Không side effect.</td></tr>
-<tr><td>API-14</td><td>PATCH</td><td><code>/api/v1/account/profile</code></td><td>JWT session backend, user active.</td><td>Body optional nhưng phải có ít nhất 1 field: <code>name</code>, <code>displayName</code>, <code>phone</code>, <code>position</code>, <code>gender</code>, <code>address</code>, <code>bankAccount</code>, <code>taxCode</code>, <code>avatarUrl</code>.</td><td><code>200</code> <code>{ user }</code> sau update.</td><td><code>400 /account/invalid-request</code>, <code>403 /account/user-disabled</code>. Side effect: update user document, <code>updatedAt</code>, <code>updatedByUserId</code>; sync Firebase profile nếu name/displayName/avatarUrl đổi.</td></tr>
-<tr><td>API-15</td><td>POST</td><td><code>/api/v1/account/avatar</code></td><td>JWT session backend, user active.</td><td>Body bắt buộc: <code>fileName</code> 1..255, <code>contentType</code> regex <code>image/*</code>, <code>base64</code>. Max 5MB decoded.</td><td><code>200</code> <code>{ user }</code> với <code>avatarUrl</code> mới.</td><td><code>400 /account/invalid-avatar-upload-request</code>, <code>400 /account/avatar-file-too-large</code>, <code>403 /account/user-disabled</code>. Side effect: upload Firebase Storage, update Firestore avatar, update Firebase <code>photoURL</code>.</td></tr>
-</tbody></table><h3 id="6-4-shop-branch-service">6.4. Shop - branch/service</h3><table><thead><tr><th>ID</th><th>Method</th><th>Endpoint</th><th>Auth/role</th><th>Request fields</th><th>Success response</th><th>Lỗi và side effect</th></tr></thead><tbody>
-<tr><td>API-16</td><td>POST</td><td><code>/api/v1/shop/branch</code></td><td>JWT. Chỉ owner.</td><td>Body theo branch create schema. Bắt buộc <code>name</code>; optional <code>code</code>, <code>phone</code>, <code>email</code>, <code>manager</code>, <code>businessType</code>, <code>website</code>, <code>openTime</code>, <code>closeTime</code>, <code>settlementCutoffTime</code>, <code>foundedDate</code>, <code>address</code>, <code>status</code>.</td><td><code>201</code> <code>{ id, branchId, branch }</code>.</td><td><code>400 /shop/invalid-request</code>, <code>403 /shop/forbidden-role</code>. Side effect: create branch, audit <code>branch_created</code>.</td></tr>
-<tr><td>API-17</td><td>GET</td><td><code>/api/v1/shop/branch</code></td><td>JWT. Owner/employees. Employees chỉ branch của token.</td><td>Query optional <code>includeEmployeeCounts=true</code></td><td>1<code>.</code></td><td><code>200</code> hoặc <code>304</code>: <code>{ shopBranches, branches, stores }</code>. <code>branches/stores</code> đã map theo <code>toShopBranchResponse</code>.</td><td>Auth errors. Không side effect. Cache private 30s + ETag.</td></tr>
-<tr><td>API-18</td><td>GET</td><td><code>/api/v1/shop/branch/:branchId</code></td><td>JWT. Owner hoặc employees cùng branch.</td><td>Path bắt buộc <code>branchId</code>; query optional <code>includeEmployeeCounts=true</code></td><td>1<code>.</code></td><td><code>200</code> hoặc <code>304</code>: <code>{ shopBranch, branch }</code>.</td><td><code>400 /shop/invalid-request</code>, <code>403 /shop/forbidden-branch</code>. Không side effect.</td></tr>
-<tr><td>API-19</td><td>PATCH</td><td><code>/api/v1/shop/branch/:branchId</code></td><td>JWT. Chỉ owner.</td><td>Path <code>branchId</code>; body branch update schema, tất cả optional nhưng phải có ít nhất 1 field.</td><td><code>200</code> <code>{ id, branchId, branch }</code>.</td><td><code>400 /shop/invalid-request</code>, <code>403 /shop/forbidden-role</code>, <code>403 /shop/forbidden-branch</code>. Side effect: update branch, audit <code>branch_updated</code>.</td></tr>
-<tr><td>API-20</td><td>POST</td><td><code>/api/v1/shop/service/image</code></td><td>JWT. Chỉ owner.</td><td>Body bắt buộc: <code>fileName</code>, <code>contentType=image/*</code>, <code>base64</code>. Max 8MB decoded.</td><td><code>200</code> <code>{ imageUrl }</code>.</td><td><code>400 /shop/invalid-service-image-upload-request</code>, <code>400 /shop/service-image-file-too-large</code>, <code>403 /shop/forbidden-role</code>. Side effect: upload Firebase Storage.</td></tr>
-<tr><td>API-21</td><td>POST</td><td><code>/api/v1/shop/service</code></td><td>JWT. Chỉ owner.</td><td>Body service create schema. Bắt buộc <code>branchId</code>, <code>name</code>, một trong <code>price/amount</code>, một trong <code>category/groupService</code>, và <code>duration</code> hoặc <code>durationMin+durationMax</code>. Optional <code>description</code>, ảnh.</td><td><code>201</code> <code>{ id, serviceId, service }</code>.</td><td><code>400 /shop/invalid-request</code> nếu thiếu field, duration invalid hoặc branch inactive; <code>403 /shop/forbidden-role</code>. Side effect: create service, audit <code>service_created</code>.</td></tr>
-<tr><td>API-22</td><td>GET</td><td><code>/api/v1/shop/service/bootstrap</code></td><td>JWT. Owner/employees.</td><td>Query optional <code>branchId</code> cho owner; employees dùng branch token.</td><td><code>200</code> hoặc <code>304</code>: <code>{ shopBranches, branches, stores, selectedBranchId, selectedStoreId, shopPredefinedServices, services, meta }</code>.</td><td><code>403 /shop/forbidden-role</code>. Không side effect.</td></tr>
-<tr><td>API-22A</td><td>GET</td><td><code>/api/v1/shop/service-catalog</code></td><td>JWT. Owner/employees. Employees chỉ được đọc branch trong token.</td><td>Query <code>branchId</code> bắt buộc với owner; employees có thể bỏ vì backend dùng <code>branchId</code> từ token.</td><td><code>200</code> hoặc <code>304</code>: <code>{ branch, catalog, groups, services, meta }</code>. <code>catalog</code> có <code>version</code>, <code>groupCount</code>, <code>serviceCount</code>; <code>groups[].services</code> đã map aliases FE như <code>amount</code>, <code>duration</code>, <code>storeName</code>.</td><td><code>400 /shop/invalid-request</code>, <code>403 /shop/forbidden-role</code>, <code>403 /shop/forbidden-branch</code>. Không side effect business; lần đầu có thể build doc <code>shop/{shopId}/service_catalog/{branchId}</code>, sau đó dùng cache/catalog để giảm reads.</td></tr>
-<tr><td>API-23</td><td>GET</td><td><code>/api/v1/shop/service</code></td><td>JWT. Owner/employees.</td><td>Query <code>branchId</code> bắt buộc với owner; employees dùng branch token.</td><td><code>200</code> hoặc <code>304</code>: <code>{ shopPredefinedServices, services }</code>. <code>services</code> có <code>branchName</code>, <code>storeName</code>, aliases <code>amount</code>, <code>duration</code>, <code>time</code>, <code>images</code>, <code>image</code>.</td><td><code>400 /shop/invalid-request</code> nếu owner thiếu branchId; <code>403 /shop/forbidden-role</code>. Không side effect.</td></tr>
-<tr><td>API-24</td><td>PATCH</td><td><code>/api/v1/shop/service/:serviceId</code></td><td>JWT. Chỉ owner.</td><td>Path <code>serviceId</code>; body service update schema, ít nhất 1 field.</td><td><code>200</code> <code>{ id, service }</code>.</td><td><code>400 /shop/invalid-request</code>, <code>403 /shop/forbidden-role</code>. Side effect: update service, audit <code>service_updated</code>.</td></tr>
-<tr><td>API-25</td><td>DELETE</td><td><code>/api/v1/shop/service/:serviceId</code></td><td>JWT. Chỉ owner.</td><td>Path <code>serviceId</code>. Không body.</td><td><code>204 No Content</code>.</td><td><code>400 /shop/invalid-request</code>, <code>403 /shop/forbidden-role</code>. Side effect: delete service, audit <code>service_deleted</code>.</td></tr>
-</tbody></table><h3 id="6-5-employee-attendance-settlement-report">6.5. Employee, attendance, settlement, report</h3><table><thead><tr><th>ID</th><th>Method</th><th>Endpoint</th><th>Auth/role</th><th>Request fields</th><th>Success response</th><th>Lỗi và side effect</th></tr></thead><tbody>
-<tr><td>API-26</td><td>GET</td><td><code>/api/v1/employee/attendance/bootstrap</code></td><td>JWT. Owner/employees.</td><td>Query optional <code>workDate</code> hoặc <code>date</code>, <code>branchId</code> hoặc <code>storeId</code>, <code>includeAttendances=true</code></td><td>1<code>.</code></td><td><code>200/304</code> <code>{ services, branches, employees, closedBranchIds, closing?, attendances?, items?, meta? }</code>.</td><td><code>400 /employee/invalid-request</code>, <code>403 /employee/forbidden-branch</code>. No side effect. Cache private 15s + server 30s.</td></tr>
-<tr><td>API-27</td><td>GET</td><td><code>/api/v1/employee/me/bootstrap</code></td><td>JWT. Chỉ employees branch-scoped active.</td><td>Query range optional: <code>fromWorkDate/from/startDate</code>, <code>toWorkDate/to/endDate</code>; mặc định từ đầu tháng tới hôm nay; max 92 ngày.</td><td><code>200/304</code> <code>{ employee, branch, employees, coworkers, services, serviceCatalog, attendances, items, closings, dailySettlements, report, meta }</code>.</td><td><code>400 /employee/invalid-request</code>, <code>403 /employee/forbidden-role</code>.</td></tr>
-<tr><td>API-28</td><td>GET</td><td><code>/api/v1/employee/me/report</code></td><td>JWT. Chỉ employees branch-scoped active.</td><td>Range query như API-27; optional <code>summaryOnly=true</code>, <code>includeItems=false</code>.</td><td><code>200/304</code> <code>{ report, attendances, items, closings, dailySettlements, meta }</code>. Nếu summaryOnly có <code>meta.source</code> là <code>weekly-report</code> hoặc <code>weekly-report-hybrid</code>.</td><td><code>400 /employee/invalid-request</code>, <code>403 /employee/forbidden-role</code>. Có thể generate weekly-report thiếu khi summaryOnly.</td></tr>
-<tr><td>API-29</td><td>GET</td><td><code>/api/v1/employee/employees</code></td><td>JWT. Chỉ owner.</td><td>Query optional <code>branchId</code>, <code>role=employees</code>, <code>status=active|pending|inactive</code>, <code>search</code> &lt;=100.</td><td><code>200/304</code> <code>{ total, employees }</code>.</td><td><code>400 /employee/invalid-request</code>, <code>403 /employee/forbidden-role</code>, <code>403 /employee/forbidden-branch</code>.</td></tr>
-<tr><td>API-30</td><td>GET</td><td><code>/api/v1/employee/employees/:employeeUserId</code></td><td>JWT. Owner đọc employee trong shop; employees chỉ đọc chính mình.</td><td>Path <code>employeeUserId</code>.</td><td><code>200/304</code> <code>{ employee }</code>.</td><td><code>400 /employee/invalid-request</code>, <code>403 /employee/forbidden-role</code>, <code>404 /employee/not-found</code>.</td></tr>
-<tr><td>API-31</td><td>GET</td><td><code>/api/v1/employee/attendance</code></td><td>JWT. Owner/employees.</td><td>Query bắt buộc <code>workDate</code> hoặc <code>date</code>, <code>branchId</code> hoặc <code>storeId</code>; optional <code>employeeUserId</code>, <code>status=open</code></td><td>closed<code>, </code>updatedAfter<code> integer ms &gt;=0.</code></td><td><code>200/304</code> <code>{ attendances, items, closing, meta }</code>. Meta có <code>totalCount</code>, <code>returnedCount</code>, <code>changedCount</code>, <code>latestUpdatedAt</code>, <code>openCount</code>, <code>closedCount</code>.</td><td><code>400 /employee/invalid-request</code>, <code>403 /employee/forbidden-branch</code>. Employees chỉ thấy attendance mình tạo hoặc được assign.</td></tr>
-<tr><td>API-32</td><td>GET</td><td><code>/api/v1/employee/attendance/correction-requests</code></td><td>JWT. Owner/employees.</td><td>Range query max 92 ngày; optional <code>status=pending</code></td><td>approved</td><td>rejected</td><td>cancelled<code>, </code>branchId/storeId<code>, </code>mine=true<code>.</code></td><td><code>200/304</code> <code>{ requests, meta }</code>; request theo <code>toAttendanceCorrectionResponse</code>.</td><td><code>400 /employee/invalid-request</code>, <code>403 /employee/forbidden-branch</code>.</td></tr>
-<tr><td>API-33</td><td>GET</td><td><code>/api/v1/employee/attendance/:attendanceId</code></td><td>JWT. Owner/employees có quyền đọc attendance.</td><td>Path <code>attendanceId</code>.</td><td><code>200/304</code> <code>{ attendance, item, closing }</code>.</td><td><code>400 /employee/invalid-request</code>, <code>403 /employee/forbidden-attendance</code>.</td></tr>
-<tr><td>API-34</td><td>GET</td><td><code>/api/v1/employee/session</code></td><td>JWT. Owner/employees.</td><td>Query bắt buộc <code>workDate/date</code>; <code>branchId/storeId</code> bắt buộc với owner, employees dùng token branch.</td><td><code>200/304</code> <code>{ session: { id, shopId, employeeUserId, branchId, workDate, status, summary, attendances, items } }</code>.</td><td><code>400 /employee/invalid-request</code>, <code>403 /employee/forbidden-branch</code>.</td></tr>
-<tr><td>API-35</td><td>GET</td><td><code>/api/v1/employee/session/settlement-preview</code></td><td>JWT. Chỉ owner.</td><td>Query bắt buộc <code>branchId/storeId</code>, <code>workDate/date</code>; optional <code>ownerCommissionRate</code>, <code>ownerDiscountSharePercent/ownerDiscountCoverageRate</code>, <code>discountMethod/discountAllocationMethod</code> (<code>equal</code>, <code>selected</code>, <code>per_order</code>, <code>revenue_share</code>), CSV <code>selectedEmployeeIds/selectedEmployeeUserIds</code>, JSON string <code>attendanceDiscountOwnerShares</code>.</td><td><code>200/304</code> <code>{ workDate, branchId, storeId, employees, discountEligibleEmployees, attendances, items, closing, preview, pendingEmployeeUserIds, pendingEmployees }</code>. Với <code>revenue_share</code>, <code>preview.employeeSummaries[].discountAllocated</code> chỉ là phần thợ ăn chia chịu; phần thợ lương cứng nằm ở <code>ownerDiscountSupported</code>.</td><td><code>400 /employee/invalid-request</code>, <code>403 /employee/forbidden-role</code>, <code>403 /employee/forbidden-branch</code>.</td></tr>
-<tr><td>API-35B</td><td>GET</td><td><code>/api/v1/employee/session/settlements</code></td><td>JWT. Chỉ owner.</td><td>Query bắt buộc <code>branchId/storeId</code>, <code>fromWorkDate</code>, <code>toWorkDate</code>; range tối đa 31 ngày.</td><td><code>200</code> <code>{ branchId, storeId, fromWorkDate, toWorkDate, items, cards, summary, meta }</code>. Mỗi card gồm <code>workDate</code>, <code>status=open|ready|closed</code>, attendance counts, totals, <code>closingId</code>, <code>closedAt</code> nếu đã chốt. Ngày open mặc định <code>discountAllocationMethod=revenue_share</code>, <code>ownerDiscountCoverageRate=50</code>.</td><td><code>400 /employee/invalid-request</code>, <code>403 /employee/forbidden-role</code>, <code>403 /employee/forbidden-branch</code>. Không side effect.</td></tr>
-<tr><td>API-36</td><td>GET</td><td><code>/api/v1/employee/report/owner-summary</code></td><td>JWT. Owner hoặc employees scoped.</td><td>Query bắt buộc <code>startDate</code>, <code>endDate</code>, range 1..31 ngày; optional <code>branchId/storeId</code>, <code>groupBy=day</code></td><td>month<code>, </code>summaryOnly=true<code>, </code>includeItems=false<code>.</code></td><td><code>200/304</code> <code>{ dailyRevenue, employeePerformance, serviceReport, summary, attendances?, items?, meta }</code>. Optimized meta có <code>source=weekly-report-hybrid</code>, <code>weeklyReportsUsed</code>, <code>rawDateRangesUsed</code>.</td><td><code>400 /employee/invalid-request</code>, <code>403 /employee/forbidden-branch</code>. Có thể generate weekly-report thiếu khi summaryOnly + branch.</td></tr>
-<tr><td>API-37</td><td>GET</td><td><code>/api/v1/employee/report/owner-summary/legacy</code></td><td>JWT. Owner hoặc employees scoped.</td><td>Query giống API-36.</td><td><code>200/304</code> cùng contract owner-summary nhưng aggregate raw attendance, không dùng weekly-report.</td><td><code>400 /employee/invalid-request</code>, <code>403 /employee/forbidden-branch</code>.</td></tr>
-<tr><td>API-38</td><td>GET</td><td><code>/api/v1/employee/salary/monthly</code></td><td>JWT. Chỉ owner.</td><td>Query bắt buộc <code>branchId/storeId</code>, <code>year</code> 2000..2100, <code>month</code> 1..12.</td><td><code>200/304</code> <code>{ period, branch, employees, summary, meta }</code>. Meta source có thể <code>weekly-report-optimized</code> hoặc <code>closed_work_day</code>.</td><td><code>400 /employee/invalid-request</code>, <code>403 /employee/forbidden-role</code>, <code>403 /employee/forbidden-branch</code>. Có fallback path nếu optimized lỗi.</td></tr>
-<tr><td>API-39</td><td>GET</td><td><code>/api/v1/employee/salary/bootstrap</code></td><td>JWT. Chỉ owner.</td><td>Query bắt buộc <code>year</code>, <code>month</code>; optional <code>branchId/storeId</code>.</td><td><code>200/304</code> <code>{ branches, stores, selectedBranchId, salary, data, meta }</code>.</td><td><code>400 /employee/invalid-request</code>, <code>403 /employee/forbidden-role</code>.</td></tr>
-<tr><td>API-40</td><td>POST</td><td><code>/api/v1/employee/employees</code></td><td>JWT. Chỉ owner.</td><td>Body employee create schema. Bắt buộc <code>email</code>, <code>password</code>, <code>name</code>, <code>branchId</code>, <code>role</code>; optional profile/lương/status.</td><td><code>201</code> <code>{ id, employee }</code>.</td><td><code>400 /employee/invalid-request</code>, <code>403 /employee/forbidden-role</code>, <code>403 /employee/forbidden-branch</code>, <code>409 /employee/email-already-in-use</code>. Side effect: create Firebase user + Firestore user, audit; rollback Firebase nếu lỗi.</td></tr>
-<tr><td>API-41</td><td>POST</td><td><code>/api/v1/employee/attendance</code></td><td>JWT. Owner/employees. Employees phải là assignee sau normalize.</td><td>Body attendance legacy hoặc frontend.</td><td><code>201</code> <code>{ id, workDate, rolledToNextWorkDate, subtotalAmount, discountAmount, totalAmount, status, attendance, item }</code>.</td><td><code>400 /employee/invalid-request</code>, <code>400 /employee/invalid-discount-allocation</code>, <code>403 /employee/forbidden-branch</code>, <code>403 /employee/forbidden-attendance</code>, <code>409 /employee/work-day-already-closed</code>. Side effect: create attendance, audit.</td></tr>
-<tr><td>API-42</td><td>POST</td><td><code>/api/v1/employee/attendance/:attendanceId/correction-requests</code></td><td>JWT. Employees creator/assignee của attendance.</td><td>Path <code>attendanceId</code>; body bắt buộc <code>reason</code> 1..500 và <code>requestedChanges</code> có ít nhất 1 thay đổi: <code>customerName</code>, <code>date/workDate</code>, <code>startTimestamp/endTimestamp</code>, <code>discountAmount</code>, <code>note</code>, <code>services</code>.</td><td><code>201</code> <code>{ request }</code>.</td><td><code>400 /employee/invalid-request</code>, <code>403 /employee/forbidden-attendance</code>, <code>409 /employee/attendance-correction-pending</code>, <code>409 /employee/attendance-not-closed</code>, <code>409 /employee/attendance-not-settled</code>. Side effect: create correction request, audit.</td></tr>
-<tr><td>API-43</td><td>POST</td><td><code>/api/v1/employee/attendance/correction-requests/:requestId/cancel</code></td><td>JWT. Requester hoặc owner có quyền branch.</td><td>Path <code>requestId</code>; không body.</td><td><code>200</code> <code>{ request }</code> status <code>cancelled</code>.</td><td><code>400 /employee/invalid-request</code>, <code>403 /employee/forbidden-correction-request</code>, <code>409 /employee/correction-request-not-pending</code>. Side effect: update request, audit.</td></tr>
-<tr><td>API-44</td><td>POST</td><td><code>/api/v1/employee/attendance/correction-requests/:requestId/review</code></td><td>JWT. Chỉ owner.</td><td>Path <code>requestId</code>; body bắt buộc <code>status=approved</code></td><td>rejected<code>; optional </code>reviewerNote<code> &lt;=1000.</code></td><td><code>200</code> <code>{ request, appliedToAttendance, applyStatus, applySkippedReason?, recalculatedSettlementDates? }</code>.</td><td><code>400 /employee/invalid-request</code>, <code>403 /employee/forbidden-role</code>, <code>403 /employee/forbidden-branch</code>, <code>409 /employee/correction-request-not-pending</code>, <code>409 /employee/attendance-changed-since-request</code>, <code>409 /employee/invalid-correction-request</code>, <code>409 /employee/invalid-settlement-state</code>. Side effect: update correction; nếu approve có thể update attendance và recalculate closing.</td></tr>
-<tr><td>API-45</td><td>PATCH</td><td><code>/api/v1/employee/employees/:employeeUserId</code></td><td>JWT. Chỉ owner.</td><td>Path <code>employeeUserId</code>; body employee update schema, tất cả optional: <code>password</code>, <code>name</code>, <code>branchId</code>, <code>role</code>, profile/lương/status/active.</td><td><code>200</code> <code>{ id, employee }</code>.</td><td><code>400 /employee/invalid-request</code>, <code>403 /employee/forbidden-role</code>, <code>403 /employee/forbidden-branch</code>, <code>404 /employee/not-found</code>. Side effect: update Firebase profile/password/disabled; update user; revoke sessions nếu password/role/branch/status/active đổi; audit.</td></tr>
-<tr><td>API-46</td><td>PATCH</td><td><code>/api/v1/employee/attendance/:attendanceId</code></td><td>JWT. Owner/employees có quyền manage attendance.</td><td>Path <code>attendanceId</code>; body attendance legacy hoặc frontend.</td><td><code>200</code> <code>{ id, workDate, rolledToNextWorkDate, discountAmount, subtotalAmount, totalAmount, status, attendance, item }</code>.</td><td><code>400 /employee/invalid-request</code>, <code>400 /employee/invalid-discount-allocation</code>, <code>403 /employee/forbidden-branch</code>, <code>403 /employee/forbidden-attendance</code>, <code>409 /employee/attendance-locked</code>, <code>409 /employee/attendance-closed</code>, <code>409 /employee/work-day-already-closed</code>. Side effect: update attendance, audit.</td></tr>
-<tr><td>API-47</td><td>POST</td><td><code>/api/v1/employee/attendance/:attendanceId/close</code></td><td>JWT. Owner/employees có quyền manage attendance.</td><td>Path <code>attendanceId</code>; không body.</td><td><code>200</code> <code>{ id, status: &quot;closed&quot;, attendance, item }</code>.</td><td><code>400 /employee/invalid-request</code>, <code>403 /employee/forbidden-attendance</code>, <code>409 /employee/attendance-locked</code>, <code>409 /employee/attendance-closed</code>, <code>409 /employee/attendance-incomplete</code>. Side effect: set closedAt/closedBy/status, audit.</td></tr>
-<tr><td>API-48</td><td>POST</td><td><code>/api/v1/employee/session/close</code></td><td>JWT. Chỉ owner.</td><td>Body close-work-day schema trong mục 5.6. Mặc định V2 là <code>discountMethod=revenue_share</code> và <code>ownerDiscountCoverageRate=50</code>; <code>percentage</code>/<code>percent</code> là alias request.</td><td><code>200</code> <code>{ id, workDate, branchId, storeId, ownerCommissionRate, ownerDiscountCoverageRate, discountAllocationMethod, discountEmployeeScope, selectedEmployeeUserIds, attendanceDiscountOwnerShares, employeeSummaries, summary }</code>. Summary lưu <code>totalEmployeeDiscountAmount</code> cho thợ ăn chia và <code>totalOwnerDiscountAmount</code> gồm phần chủ chịu + phần lương cứng được chủ absorb.</td><td><code>400 /employee/invalid-request</code>, <code>400 /employee/discount-targets-required</code>, <code>400 /employee/no-discount-eligible-employees</code>, <code>403 /employee/forbidden-role</code>, <code>403 /employee/forbidden-branch</code>, <code>409 /employee/work-day-already-closed</code>, <code>409 /employee/invalid-settlement-state</code>. Side effect: create work_day_closing, audit; all-fixed close bình thường và đây là nguồn aggregate cho weekly-report/salary.</td></tr>
-</tbody></table><h3 id="6-6-notifications">6.6. Notifications</h3><table><thead><tr><th>ID</th><th>Method</th><th>Endpoint</th><th>Auth/role</th><th>Request fields</th><th>Success response</th><th>Lỗi và side effect</th></tr></thead><tbody>
-<tr><td>API-49</td><td>GET</td><td><code>/api/v1/notifications</code></td><td>JWT. Owner/employees.</td><td>Query optional <code>limit</code> integer 1..80, default 40.</td><td><code>200/304</code> <code>{ notifications, meta }</code>; notification có <code>id</code>, <code>type</code>, <code>title</code>, <code>message</code>, <code>severity</code>, <code>createdAt</code>, <code>source</code>, optional <code>entityType</code>, <code>entityId</code>, <code>branchId</code>, <code>workDate</code>, <code>route</code>.</td><td>Auth errors. Không side effect. Cache private 15s + ETag.</td></tr>
-</tbody></table><h3 id="6-7-weekly-report">6.7. Weekly report</h3><table><thead><tr><th>ID</th><th>Method</th><th>Endpoint</th><th>Auth/role</th><th>Request fields</th><th>Success response</th><th>Lỗi và side effect</th></tr></thead><tbody>
-<tr><td>API-50</td><td>GET</td><td><code>/api/v1/weekly-report</code></td><td>JWT. Owner/employees. Employees có thể dùng branch token.</td><td>Query bắt buộc <code>fromWeek</code>, <code>toWeek</code>: <code>YYYY-MM-DD</code> và phải là thứ Hai; <code>fromWeek &lt;= toWeek</code>. <code>branchId</code> bắt buộc với owner; optional <code>aggregate=true</code>.</td><td><code>200/304</code> <code>{ items, meta, aggregate? }</code>. Meta có <code>shopId</code>, <code>branchId</code>, <code>fromWeek</code>, <code>toWeek</code>, <code>totalCount</code>, <code>missingWeeks</code>, <code>expectedWeeks</code>.</td><td><code>400 /weekly-report/invalid-request</code>, <code>403 /weekly-report/forbidden-branch</code>. Không generate missing weeks ở list. Cache 5 phút server, private 60s.</td></tr>
-<tr><td>API-51</td><td>GET</td><td><code>/api/v1/weekly-report/:weekStartDate</code></td><td>JWT. Owner/employees có quyền branch.</td><td>Path <code>weekStartDate</code> phải là thứ Hai; query <code>branchId</code> bắt buộc với owner; optional <code>generateIfMissing=true</code>.</td><td><code>200/304</code> <code>{ item, meta }</code>. Meta có <code>generated</code> boolean.</td><td><code>400 /weekly-report/invalid-request</code>, <code>403 /weekly-report/forbidden-branch</code>, <code>404 /weekly-report/not-found</code>. Nếu <code>generateIfMissing=true</code> có thể create weekly-report.</td></tr>
-<tr><td>API-52</td><td>POST</td><td><code>/api/v1/weekly-report</code></td><td>JWT. Role employees bị chặn; dùng cho non-employee role có quyền branch.</td><td>Body bắt buộc <code>weekStartDate</code> thứ Hai; <code>branchId</code> bắt buộc khi không resolve được từ token.</td><td><code>201</code> <code>{ item, meta }</code> với <code>generated=true</code>.</td><td><code>400 /weekly-report/invalid-request</code>, <code>403 /weekly-report/forbidden-role</code>, <code>403 /weekly-report/forbidden-branch</code>, <code>409 /weekly-report/already-exists</code>. Side effect: đọc <code>work_day_closing</code> 7 ngày, create weekly-report, invalidate cache branch.</td></tr>
-</tbody></table><h2 id="7-endpoint-ngo-i-api-v1">7. Endpoint ngoài <code>/api/v1</code></h2><table><thead><tr><th>Method</th><th>Endpoint</th><th>Auth</th><th>Response</th></tr></thead><tbody>
-<tr><td>GET</td><td><code>/</code></td><td>Không</td><td>Text: <code>This is the backend service of Nail Salon Management System!</code></td></tr>
-</tbody></table><h2 id="8-ghi-ch-ki-m-th-contract">8. Ghi chú kiểm thử contract</h2><ul><li>Với endpoint dùng ETag, test nên gọi lần 1 lấy <code>ETag</code>, lần 2 gửi <code>If-None-Match</code>, kỳ vọng <code>304</code> nếu dữ liệu không đổi.</li><li>Với mutating endpoint, test idempotency nên gửi cùng <code>X-Idempotency-Key</code> và cùng body hai lần, kỳ vọng lần replay có <code>X-Idempotency-Replayed: true</code>; gửi cùng key khác body kỳ vọng <code>409 /request/idempotency-conflict</code>.</li><li>HRM/module đấu nối lấy token từ backend, không lấy từ GitHub Pages. Flow chuẩn: Firebase ID token -> <code>/auth/signin</code> -> dùng <code>accessToken</code> gọi API -> dùng <code>refreshToken</code> gọi <code>/auth/refresh-token</code> khi access token expired.</li><li>Không gọi <code>/auth/signin</code> cho từng API business. Signin hiện tốn khoảng 1 Firestore read + 1 write <code>lastLoginAt</code>; verify access token và refresh token không làm phát sinh Firestore reads.</li><li><code>jwtToken</code> vẫn là alias legacy của <code>accessToken</code>. Không xóa field này nếu HRM/module cũ còn đọc.</li><li>Attendance nên test cả payload legacy và frontend vì backend vẫn hỗ trợ cả hai contract.</li><li>Weekly report list không tự generate missing week; detail với <code>generateIfMissing=true</code>, owner report summaryOnly và monthly salary optimized mới có thể generate/read weekly-report.</li><li>Các lỗi từ repository nếu document không tồn tại có thể đi qua error handler generic hoặc firestore error mapper tùy repository; tài liệu trên liệt kê lỗi public mà handler chủ động trả.</li></ul><h2 id="9-ngu-n-tham-kh-o">9. Nguồn tham khảo</h2><ul><li>Source backend: <code>src/app.ts</code>, <code>src/business/*/index.ts</code>, <code>src/helpers/auth-session.ts</code>, <code>src/modules/verify-auth-header.ts</code>, các handler và shared schema.</li><li>GitNexus route map/query dùng để đối chiếu route nền; phần mới sau commit <code>ee2da93</code> được kiểm tra trực tiếp bằng source local và GitNexus re-index 2026-06-05.</li><li>Existing handoff: <code>docs/api-test-protocol.md</code>.</li><li>API docs style reference: <a href="https://apidocs.nhanh.vn/v3">https://apidocs.nhanh.vn/v3</a></li><li>API docs style reference: <a href="https://developers.zalo.me/docs/social-api/tai-lieu/thong-tin-ten-anh-dai-dien">https://developers.zalo.me/docs/social-api/tai-lieu/thong-tin-ten-anh-dai-dien</a></li></ul>
+}</code></pre>
+        <table>
+          <thead><tr><th>Token</th><th>Dùng để làm gì</th><th>Có tốn Firestore reads không?</th></tr></thead>
+          <tbody>
+            <tr><td><code>accessToken</code></td><td>Gọi API nghiệp vụ sau khi đăng nhập.</td><td>Bản thân bước kiểm tra token không đọc Firestore. Reads đến từ API nghiệp vụ phía sau.</td></tr>
+            <tr><td><code>jwtToken</code></td><td>Bí danh cũ của <code>accessToken</code>.</td><td>Không phát sinh thêm read. Giữ để module cũ không vỡ.</td></tr>
+            <tr><td><code>refreshToken</code></td><td>Chỉ dùng để xin access token mới.</td><td>Không đọc Firestore trong flow hiện tại; backend kiểm tra JWT nội bộ và cache revoke.</td></tr>
+          </tbody>
+        </table>
+        <div class="ok">Không gọi <code>/auth/signin</code> trước mỗi API. Đăng nhập có đọc user và cập nhật <code>lastLoginAt</code>; còn access token/refresh token được thiết kế để giảm việc đọc DB không cần thiết.</div>
+      </section>
+
+      <section id="tu-dien">
+        <h2>4. Từ điển biến và bí danh</h2>
+        <p>Các biến dưới đây xuất hiện nhiều trong request/response. “Bí danh” nghĩa là hai tên khác nhau nhưng backend hiểu cùng một ý để giữ tương thích với app cũ.</p>
+        <table>
+          <thead><tr><th>Biến</th><th>Nghĩa tiếng Việt</th><th>Dùng ở đâu</th><th>Lưu ý</th></tr></thead>
+          <tbody>
+            <tr><td><code>shopId</code></td><td>Mã shop, tức tenant/root của chủ.</td><td>Hầu hết document DB.</td><td>Một chủ sở hữu quản lý một shop; shop có nhiều chi nhánh.</td></tr>
+            <tr><td><code>branchId</code></td><td>Mã chi nhánh/cửa hàng con.</td><td>Branch, service, attendance, closing, report.</td><td>Owner phải gửi khi chọn chi nhánh; employees thường lấy từ token.</td></tr>
+            <tr><td><code>storeId</code></td><td>Bí danh frontend của <code>branchId</code>.</td><td>Query/body một số API.</td><td>Backend trả cả hai ở nhiều response để frontend cũ/mới đều đọc được.</td></tr>
+            <tr><td><code>uid</code></td><td>Mã user Firebase.</td><td>User, auth, audit.</td><td>Không nên tự đổi thành số thứ tự nếu chưa có migration.</td></tr>
+            <tr><td><code>employeeUserId</code></td><td>Mã user của nhân viên.</td><td>Attendance, correction, salary.</td><td>Trỏ về document trong collection <code>user</code>.</td></tr>
+            <tr><td><code>workDate</code></td><td>Ngày làm việc theo quy tắc chốt ngày.</td><td>Attendance, settlement, report.</td><td>Không luôn giống ngày lịch nếu chi nhánh có giờ chốt sau nửa đêm.</td></tr>
+            <tr><td><code>date</code></td><td>Bí danh của <code>workDate</code> ở vài API/frontend.</td><td>Attendance/session.</td><td>Ưu tiên dùng <code>workDate</code> trong tích hợp mới.</td></tr>
+            <tr><td><code>price</code></td><td>Giá dạng số.</td><td>Service.</td><td>Nên gửi số đúng scale tiền.</td></tr>
+            <tr><td><code>amount</code></td><td>Bí danh frontend của <code>price</code> hoặc số tiền.</td><td>Service/attendance.</td><td>Có thể là string, backend sẽ parse.</td></tr>
+            <tr><td><code>imageUrls</code></td><td>Danh sách link ảnh.</td><td>Service/avatar.</td><td>Backend cũng trả <code>images</code> cho frontend cũ.</td></tr>
+            <tr><td><code>durationMin</code>, <code>durationMax</code></td><td>Thời lượng tối thiểu/tối đa.</td><td>Service.</td><td><code>duration</code> hoặc <code>time</code> là bí danh ngắn hơn.</td></tr>
+            <tr><td><code>compensationModel</code></td><td>Cách trả lương chuẩn backend.</td><td>User, attendance snapshot, closing.</td><td><code>commission</code> là ăn chia; <code>hourly</code> là lương cứng/giờ.</td></tr>
+            <tr><td><code>payType</code>, <code>salaryType</code></td><td>Bí danh dễ đọc cho frontend.</td><td>Employee/attendance/closing response.</td><td><code>fixed</code> tương ứng <code>hourly</code>; <code>commission</code> giữ nguyên.</td></tr>
+            <tr><td><code>ownerDiscountCoverageRate</code></td><td>Chủ chịu bao nhiêu phần trăm discount.</td><td>Settlement preview/close.</td><td>Giá trị hợp lệ hiện tại: <code>0</code>, <code>50</code>, <code>100</code>.</td></tr>
+            <tr><td><code>ownerDiscountSharePercent</code></td><td>Bí danh của <code>ownerDiscountCoverageRate</code>.</td><td>Frontend cũ.</td><td>Tích hợp mới nên dùng <code>ownerDiscountCoverageRate</code>.</td></tr>
+            <tr><td><code>discountAllocationMethod</code></td><td>Cách chia discount khi chốt ngày.</td><td>Work day closing.</td><td>V2 chuẩn là <code>revenue_share</code>; các giá trị cũ chỉ để đọc dữ liệu cũ.</td></tr>
+            <tr><td><code>discountMethod</code></td><td>Bí danh của <code>discountAllocationMethod</code>.</td><td>Request/response settlement.</td><td>Giữ lại để app cũ không vỡ.</td></tr>
+            <tr><td><code>ownerDiscountSupported</code></td><td>Phần discount của nhân viên lương cứng mà chủ chịu thay.</td><td>Employee summary khi chốt ngày.</td><td>Không trừ vào tiền nhân viên lương cứng.</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="db-contract">
+        <h2>5. Giải thích dữ liệu DB</h2>
+        <h3>Shop và chi nhánh</h3>
+        <table>
+          <thead><tr><th>Type/collection</th><th>Dùng để làm gì</th><th>Field quan trọng</th></tr></thead>
+          <tbody>
+            <tr><td><code>ShopType</code><br><code>shop/{shopId}</code></td><td>Hồ sơ tenant gốc của chủ. Nó chứa thông tin chung cho toàn bộ hệ thống của chủ đó.</td><td><code>ownerUid</code>, <code>timezone</code>, <code>currency=EUR</code>, <code>status</code>, <code>onboarding</code>.</td></tr>
+            <tr><td><code>ShopBranchType</code><br><code>shop/{shopId}/branch/{branchId}</code></td><td>Một cửa hàng/chi nhánh cụ thể nằm trong shop.</td><td><code>name</code>, <code>phone</code>, <code>address</code>, <code>openTime</code>, <code>closeTime</code>, <code>settlementCutoffTime</code>, <code>status</code>.</td></tr>
+          </tbody>
+        </table>
+        <p><code>ShopType</code> và <code>ShopBranchType</code> không trùng nhau: shop là “công ty/tenant của chủ”, branch là từng cửa hàng để chấm công, tạo service, chốt ngày và xem báo cáo.</p>
+
+        <h3>Chấm công và giảm giá</h3>
+        <table>
+          <thead><tr><th>Type</th><th>Dùng để làm gì</th><th>Giải thích field chính</th></tr></thead>
+          <tbody>
+            <tr><td><code>ShopAttendanceType</code></td><td>Một lần chấm công hoặc một đơn dịch vụ trong ngày.</td><td><code>assignees</code> là nhân viên tham gia; <code>services</code> là dịch vụ; <code>subtotalAmount</code> là trước discount; <code>discount</code> là giảm giá; <code>totalAmount</code> là sau discount; <code>status</code> là <code>open</code> hoặc <code>closed</code>.</td></tr>
+            <tr><td><code>ShopAttendanceDiscountType</code></td><td>Thông tin giảm giá gắn với attendance.</td><td><code>type=amount|percentage</code>, <code>value</code> là số nhập vào, <code>amount</code> là tiền giảm thực tế. V2 nên để <code>allocationMode=workday</code>, tức đến lúc chốt ngày mới chia cho chủ/nhân viên.</td></tr>
+            <tr><td><code>ShopAttendanceAssigneeType</code></td><td>Nhân viên được chia doanh thu trong một service/attendance.</td><td><code>employeeUserId</code>, <code>percentage</code>, <code>shareAmount</code>, snapshot lương như <code>compensationModel</code>, <code>commissionRate</code>, <code>hourlyRate</code>.</td></tr>
+          </tbody>
+        </table>
+
+        <h3>Yêu cầu sửa chấm công</h3>
+        <table>
+          <thead><tr><th>Type</th><th>Dùng để làm gì</th><th>Đóng góp trong flow</th></tr></thead>
+          <tbody>
+            <tr><td><code>ShopAttendanceCorrectionRequestedChangesType</code></td><td>Lưu “nhân viên muốn sửa gì”.</td><td>Chưa sửa DB ngay. Nó giữ các field như <code>customerName</code>, <code>workDate</code>, <code>startTimestamp</code>, <code>endTimestamp</code>, <code>discountAmount</code>, <code>services</code> để owner duyệt.</td></tr>
+            <tr><td><code>ShopAttendanceCorrectionRequestType</code></td><td>Document đầy đủ của một yêu cầu sửa.</td><td>Theo dõi người gửi, attendance bị sửa, trạng thái duyệt, ngày chốt bị ảnh hưởng, và kết quả apply/recalculate.</td></tr>
+            <tr><td><code>ShopAttendanceCorrectionImpactSummaryType</code></td><td>Tóm tắt request ảnh hưởng phần nào.</td><td>Giúp biết yêu cầu có ảnh hưởng danh sách chấm công, doanh thu, lương, chốt sổ hay không.</td></tr>
+          </tbody>
+        </table>
+
+        <h3>Chốt sổ ngày</h3>
+        <table>
+          <thead><tr><th>Type/field</th><th>Dùng để làm gì</th><th>Ghi chú V2</th></tr></thead>
+          <tbody>
+            <tr><td><code>ShopWorkDayClosingType</code></td><td>Document chốt sổ của một chi nhánh trong một ngày.</td><td>Là nguồn thật cho salary, report và weekly-report sau khi đã chốt.</td></tr>
+            <tr><td><code>ShopWorkDayEmployeeSummaryType</code></td><td>Tổng hợp tiền của từng nhân viên trong ngày.</td><td>Nhân viên ăn chia bị trừ <code>discountAllocated</code>; nhân viên lương cứng có phần chủ chịu thay ở <code>ownerDiscountSupported</code>.</td></tr>
+            <tr><td><code>discountAllocationMethod</code></td><td>Cách chia discount.</td><td>V2 dùng <code>revenue_share</code>: chia theo tỷ trọng doanh thu ngày. <code>equal</code>, <code>selected</code>, <code>per_order</code> là dữ liệu cũ.</td></tr>
+            <tr><td><code>discountEmployeeScope</code>, <code>selectedEmployeeUserIds</code></td><td>Cơ chế chọn nhân viên chịu discount của bản cũ.</td><td>Không dùng cho flow mới. Giữ trong contract để đọc/chỉnh dữ liệu cũ nếu có.</td></tr>
+          </tbody>
+        </table>
+
+        <h3>Dịch vụ và catalog</h3>
+        <table>
+          <thead><tr><th>Type/collection</th><th>Dùng để làm gì</th><th>Field quan trọng</th></tr></thead>
+          <tbody>
+            <tr><td><code>ShopServiceType</code><br><code>shop/{shopId}/service</code></td><td>Dịch vụ của từng chi nhánh.</td><td><code>type=predefined|custom</code>, <code>name</code>, <code>groupService</code>, <code>category</code>, <code>price</code>, thời lượng, ảnh.</td></tr>
+            <tr><td><code>ShopServiceCatalogType</code></td><td>Catalog đã gom nhóm để frontend đọc nhanh.</td><td><code>groups</code>, <code>version</code>, <code>serviceCount</code>. Lần đầu đọc có thể tạo cache catalog.</td></tr>
+            <tr><td><code>category</code></td><td>Nhóm/phân loại service.</td><td>Không nên khóa cứng 5 loại. Chủ tiệm tự đặt nhóm dịch vụ khác nhau nên field này là string tự do.</td></tr>
+          </tbody>
+        </table>
+
+        <h3>Báo cáo tuần</h3>
+        <table>
+          <thead><tr><th>Type/collection</th><th>Dùng để làm gì</th><th>Lợi ích</th></tr></thead>
+          <tbody>
+            <tr><td><code>WeeklyReportType</code><br><code>weekly-report/{reportId}</code></td><td>Tổng hợp sẵn dữ liệu một tuần theo shop, branch và weekStartDate.</td><td>Báo cáo tháng chỉ cần đọc 4-5 weekly report cộng lại, không quét toàn bộ attendance từng ngày.</td></tr>
+            <tr><td><code>dailyMetrics</code></td><td>Số liệu từng ngày trong tuần.</td><td>Gồm doanh thu, discount, tiền chủ, tiền nhân viên, số attendance.</td></tr>
+            <tr><td><code>employeeBreakdowns</code></td><td>Tổng hợp theo nhân viên.</td><td>Dùng cho salary/report.</td></tr>
+            <tr><td><code>sourceClosingIds</code></td><td>Danh sách closing đã dùng để tạo report.</td><td>Giúp trace lại report lấy từ ngày chốt nào.</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="ham-xu-ly">
+        <h2>6. Hàm xử lý chính</h2>
+        <p>Phần này giúp người đọc hiểu “function” trong code đang đóng vai trò gì. Đây không phải API public, nhưng là nơi quyết định cách dữ liệu được kiểm tra, tính toán và trả về.</p>
+        <table>
+          <thead><tr><th>Hàm/module</th><th>Dùng để làm gì</th><th>Ảnh hưởng contract</th></tr></thead>
+          <tbody>
+            <tr><td><code>verifyAuthorizationHeader</code></td><td>Đọc header Authorization và kiểm tra token.</td><td>Quyết định request có <code>uid</code>, <code>role</code>, <code>shopId</code>, <code>branchId</code> hay không.</td></tr>
+            <tr><td><code>verifyFirebaseAppCheck</code></td><td>Kiểm tra App Check nếu backend bật.</td><td>Có thể chặn request trước khi vào API nghiệp vụ.</td></tr>
+            <tr><td><code>createIdempotencyMiddleware</code></td><td>Chống gửi trùng request ghi dữ liệu.</td><td>Cùng key + cùng body có thể trả lại kết quả cũ; cùng key + khác body trả lỗi 409.</td></tr>
+            <tr><td><code>parseAttendancePayload</code></td><td>Chuẩn hóa body attendance từ format cũ hoặc format frontend.</td><td>Giúp backend nhận được cả <code>service</code> cũ và <code>services</code> mới.</td></tr>
+            <tr><td><code>buildAttendanceDiscount</code></td><td>Tính số tiền discount của attendance.</td><td>V2 nên chỉ lưu số discount ở attendance; phân bổ chủ/nhân viên để lúc chốt ngày.</td></tr>
+            <tr><td><code>buildWorkDaySettlementPreview</code></td><td>Tính thử kết quả chốt ngày.</td><td>Quyết định <code>employeeSummaries</code>, <code>ownerDiscountSupported</code>, tổng tiền chủ và nhân viên.</td></tr>
+            <tr><td><code>get-session-settlements</code></td><td>Tạo danh sách card chốt sổ nhiều ngày.</td><td>Dùng cho màn danh sách chốt sổ trước khi vào detail.</td></tr>
+            <tr><td><code>generateWeeklyReport</code></td><td>Tạo báo cáo tuần từ các ngày đã chốt.</td><td>Không đọc attendance thô nếu đã có closing.</td></tr>
+            <tr><td><code>getOrGenerateWeeklyReport</code></td><td>Lấy weekly report có sẵn hoặc tạo nếu thiếu.</td><td>Giảm reads cho báo cáo tháng/lương tháng sau khi đã warm cache.</td></tr>
+            <tr><td><code>normalizeAttendanceForResponse</code></td><td>Đưa attendance về response ổn định.</td><td>Giữ alias cũ/mới để frontend không vỡ.</td></tr>
+            <tr><td><code>toShopServiceResponse</code></td><td>Đưa service DB thành response cho frontend.</td><td>Thêm alias như <code>amount</code>, <code>duration</code>, <code>images</code>.</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="luong-nghiep-vu">
+        <h2>7. Luồng nghiệp vụ</h2>
+        <table>
+          <thead><tr><th>Luồng</th><th>Thứ tự gọi API</th><th>Kết quả DB</th></tr></thead>
+          <tbody>
+            <tr><td>Onboarding</td><td>Admin đăng nhập → tạo owner → owner đăng nhập → tạo branch → tạo service → tạo employee.</td><td>Tạo Firebase user, <code>shop</code>, <code>user</code>, <code>branch</code>, <code>service</code>.</td></tr>
+            <tr><td>Vận hành ngày</td><td>Nhân viên đăng nhập → tạo attendance → đóng từng attendance → owner xem preview → owner chốt ngày.</td><td>Tạo attendance, sau đó tạo <code>work_day_closing</code>.</td></tr>
+            <tr><td>Chốt sổ V2</td><td>Owner mở danh sách ngày → chọn ngày → xem detail → chọn chủ chịu 0/50/100 → xác nhận.</td><td>Discount tự chia theo tỷ trọng doanh thu ngày. Không chọn nhân viên chịu discount nữa.</td></tr>
+            <tr><td>Sửa chấm công</td><td>Nhân viên tạo correction request → owner duyệt → backend apply và tính lại closing nếu cần.</td><td>Cập nhật correction, attendance và có thể tăng <code>revision</code> của closing.</td></tr>
+            <tr><td>Báo cáo</td><td>Owner xem lương/thống kê/weekly-report.</td><td>Đọc <code>weekly-report</code> nếu có; phần tuần hiện tại chưa chốt đủ có thể đọc dữ liệu thô còn thiếu.</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="mau-goi">
+        <h2>8. Mẫu gọi API</h2>
+        <h3>Đăng nhập owner hoặc nhân viên</h3>
+        <pre><code>curl --request POST "{{baseUrl}}/api/v1/auth/signin" \
+  --header "Authorization: Bearer {{firebaseIdToken}}"</code></pre>
+        <h3>Lấy access token mới</h3>
+        <pre><code>curl --request POST "{{baseUrl}}/api/v1/auth/refresh-token" \
+  --header "Content-Type: application/json" \
+  --data '{ "refreshToken": "Bearer {{refreshToken}}" }'</code></pre>
+        <h3>Xem trước chốt sổ ngày</h3>
+        <pre><code>curl "{{baseUrl}}/api/v1/employee/session/settlement-preview?branchId={{branchId}}&workDate=2026-05-18&ownerDiscountCoverageRate=50" \
+  --header "Authorization: Bearer {{accessToken}}"</code></pre>
+        <h3>Tạo báo cáo tuần</h3>
+        <pre><code>curl --request POST "{{baseUrl}}/api/v1/weekly-report" \
+  --header "Authorization: Bearer {{accessToken}}" \
+  --header "Content-Type: application/json" \
+  --data '{ "branchId": "{{branchId}}", "weekStartDate": "2026-05-18" }'</code></pre>
+      </section>
+
+      <section id="danh-sach-api">
+        <h2>9. Danh sách API</h2>
+        <p>Cách đọc bảng: “Ai gọi” là role được phép; “Gửi gì” là dữ liệu cần gửi; “Thành công” là response chính; “Lỗi/ảnh hưởng DB” là lỗi thường gặp và dữ liệu bị thay đổi nếu có.</p>
+
+        <h3>9.1 Theo dõi hệ thống</h3>
+        <table>
+          <thead><tr><th>Mã</th><th>API</th><th>Ai gọi</th><th>Gửi gì</th><th>Thành công</th><th>Lỗi/ảnh hưởng DB</th></tr></thead>
+          <tbody>
+            <tr><td>API-01</td><td><span class="method get">GET</span> <code>/api/v1/monitoring/health</code></td><td>Không cần đăng nhập.</td><td>Không gửi dữ liệu.</td><td><code>200</code> với trạng thái dịch vụ.</td><td>Không ghi DB.</td></tr>
+            <tr><td>API-02</td><td><span class="method get">GET</span> <code>/api/v1/monitoring/ready</code></td><td>Không cần đăng nhập.</td><td>Không gửi dữ liệu.</td><td><code>200</code> nếu sẵn sàng, <code>503</code> nếu chưa sẵn sàng.</td><td>Không ghi DB.</td></tr>
+            <tr><td>API-03</td><td><span class="method get">GET</span> <code>/api/v1/monitoring/metrics</code></td><td>Không cần đăng nhập.</td><td>Không gửi dữ liệu.</td><td><code>200</code> text metrics cho Prometheus.</td><td>Không ghi DB.</td></tr>
+          </tbody>
+        </table>
+
+        <h3>9.2 Đăng nhập, tài khoản và mật khẩu</h3>
+        <table>
+          <thead><tr><th>Mã</th><th>API</th><th>Ai gọi</th><th>Gửi gì</th><th>Thành công</th><th>Lỗi/ảnh hưởng DB</th></tr></thead>
+          <tbody>
+            <tr><td>API-04</td><td><span class="method post">POST</span> <code>/api/v1/admin/signin</code></td><td>Admin.</td><td>Header Firebase ID token.</td><td><code>201</code> trả access token, refresh token, quyền và thông tin admin.</td><td>Cập nhật <code>lastLoginAt</code>. Lỗi thường gặp: sai role, user bị khóa.</td></tr>
+            <tr><td>API-05</td><td><span class="method post">POST</span> <code>/api/v1/admin/register-owner</code></td><td>Admin.</td><td><code>email</code>, <code>name</code>, <code>password</code>.</td><td><code>201</code> trả <code>uid</code>, <code>email</code>, <code>shopId</code>.</td><td>Tạo Firebase user, shop active, user owner, audit. Có rollback Firebase nếu Firestore lỗi.</td></tr>
+            <tr><td>API-06</td><td><span class="method post">POST</span> <code>/api/v1/auth/register-owner</code></td><td>Public, vẫn qua App Check nếu bật.</td><td><code>email</code>, <code>name</code>, <code>password</code>.</td><td><code>201</code> trả <code>uid</code>, <code>email</code>, <code>shopId</code>.</td><td>Tạo shop draft, user owner, audit.</td></tr>
+            <tr><td>API-07</td><td><span class="method post">POST</span> <code>/api/v1/auth/signin</code></td><td>Owner hoặc employees.</td><td>Header Firebase ID token.</td><td><code>201</code> trả access token, refresh token, user, scope.</td><td>Cập nhật <code>lastLoginAt</code>. Employees cần có branch.</td></tr>
+            <tr><td>API-08</td><td><span class="method post">POST</span> <code>/api/v1/auth/logout</code></td><td>Người đã đăng nhập.</td><td>Header access token.</td><td><code>200</code> <code>{ success: true }</code>.</td><td>Thu hồi session hiện tại.</td></tr>
+            <tr><td>API-08A</td><td><span class="method post">POST</span> <code>/api/v1/auth/refresh-token</code></td><td>Không cần access token.</td><td>Body <code>{ refreshToken }</code>.</td><td><code>200</code> trả access token mới và giữ refresh token hiện tại.</td><td>Không đọc/ghi Firestore trong flow hiện tại. Lỗi: refresh token sai, hết hạn hoặc bị thu hồi.</td></tr>
+            <tr><td>API-09</td><td><span class="method post">POST</span> <code>/api/v1/auth/change-password</code></td><td>User vừa đăng nhập Firebase gần đây.</td><td>Header Firebase ID token, body <code>newPassword</code>.</td><td><code>200</code> <code>{ success: true }</code>.</td><td>Đổi mật khẩu Firebase, thu hồi session cũ.</td></tr>
+            <tr><td>API-10</td><td><span class="method post">POST</span> <code>/api/v1/auth/forgot-password/request-otp</code></td><td>Public.</td><td><code>email</code>.</td><td><code>200</code> trả thông tin OTP/cooldown.</td><td>Tạo OTP session và gửi email nếu user hợp lệ. Có giới hạn gửi lại.</td></tr>
+            <tr><td>API-11</td><td><span class="method post">POST</span> <code>/api/v1/auth/forgot-password/verify-otp</code></td><td>Public.</td><td><code>email</code>, <code>otp</code> 6 số.</td><td><code>200</code> trả <code>resetToken</code>.</td><td>Tăng số lần sai hoặc xóa session nếu hết hạn.</td></tr>
+            <tr><td>API-12</td><td><span class="method post">POST</span> <code>/api/v1/auth/forgot-password/reset-password</code></td><td>Public.</td><td><code>resetToken + password</code> hoặc <code>email + otp + password</code>.</td><td><code>200</code> <code>{ success: true }</code>.</td><td>Đổi mật khẩu Firebase, thu hồi session, xóa OTP, ghi audit nếu tìm được user.</td></tr>
+            <tr><td>API-13</td><td><span class="method get">GET</span> <code>/api/v1/account/profile</code></td><td>User đã đăng nhập.</td><td>Header access token.</td><td><code>200</code> trả <code>{ user }</code>.</td><td>Không ghi DB.</td></tr>
+            <tr><td>API-14</td><td><span class="method patch">PATCH</span> <code>/api/v1/account/profile</code></td><td>User đã đăng nhập.</td><td>Các field hồ sơ: tên, phone, avatar, địa chỉ, ngân hàng...</td><td><code>200</code> trả user sau update.</td><td>Cập nhật user document và có thể sync Firebase profile.</td></tr>
+            <tr><td>API-15</td><td><span class="method post">POST</span> <code>/api/v1/account/avatar</code></td><td>User đã đăng nhập.</td><td><code>fileName</code>, <code>contentType=image/*</code>, <code>base64</code>, tối đa 5MB.</td><td><code>200</code> trả user có <code>avatarUrl</code>.</td><td>Upload Storage, update Firestore và Firebase photoURL.</td></tr>
+          </tbody>
+        </table>
+
+        <h3>9.3 Shop, chi nhánh và dịch vụ</h3>
+        <table>
+          <thead><tr><th>Mã</th><th>API</th><th>Ai gọi</th><th>Gửi gì</th><th>Thành công</th><th>Lỗi/ảnh hưởng DB</th></tr></thead>
+          <tbody>
+            <tr><td>API-16</td><td><span class="method post">POST</span> <code>/api/v1/shop/branch</code></td><td>Owner.</td><td>Bắt buộc <code>name</code>; tùy chọn phone, email, giờ mở cửa, giờ chốt ngày, địa chỉ.</td><td><code>201</code> trả <code>{ id, branchId, branch }</code>.</td><td>Tạo branch và audit <code>branch_created</code>.</td></tr>
+            <tr><td>API-17</td><td><span class="method get">GET</span> <code>/api/v1/shop/branch</code></td><td>Owner/employees.</td><td>Tùy chọn <code>includeEmployeeCounts=true</code>.</td><td><code>200</code> hoặc <code>304</code> trả danh sách branch/store.</td><td>Không ghi DB, có cache.</td></tr>
+            <tr><td>API-18</td><td><span class="method get">GET</span> <code>/api/v1/shop/branch/:branchId</code></td><td>Owner hoặc employees cùng branch.</td><td><code>branchId</code> trên đường dẫn.</td><td><code>200</code> hoặc <code>304</code> trả branch.</td><td>Không ghi DB.</td></tr>
+            <tr><td>API-19</td><td><span class="method patch">PATCH</span> <code>/api/v1/shop/branch/:branchId</code></td><td>Owner.</td><td>Ít nhất một field branch cần sửa.</td><td><code>200</code> trả branch sau update.</td><td>Cập nhật branch, audit <code>branch_updated</code>.</td></tr>
+            <tr><td>API-20</td><td><span class="method post">POST</span> <code>/api/v1/shop/service/image</code></td><td>Owner.</td><td>Ảnh service dạng base64, tối đa 8MB.</td><td><code>200</code> <code>{ imageUrl }</code>.</td><td>Upload Firebase Storage.</td></tr>
+            <tr><td>API-21</td><td><span class="method post">POST</span> <code>/api/v1/shop/service</code></td><td>Owner.</td><td><code>branchId</code>, <code>name</code>, <code>price/amount</code>, <code>category/groupService</code>, thời lượng.</td><td><code>201</code> trả service mới.</td><td>Tạo service, audit, xóa cache catalog.</td></tr>
+            <tr><td>API-22</td><td><span class="method get">GET</span> <code>/api/v1/shop/service/bootstrap</code></td><td>Owner/employees.</td><td>Tùy chọn <code>branchId</code> với owner.</td><td><code>200</code>/<code>304</code> trả branch, service và thông tin chọn mặc định.</td><td>Không ghi DB.</td></tr>
+            <tr><td>API-22A</td><td><span class="method get">GET</span> <code>/api/v1/shop/service-catalog</code></td><td>Owner/employees.</td><td>Owner gửi <code>branchId</code>; employees dùng branch trong token.</td><td><code>200</code>/<code>304</code> trả catalog đã gom nhóm.</td><td>Lần đầu có thể tạo document <code>service_catalog</code> để lần sau đọc nhanh hơn.</td></tr>
+            <tr><td>API-23</td><td><span class="method get">GET</span> <code>/api/v1/shop/service</code></td><td>Owner/employees.</td><td>Owner gửi <code>branchId</code>.</td><td><code>200</code>/<code>304</code> trả danh sách service.</td><td>Không ghi DB.</td></tr>
+            <tr><td>API-24</td><td><span class="method patch">PATCH</span> <code>/api/v1/shop/service/:serviceId</code></td><td>Owner.</td><td>Ít nhất một field service cần sửa.</td><td><code>200</code> trả service sau update.</td><td>Cập nhật service, audit, xóa cache catalog.</td></tr>
+            <tr><td>API-25</td><td><span class="method delete">DELETE</span> <code>/api/v1/shop/service/:serviceId</code></td><td>Owner.</td><td><code>serviceId</code> trên đường dẫn.</td><td><code>204</code>, không body.</td><td>Xóa service, audit, xóa cache catalog.</td></tr>
+          </tbody>
+        </table>
+
+        <h3>9.4 Nhân viên, chấm công, chốt sổ và báo cáo</h3>
+        <table>
+          <thead><tr><th>Mã</th><th>API</th><th>Ai gọi</th><th>Gửi gì</th><th>Thành công</th><th>Lỗi/ảnh hưởng DB</th></tr></thead>
+          <tbody>
+            <tr><td>API-26</td><td><span class="method get">GET</span> <code>/api/v1/employee/attendance/bootstrap</code></td><td>Owner/employees.</td><td>Tùy chọn <code>workDate/date</code>, <code>branchId/storeId</code>, <code>includeAttendances</code>.</td><td><code>200</code>/<code>304</code> trả service, branch, employees, closing và attendance nếu yêu cầu.</td><td>Không ghi DB.</td></tr>
+            <tr><td>API-27</td><td><span class="method get">GET</span> <code>/api/v1/employee/me/bootstrap</code></td><td>Employees.</td><td>Khoảng ngày, tối đa 92 ngày.</td><td><code>200</code>/<code>304</code> trả thông tin nhân viên, branch, coworker, service, attendance, report.</td><td>Không ghi DB.</td></tr>
+            <tr><td>API-28</td><td><span class="method get">GET</span> <code>/api/v1/employee/me/report</code></td><td>Employees.</td><td>Khoảng ngày, tùy chọn <code>summaryOnly</code>, <code>includeItems</code>.</td><td><code>200</code>/<code>304</code> trả báo cáo cá nhân.</td><td>Có thể tạo weekly-report thiếu khi cần tổng hợp nhanh.</td></tr>
+            <tr><td>API-29</td><td><span class="method get">GET</span> <code>/api/v1/employee/employees</code></td><td>Owner.</td><td>Tùy chọn <code>branchId</code>, <code>role=employees</code>, <code>status</code>, <code>search</code>.</td><td><code>200</code>/<code>304</code> trả <code>{ total, employees }</code>.</td><td>Không ghi DB.</td></tr>
+            <tr><td>API-30</td><td><span class="method get">GET</span> <code>/api/v1/employee/employees/:employeeUserId</code></td><td>Owner hoặc chính employees đó.</td><td><code>employeeUserId</code> trên đường dẫn.</td><td><code>200</code>/<code>304</code> trả một employee.</td><td>Không ghi DB.</td></tr>
+            <tr><td>API-31</td><td><span class="method get">GET</span> <code>/api/v1/employee/attendance</code></td><td>Owner/employees.</td><td>Bắt buộc <code>workDate/date</code> và <code>branchId/storeId</code>; tùy chọn status, employeeUserId.</td><td><code>200</code>/<code>304</code> trả attendance, item, closing và meta.</td><td>Không ghi DB; employees chỉ thấy dữ liệu của mình hoặc được gán.</td></tr>
+            <tr><td>API-32</td><td><span class="method get">GET</span> <code>/api/v1/employee/attendance/correction-requests</code></td><td>Owner/employees.</td><td>Khoảng ngày tối đa 92 ngày, tùy chọn status, branch, mine.</td><td><code>200</code>/<code>304</code> trả danh sách yêu cầu sửa.</td><td>Không ghi DB.</td></tr>
+            <tr><td>API-33</td><td><span class="method get">GET</span> <code>/api/v1/employee/attendance/:attendanceId</code></td><td>Owner/employees có quyền đọc attendance.</td><td><code>attendanceId</code>.</td><td><code>200</code>/<code>304</code> trả attendance, item, closing.</td><td>Không ghi DB.</td></tr>
+            <tr><td>API-34</td><td><span class="method get">GET</span> <code>/api/v1/employee/session</code></td><td>Owner/employees.</td><td><code>workDate/date</code>; owner cần <code>branchId/storeId</code>.</td><td><code>200</code>/<code>304</code> trả session ngày.</td><td>Không ghi DB.</td></tr>
+            <tr><td>API-35</td><td><span class="method get">GET</span> <code>/api/v1/employee/session/settlement-preview</code></td><td>Owner.</td><td><code>branchId/storeId</code>, <code>workDate/date</code>, tùy chọn tỷ lệ chủ chịu discount.</td><td><code>200</code>/<code>304</code> trả preview chốt sổ.</td><td>Không ghi DB. V2 tự chia discount theo doanh thu ngày.</td></tr>
+            <tr><td>API-35B</td><td><span class="method get">GET</span> <code>/api/v1/employee/session/settlements</code></td><td>Owner.</td><td><code>branchId/storeId</code>, <code>fromWorkDate</code>, <code>toWorkDate</code>, tối đa 31 ngày.</td><td><code>200</code> trả danh sách card chốt sổ theo ngày.</td><td>Không ghi DB.</td></tr>
+            <tr><td>API-36</td><td><span class="method get">GET</span> <code>/api/v1/employee/report/owner-summary</code></td><td>Owner hoặc employees có scope.</td><td><code>startDate</code>, <code>endDate</code>, tùy chọn branch, <code>groupBy=day|month</code>, <code>summaryOnly</code>.</td><td><code>200</code>/<code>304</code> trả báo cáo doanh thu, nhân viên, service, summary.</td><td>Có thể dùng weekly-report để giảm reads hoặc tạo phần thiếu.</td></tr>
+            <tr><td>API-37</td><td><span class="method get">GET</span> <code>/api/v1/employee/report/owner-summary/legacy</code></td><td>Owner hoặc employees có scope.</td><td>Giống API-36.</td><td><code>200</code>/<code>304</code> cùng shape với owner-summary.</td><td>Đường cũ đọc attendance thô, chỉ dùng để đối chiếu hoặc fallback.</td></tr>
+            <tr><td>API-38</td><td><span class="method get">GET</span> <code>/api/v1/employee/salary/monthly</code></td><td>Owner.</td><td><code>branchId/storeId</code>, <code>year</code>, <code>month</code>.</td><td><code>200</code>/<code>304</code> trả lương tháng.</td><td>Ưu tiên weekly-report, fallback closing nếu cần.</td></tr>
+            <tr><td>API-39</td><td><span class="method get">GET</span> <code>/api/v1/employee/salary/bootstrap</code></td><td>Owner.</td><td><code>year</code>, <code>month</code>, tùy chọn branch.</td><td><code>200</code>/<code>304</code> trả branch và salary data.</td><td>Không ghi DB.</td></tr>
+            <tr><td>API-40</td><td><span class="method post">POST</span> <code>/api/v1/employee/employees</code></td><td>Owner.</td><td><code>email</code>, <code>password</code>, <code>name</code>, <code>branchId</code>, <code>role=employees</code>, tùy chọn lương/hồ sơ.</td><td><code>201</code> trả employee mới.</td><td>Tạo Firebase user, Firestore user, audit. Rollback Firebase nếu Firestore lỗi.</td></tr>
+            <tr><td>API-41</td><td><span class="method post">POST</span> <code>/api/v1/employee/attendance</code></td><td>Owner/employees.</td><td>Body attendance. Service có thể lấy từ catalog hoặc tạo mới. Discount V2 chỉ nên gửi tổng discount.</td><td><code>201</code> trả attendance/item vừa tạo.</td><td>Tạo attendance và audit. Chặn nếu ngày đã chốt.</td></tr>
+            <tr><td>API-42</td><td><span class="method post">POST</span> <code>/api/v1/employee/attendance/:attendanceId/correction-requests</code></td><td>Employees tạo hoặc được gán vào attendance.</td><td><code>reason</code> và <code>requestedChanges</code>.</td><td><code>201</code> trả correction request.</td><td>Tạo request, audit. Chỉ cho sửa attendance đã đóng và đã có chốt sổ.</td></tr>
+            <tr><td>API-43</td><td><span class="method post">POST</span> <code>/api/v1/employee/attendance/correction-requests/:requestId/cancel</code></td><td>Người tạo request hoặc owner.</td><td><code>requestId</code>.</td><td><code>200</code> trả request status <code>cancelled</code>.</td><td>Cập nhật request, audit.</td></tr>
+            <tr><td>API-44</td><td><span class="method post">POST</span> <code>/api/v1/employee/attendance/correction-requests/:requestId/review</code></td><td>Owner.</td><td><code>status=approved|rejected</code>, tùy chọn <code>reviewerNote</code>.</td><td><code>200</code> trả request, trạng thái apply và ngày đã tính lại nếu có.</td><td>Nếu approve có thể update attendance và tính lại closing.</td></tr>
+            <tr><td>API-45</td><td><span class="method patch">PATCH</span> <code>/api/v1/employee/employees/:employeeUserId</code></td><td>Owner.</td><td>Các field employee cần sửa: mật khẩu, tên, branch, role, lương, status.</td><td><code>200</code> trả employee sau update.</td><td>Cập nhật Firebase/Firestore, có thể thu hồi session, audit.</td></tr>
+            <tr><td>API-46</td><td><span class="method patch">PATCH</span> <code>/api/v1/employee/attendance/:attendanceId</code></td><td>Owner/employees có quyền sửa attendance.</td><td>Body attendance mới.</td><td><code>200</code> trả attendance/item sau update.</td><td>Cập nhật attendance, audit. Không cho sửa nếu attendance/ngày đã khóa.</td></tr>
+            <tr><td>API-47</td><td><span class="method post">POST</span> <code>/api/v1/employee/attendance/:attendanceId/close</code></td><td>Owner/employees có quyền sửa attendance.</td><td><code>attendanceId</code>.</td><td><code>200</code> trả attendance status <code>closed</code>.</td><td>Set <code>closedAt</code>, <code>closedBy</code>, audit.</td></tr>
+            <tr><td>API-48</td><td><span class="method post">POST</span> <code>/api/v1/employee/session/close</code></td><td>Owner.</td><td><code>branchId/storeId</code>, <code>workDate/date</code>, tùy chọn <code>ownerDiscountCoverageRate</code>.</td><td><code>200</code> trả closing, employee summary và tổng ngày.</td><td>Tạo <code>work_day_closing</code>, audit, làm nguồn cho weekly-report/lương/báo cáo. All-fixed vẫn chốt được.</td></tr>
+            <tr><td>API-49</td><td><span class="method get">GET</span> <code>/api/v1/notifications</code></td><td>Owner/employees.</td><td>Tùy chọn <code>limit</code>, mặc định 40.</td><td><code>200</code>/<code>304</code> trả thông báo.</td><td>Không ghi DB.</td></tr>
+          </tbody>
+        </table>
+
+        <h3>9.5 Weekly report</h3>
+        <table>
+          <thead><tr><th>Mã</th><th>API</th><th>Ai gọi</th><th>Gửi gì</th><th>Thành công</th><th>Lỗi/ảnh hưởng DB</th></tr></thead>
+          <tbody>
+            <tr><td>API-50</td><td><span class="method get">GET</span> <code>/api/v1/weekly-report</code></td><td>Owner/employees có quyền branch.</td><td><code>fromWeek</code>, <code>toWeek</code> là thứ Hai; owner cần <code>branchId</code>; tùy chọn <code>aggregate=true</code>.</td><td><code>200</code>/<code>304</code> trả danh sách report, meta và aggregate nếu yêu cầu.</td><td>Không tự tạo tuần thiếu khi list. Có cache.</td></tr>
+            <tr><td>API-51</td><td><span class="method get">GET</span> <code>/api/v1/weekly-report/:weekStartDate</code></td><td>Owner/employees có quyền branch.</td><td><code>weekStartDate</code> là thứ Hai; owner cần <code>branchId</code>; tùy chọn <code>generateIfMissing=true</code>.</td><td><code>200</code>/<code>304</code> trả một report.</td><td>Nếu <code>generateIfMissing=true</code> có thể tạo report mới; nếu không có trả 404.</td></tr>
+            <tr><td>API-52</td><td><span class="method post">POST</span> <code>/api/v1/weekly-report</code></td><td>Owner hoặc role không phải employees có quyền branch.</td><td><code>weekStartDate</code> là thứ Hai; <code>branchId</code> nếu token không có branch.</td><td><code>201</code> trả report vừa tạo.</td><td>Đọc các ngày chốt sổ trong tuần, tạo <code>weekly-report</code>, xóa cache branch. Nếu đã có trả 409.</td></tr>
+          </tbody>
+        </table>
+
+        <h3>9.6 Endpoint ngoài <code>/api/v1</code></h3>
+        <table>
+          <thead><tr><th>API</th><th>Ai gọi</th><th>Thành công</th></tr></thead>
+          <tbody>
+            <tr><td><span class="method get">GET</span> <code>/</code></td><td>Không cần đăng nhập.</td><td>Text: <code>This is the backend service of Nail Salon Management System!</code></td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="kiem-thu">
+        <h2>10. Kiểm thử khi đấu nối</h2>
+        <ul>
+          <li>Luôn kiểm tra cả mã HTTP và <code>type/message</code> trong body lỗi.</li>
+          <li>Với API có <code>ETag</code>, gọi lần đầu lấy ETag, gọi lại với <code>If-None-Match</code> để kỳ vọng <code>304</code>.</li>
+          <li>Với API ghi dữ liệu, dùng <code>X-Idempotency-Key</code> khi retry để tránh tạo trùng.</li>
+          <li>Không xóa alias cũ như <code>jwtToken</code>, <code>storeId</code>, <code>amount</code>, <code>images</code>, <code>payType</code> nếu module khác còn đọc.</li>
+          <li>Flow V2 không chọn nhân viên chịu discount. Nếu thấy request mới gửi <code>selectedEmployeeUserIds</code> hoặc <code>discountEmployeeScope=selected</code> thì xem là flow cũ cần dọn ở frontend.</li>
+          <li>Role chuẩn trong DB/API là <code>employees</code>. Không tạo user mới với role <code>staff</code>.</li>
+          <li>Báo cáo tháng nên ưu tiên weekly-report; chỉ dùng legacy owner-summary để đối chiếu hoặc khi cần debug.</li>
+        </ul>
+      </section>
+
+      <section id="nguon">
+        <h2>11. Nguồn tham khảo</h2>
+        <ul>
+          <li>Source backend local: <code>src/app.ts</code>, router trong <code>src/business/*/index.ts</code>, type trong <code>src/repository/firestore/shop</code>, helper chốt sổ và weekly-report.</li>
+          <li>Postman collection local: <code>postman/NailSalonManagementSystem.postman_collection.json</code>.</li>
+          <li>GitNexus backend context và query route/flow.</li>
+          <li>Tham khảo cách chia mục API, tham số, phản hồi, lỗi và giới hạn gọi từ <a href="https://apidocs.nhanh.vn/v3">Nhanh.vn Open API v3</a>.</li>
+          <li>Tham khảo cách nhóm tài liệu API theo sản phẩm/kênh từ <a href="https://developers.zalo.me/docs/api/official-account-api-230">Zalo For Developers</a>.</li>
+        </ul>
+      </section>
     </main>
   </div>
 </body>
