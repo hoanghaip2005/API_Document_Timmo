@@ -1,0 +1,1064 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Reports &amp; Salary API - Timmo API</title>
+    <link rel="stylesheet" href="../assets/styles.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <aside class="sidebar">
+        <a class="brand" href="../index.html"
+          ><span class="logo">T</span
+          ><span
+            ><strong>Timmo API v1</strong
+            ><small>Nail Salon Management System</small></span
+          ></a
+        ><input class="search" data-search placeholder="Tìm trong trang..." />
+        <nav>
+          <a class="nav-link" href="../index.html">Tổng quan</a
+          ><a class="nav-link" href="../pages/auth.html">Auth</a
+          ><a class="nav-link" href="../pages/account.html">Account</a
+          ><a class="nav-link" href="../pages/shop-branch.html">Branch</a
+          ><a class="nav-link" href="../pages/shop-service.html">Service</a
+          ><a class="nav-link" href="../pages/employee.html">Employee</a
+          ><a class="nav-link" href="../pages/attendance.html">Attendance</a
+          ><a class="nav-link" href="../pages/settlement.html">Settlement</a
+          ><a class="nav-link active" href="../pages/reports-salary.html"
+            >Reports &amp; Salary</a
+          ><a class="nav-link" href="../pages/notifications-monitoring.html"
+            >Notifications &amp; Monitoring</a
+          ><a class="nav-link" href="../pages/schemas-errors.html"
+            >Schemas &amp; Errors</a
+          >
+        </nav>
+      </aside>
+      <main class="content">
+        <header class="page-head">
+          <p class="eyebrow">API Documentation</p>
+          <h1>Reports &amp; Salary API</h1>
+          <p>Owner report, salary monthly và weekly report precompute.</p>
+        </header>
+        <section class="card">
+          <h2>Endpoints</h2>
+          <div class="endpoint-list">
+            <a href="#get-employee-report-owner-summary"
+              ><span class="method get">GET</span
+              ><code>/api/v1/employee/report/owner-summary</code></a
+            ><a href="#get-employee-report-owner-summary-legacy"
+              ><span class="method get">GET</span
+              ><code>/api/v1/employee/report/owner-summary/legacy</code></a
+            ><a href="#get-employee-salary-bootstrap"
+              ><span class="method get">GET</span
+              ><code>/api/v1/employee/salary/bootstrap</code></a
+            ><a href="#get-employee-salary-monthly"
+              ><span class="method get">GET</span
+              ><code>/api/v1/employee/salary/monthly</code></a
+            ><a href="#get-weekly-report"
+              ><span class="method get">GET</span
+              ><code>/api/v1/weekly-report</code></a
+            ><a href="#get-weekly-report-weekstartdate"
+              ><span class="method get">GET</span
+              ><code>/api/v1/weekly-report/:weekStartDate</code></a
+            ><a href="#post-weekly-report"
+              ><span class="method post">POST</span
+              ><code>/api/v1/weekly-report</code></a
+            >
+          </div>
+        </section>
+        <article class="endpoint" id="get-employee-report-owner-summary">
+          <div class="endpoint-title">
+            <span class="method get">GET</span
+            ><code>/api/v1/employee/report/owner-summary</code>
+          </div>
+          <p>Owner report optimized.</p>
+          <div class="meta-row">
+            <span>Auth: Backend access token</span
+            ><span>Scope: owner + branch access</span
+            ><span>Used by: /reports</span>
+          </div>
+          <h4>Headers</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>Authorization</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Bearer accessToken sau signin/refresh-token.</td>
+                <td><code>Bearer eyJ...</code></td>
+              </tr>
+              <tr>
+                <td><code>X-Firebase-AppCheck</code></td>
+                <td>string</td>
+                <td>Prod</td>
+                <td>Firebase App Check token. Monitoring không cần.</td>
+                <td><code>eyJ...</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Query params</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>branchId</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Branch id.</td>
+                <td><code>branch_123</code></td>
+              </tr>
+              <tr>
+                <td><code>startDate/fromWorkDate</code></td>
+                <td>date</td>
+                <td>Yes</td>
+                <td>Start date.</td>
+                <td><code>2026-06-01</code></td>
+              </tr>
+              <tr>
+                <td><code>endDate/toWorkDate</code></td>
+                <td>date</td>
+                <td>Yes</td>
+                <td>End date, max 31 ngày.</td>
+                <td><code>2026-06-30</code></td>
+              </tr>
+              <tr>
+                <td><code>groupBy</code></td>
+                <td>enum</td>
+                <td>No</td>
+                <td>day|month.</td>
+                <td><code>day</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Request body</h4>
+          <p class="muted">GET không có body.</p>
+
+          <h4>cURL</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>curl</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>curl -X GET &quot;$API_BASE/employee/report/owner-summary?branchId=branch_123&amp;startDate=2026-06-01&amp;endDate=2026-06-30&amp;groupBy=day&quot; \
+  -H &quot;Authorization: Bearer eyJ...&quot; \
+  -H &quot;X-Firebase-AppCheck: $APP_CHECK_TOKEN&quot;</code></pre>
+          </div>
+          <h4>Successful response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>200 response</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;summary&quot;: {
+    &quot;totalRevenue&quot;: 680,
+    &quot;totalDiscount&quot;: 20,
+    &quot;totalNetAmount&quot;: 660
+  },
+  &quot;revenueByDate&quot;: [
+    {
+      &quot;date&quot;: &quot;2026-06-06&quot;,
+      &quot;revenue&quot;: 105
+    }
+  ],
+  &quot;employees&quot;: [
+    {
+      &quot;employeeUserId&quot;: &quot;emp_1&quot;,
+      &quot;name&quot;: &quot;Hải&quot;,
+      &quot;revenue&quot;: 45,
+      &quot;earning&quot;: 32
+    }
+  ],
+  &quot;services&quot;: [
+    {
+      &quot;serviceId&quot;: &quot;svc_1&quot;,
+      &quot;name&quot;: &quot;Gel manicure&quot;,
+      &quot;revenue&quot;: 45
+    }
+  ]
+}</code></pre>
+          </div>
+          <h4>Response fields</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>summary</code></td>
+                <td>object</td>
+                <td>Tổng hợp doanh thu/discount/net.</td>
+              </tr>
+              <tr>
+                <td><code>revenueByDate[]</code></td>
+                <td>object[]</td>
+                <td>Breakdown theo ngày/tháng.</td>
+              </tr>
+              <tr>
+                <td><code>employees[]</code></td>
+                <td>object[]</td>
+                <td>Breakdown nhân viên.</td>
+              </tr>
+              <tr>
+                <td><code>services[]</code></td>
+                <td>object[]</td>
+                <td>Breakdown service.</td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Failed response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>400 error</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;type&quot;: &quot;/employee/branch-required&quot;,
+  &quot;message&quot;: &quot;A specific branch must be selected for reports&quot;
+}</code></pre>
+          </div>
+          <h4>Notes</h4>
+          <ul>
+            <li>Optimized dùng weekly-report cho historical data khi có.</li>
+          </ul>
+        </article>
+        <article class="endpoint" id="get-employee-report-owner-summary-legacy">
+          <div class="endpoint-title">
+            <span class="method get">GET</span
+            ><code>/api/v1/employee/report/owner-summary/legacy</code>
+          </div>
+          <p>Owner report legacy implementation.</p>
+          <div class="meta-row">
+            <span>Auth: Backend access token</span
+            ><span>Scope: owner + branch access</span
+            ><span>Used by: Debug/fallback</span>
+          </div>
+          <h4>Headers</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>Authorization</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Bearer accessToken sau signin/refresh-token.</td>
+                <td><code>Bearer eyJ...</code></td>
+              </tr>
+              <tr>
+                <td><code>X-Firebase-AppCheck</code></td>
+                <td>string</td>
+                <td>Prod</td>
+                <td>Firebase App Check token. Monitoring không cần.</td>
+                <td><code>eyJ...</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Query params</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>branchId</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Branch id.</td>
+                <td><code>branch_123</code></td>
+              </tr>
+              <tr>
+                <td><code>startDate/endDate</code></td>
+                <td>date</td>
+                <td>Yes</td>
+                <td>Range.</td>
+                <td><code>2026-06-01</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Request body</h4>
+          <p class="muted">GET không có body.</p>
+
+          <h4>cURL</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>curl</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>curl -X GET &quot;$API_BASE/employee/report/owner-summary/legacy?branchId=branch_123&amp;startDate=2026-06-01&amp;endDate=2026-06-30&quot; \
+  -H &quot;Authorization: Bearer eyJ...&quot; \
+  -H &quot;X-Firebase-AppCheck: $APP_CHECK_TOKEN&quot;</code></pre>
+          </div>
+          <h4>Successful response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>200 response</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;summary&quot;: {
+    &quot;totalRevenue&quot;: 680
+  }
+}</code></pre>
+          </div>
+          <h4>Response fields</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>summary</code></td>
+                <td>object</td>
+                <td>Legacy summary.</td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Failed response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>400 error</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;type&quot;: &quot;/employee/invalid-request&quot;,
+  &quot;message&quot;: &quot;Invalid request&quot;
+}</code></pre>
+          </div>
+          <h4>Notes</h4>
+          <ul>
+            <li>Không ưu tiên cho UI mới.</li>
+          </ul>
+        </article>
+        <article class="endpoint" id="get-employee-salary-bootstrap">
+          <div class="endpoint-title">
+            <span class="method get">GET</span
+            ><code>/api/v1/employee/salary/bootstrap</code>
+          </div>
+          <p>Bootstrap salary screen.</p>
+          <div class="meta-row">
+            <span>Auth: Backend access token</span><span>Scope: owner</span
+            ><span>Used by: /salary</span>
+          </div>
+          <h4>Headers</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>Authorization</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Bearer accessToken sau signin/refresh-token.</td>
+                <td><code>Bearer eyJ...</code></td>
+              </tr>
+              <tr>
+                <td><code>X-Firebase-AppCheck</code></td>
+                <td>string</td>
+                <td>Prod</td>
+                <td>Firebase App Check token. Monitoring không cần.</td>
+                <td><code>eyJ...</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Query params</h4>
+          <p class="muted">Không có query params.</p>
+          <h4>Request body</h4>
+          <p class="muted">GET không có body.</p>
+
+          <h4>cURL</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>curl</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>curl -X GET &quot;$API_BASE/employee/salary/bootstrap&quot; \
+  -H &quot;Authorization: Bearer eyJ...&quot; \
+  -H &quot;X-Firebase-AppCheck: $APP_CHECK_TOKEN&quot;</code></pre>
+          </div>
+          <h4>Successful response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>200 response</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;branches&quot;: [
+    {
+      &quot;id&quot;: &quot;branch_123&quot;,
+      &quot;shopId&quot;: &quot;shop_123&quot;,
+      &quot;name&quot;: &quot;Cửa hàng Bình Thạnh&quot;,
+      &quot;settlementCutoffTime&quot;: &quot;04:00&quot;,
+      &quot;status&quot;: &quot;active&quot;,
+      &quot;storeId&quot;: &quot;branch_123&quot;,
+      &quot;addressText&quot;: &quot;Bình Thạnh, HCM&quot;,
+      &quot;label&quot;: &quot;Cửa hàng Bình Thạnh&quot;,
+      &quot;value&quot;: &quot;branch_123&quot;
+    }
+  ],
+  &quot;employees&quot;: [
+    {
+      &quot;id&quot;: &quot;emp_1&quot;,
+      &quot;uid&quot;: &quot;emp_1&quot;,
+      &quot;email&quot;: &quot;hai@example.com&quot;,
+      &quot;name&quot;: &quot;Hải&quot;,
+      &quot;role&quot;: &quot;employee&quot;,
+      &quot;active&quot;: true,
+      &quot;status&quot;: &quot;active&quot;,
+      &quot;branchId&quot;: &quot;branch_123&quot;,
+      &quot;storeId&quot;: &quot;branch_123&quot;,
+      &quot;compensationModel&quot;: &quot;commission&quot;,
+      &quot;label&quot;: &quot;Hải&quot;,
+      &quot;value&quot;: &quot;emp_1&quot;
+    }
+  ]
+}</code></pre>
+          </div>
+          <h4>Response fields</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>branches[]</code></td>
+                <td>Branch[]</td>
+                <td>Store filter.</td>
+              </tr>
+              <tr>
+                <td><code>employees[]</code></td>
+                <td>Employee[]</td>
+                <td>Employee filter/display.</td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Failed response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>403 error</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;type&quot;: &quot;/employee/forbidden-role&quot;,
+  &quot;message&quot;: &quot;Forbidden: insufficient permissions&quot;
+}</code></pre>
+          </div>
+          <h4>Notes</h4>
+          <ul>
+            <li>Dùng trước monthly salary query.</li>
+          </ul>
+        </article>
+        <article class="endpoint" id="get-employee-salary-monthly">
+          <div class="endpoint-title">
+            <span class="method get">GET</span
+            ><code>/api/v1/employee/salary/monthly</code>
+          </div>
+          <p>Tính salary tháng theo closings/weekly reports.</p>
+          <div class="meta-row">
+            <span>Auth: Backend access token</span
+            ><span>Scope: owner + branch access</span
+            ><span>Used by: /salary</span>
+          </div>
+          <h4>Headers</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>Authorization</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Bearer accessToken sau signin/refresh-token.</td>
+                <td><code>Bearer eyJ...</code></td>
+              </tr>
+              <tr>
+                <td><code>X-Firebase-AppCheck</code></td>
+                <td>string</td>
+                <td>Prod</td>
+                <td>Firebase App Check token. Monitoring không cần.</td>
+                <td><code>eyJ...</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Query params</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>branchId</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Branch id.</td>
+                <td><code>branch_123</code></td>
+              </tr>
+              <tr>
+                <td><code>year</code></td>
+                <td>number</td>
+                <td>Yes</td>
+                <td>2000..2100.</td>
+                <td><code>2026</code></td>
+              </tr>
+              <tr>
+                <td><code>month</code></td>
+                <td>number</td>
+                <td>Yes</td>
+                <td>1..12.</td>
+                <td><code>6</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Request body</h4>
+          <p class="muted">GET không có body.</p>
+
+          <h4>cURL</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>curl</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>curl -X GET &quot;$API_BASE/employee/salary/monthly?branchId=branch_123&amp;year=2026&amp;month=6&quot; \
+  -H &quot;Authorization: Bearer eyJ...&quot; \
+  -H &quot;X-Firebase-AppCheck: $APP_CHECK_TOKEN&quot;</code></pre>
+          </div>
+          <h4>Successful response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>200 response</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;branchId&quot;: &quot;branch_123&quot;,
+  &quot;year&quot;: 2026,
+  &quot;month&quot;: 6,
+  &quot;summary&quot;: {
+    &quot;totalSalary&quot;: 320,
+    &quot;workingDays&quot;: 4
+  },
+  &quot;employees&quot;: [
+    {
+      &quot;employeeUserId&quot;: &quot;emp_1&quot;,
+      &quot;name&quot;: &quot;Hải&quot;,
+      &quot;compensationModel&quot;: &quot;commission&quot;,
+      &quot;totalEarning&quot;: 320
+    }
+  ]
+}</code></pre>
+          </div>
+          <h4>Response fields</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>summary.totalSalary</code></td>
+                <td>number</td>
+                <td>Tổng lương tháng.</td>
+              </tr>
+              <tr>
+                <td><code>employees[]</code></td>
+                <td>object[]</td>
+                <td>Breakdown nhân viên.</td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Failed response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>400 error</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;type&quot;: &quot;/employee/invalid-request&quot;,
+  &quot;message&quot;: &quot;Invalid request&quot;
+}</code></pre>
+          </div>
+          <h4>Notes</h4>
+          <ul>
+            <li>Tháng chưa chốt đủ ngày thì số liệu chưa hoàn chỉnh.</li>
+          </ul>
+        </article>
+        <article class="endpoint" id="get-weekly-report">
+          <div class="endpoint-title">
+            <span class="method get">GET</span
+            ><code>/api/v1/weekly-report</code>
+          </div>
+          <p>List weekly reports.</p>
+          <div class="meta-row">
+            <span>Auth: Backend access token</span
+            ><span>Scope: owner hoặc employee scoped branch</span
+            ><span>Used by: Report optimization/admin</span>
+          </div>
+          <h4>Headers</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>Authorization</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Bearer accessToken sau signin/refresh-token.</td>
+                <td><code>Bearer eyJ...</code></td>
+              </tr>
+              <tr>
+                <td><code>X-Firebase-AppCheck</code></td>
+                <td>string</td>
+                <td>Prod</td>
+                <td>Firebase App Check token. Monitoring không cần.</td>
+                <td><code>eyJ...</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Query params</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>branchId</code></td>
+                <td>string</td>
+                <td>No/Scoped</td>
+                <td>
+                  Owner gửi branchId; employee dùng branch scope nếu không gửi.
+                </td>
+                <td><code>branch_123</code></td>
+              </tr>
+              <tr>
+                <td><code>fromWeekStartDate/toWeekStartDate</code></td>
+                <td>date</td>
+                <td>No</td>
+                <td>Monday range.</td>
+                <td><code>2026-06-01</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Request body</h4>
+          <p class="muted">GET không có body.</p>
+
+          <h4>cURL</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>curl</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>curl -X GET &quot;$API_BASE/weekly-report?branchId=branch_123&quot; \
+  -H &quot;Authorization: Bearer eyJ...&quot; \
+  -H &quot;X-Firebase-AppCheck: $APP_CHECK_TOKEN&quot;</code></pre>
+          </div>
+          <h4>Successful response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>200 response</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;items&quot;: [
+    {
+      &quot;id&quot;: &quot;wr_1&quot;,
+      &quot;branchId&quot;: &quot;branch_123&quot;,
+      &quot;weekStartDate&quot;: &quot;2026-06-01&quot;,
+      &quot;weekEndDate&quot;: &quot;2026-06-07&quot;,
+      &quot;summary&quot;: {
+        &quot;totalRevenue&quot;: 680
+      }
+    }
+  ]
+}</code></pre>
+          </div>
+          <h4>Response fields</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>items[]</code></td>
+                <td>WeeklyReport[]</td>
+                <td>Reports đã generate.</td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Failed response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>403 error</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;type&quot;: &quot;/weekly-report/forbidden-branch&quot;,
+  &quot;message&quot;: &quot;Forbidden: branch access denied&quot;
+}</code></pre>
+          </div>
+          <h4>Notes</h4>
+          <ul>
+            <li>weekStartDate phải là thứ Hai khi query detail/generate.</li>
+          </ul>
+        </article>
+        <article class="endpoint" id="get-weekly-report-weekstartdate">
+          <div class="endpoint-title">
+            <span class="method get">GET</span
+            ><code>/api/v1/weekly-report/:weekStartDate</code>
+          </div>
+          <p>Chi tiết weekly report.</p>
+          <div class="meta-row">
+            <span>Auth: Backend access token</span
+            ><span>Scope: owner hoặc employee scoped branch</span
+            ><span>Used by: Report detail/cache</span>
+          </div>
+          <h4>Headers</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>Authorization</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Bearer accessToken sau signin/refresh-token.</td>
+                <td><code>Bearer eyJ...</code></td>
+              </tr>
+              <tr>
+                <td><code>X-Firebase-AppCheck</code></td>
+                <td>string</td>
+                <td>Prod</td>
+                <td>Firebase App Check token. Monitoring không cần.</td>
+                <td><code>eyJ...</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Query params</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>branchId</code></td>
+                <td>string</td>
+                <td>No/Scoped</td>
+                <td>Required với owner nếu không infer được.</td>
+                <td><code>branch_123</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Request body</h4>
+          <p class="muted">GET không có body.</p>
+
+          <h4>cURL</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>curl</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>curl -X GET &quot;$API_BASE/weekly-report/:weekStartDate?branchId=branch_123&quot; \
+  -H &quot;Authorization: Bearer eyJ...&quot; \
+  -H &quot;X-Firebase-AppCheck: $APP_CHECK_TOKEN&quot;</code></pre>
+          </div>
+          <h4>Successful response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>200 response</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;id&quot;: &quot;wr_1&quot;,
+  &quot;branchId&quot;: &quot;branch_123&quot;,
+  &quot;weekStartDate&quot;: &quot;2026-06-01&quot;,
+  &quot;weekEndDate&quot;: &quot;2026-06-07&quot;,
+  &quot;currency&quot;: &quot;EUR&quot;,
+  &quot;moneyScale&quot;: 2,
+  &quot;summary&quot;: {
+    &quot;totalRevenue&quot;: 680
+  },
+  &quot;dailyMetrics&quot;: [],
+  &quot;employeeBreakdowns&quot;: [],
+  &quot;serviceBreakdowns&quot;: []
+}</code></pre>
+          </div>
+          <h4>Response fields</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>currency</code></td>
+                <td>EUR</td>
+                <td>Currency backend.</td>
+              </tr>
+              <tr>
+                <td><code>summary</code></td>
+                <td>object</td>
+                <td>Weekly aggregate.</td>
+              </tr>
+              <tr>
+                <td><code>dailyMetrics[]</code></td>
+                <td>object[]</td>
+                <td>Breakdown ngày.</td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Failed response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>404 error</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;type&quot;: &quot;/weekly-report/not-found&quot;,
+  &quot;message&quot;: &quot;Weekly report not found&quot;
+}</code></pre>
+          </div>
+          <h4>Notes</h4>
+          <ul>
+            <li>Detail có thể generate qua endpoint POST nếu chưa có.</li>
+          </ul>
+        </article>
+        <article class="endpoint" id="post-weekly-report">
+          <div class="endpoint-title">
+            <span class="method post">POST</span
+            ><code>/api/v1/weekly-report</code>
+          </div>
+          <p>Generate/persist weekly report.</p>
+          <div class="meta-row">
+            <span>Auth: Backend access token</span
+            ><span>Scope: owner + branch access</span
+            ><span>Used by: Report precompute/admin</span>
+          </div>
+          <h4>Headers</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>Authorization</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Bearer accessToken sau signin/refresh-token.</td>
+                <td><code>Bearer eyJ...</code></td>
+              </tr>
+              <tr>
+                <td><code>X-Firebase-AppCheck</code></td>
+                <td>string</td>
+                <td>Prod</td>
+                <td>Firebase App Check token. Monitoring không cần.</td>
+                <td><code>eyJ...</code></td>
+              </tr>
+              <tr>
+                <td><code>Content-Type</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>application/json.</td>
+                <td><code>application/json</code></td>
+              </tr>
+              <tr>
+                <td><code>X-Idempotency-Key</code></td>
+                <td>string</td>
+                <td>Recommended</td>
+                <td>Key ổn định cho POST/PATCH/DELETE để tránh ghi trùng.</td>
+                <td><code>attendance-2026-06-06-001</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Query params</h4>
+          <p class="muted">Không có query params.</p>
+          <h4>Request body</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>branchId</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Branch id.</td>
+                <td><code>branch_123</code></td>
+              </tr>
+              <tr>
+                <td><code>weekStartDate</code></td>
+                <td>date</td>
+                <td>Yes</td>
+                <td>Phải là thứ Hai.</td>
+                <td><code>2026-06-01</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="codebox">
+            <div class="codebar">
+              <span>request.json</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;branchId&quot;: &quot;branch_123&quot;,
+  &quot;weekStartDate&quot;: &quot;2026-06-01&quot;
+}</code></pre>
+          </div>
+          <h4>cURL</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>curl</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>curl -X POST &quot;$API_BASE/weekly-report&quot; \
+  -H &quot;Authorization: Bearer eyJ...&quot; \
+  -H &quot;X-Firebase-AppCheck: $APP_CHECK_TOKEN&quot; \
+  -H &quot;Content-Type: application/json&quot; \
+  -H &quot;X-Idempotency-Key: attendance-2026-06-06-001&quot; \
+  -d &#39;{&quot;branchId&quot;:&quot;branch_123&quot;,&quot;weekStartDate&quot;:&quot;2026-06-01&quot;}&#39;</code></pre>
+          </div>
+          <h4>Successful response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>200 response</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;id&quot;: &quot;wr_1&quot;,
+  &quot;branchId&quot;: &quot;branch_123&quot;,
+  &quot;weekStartDate&quot;: &quot;2026-06-01&quot;,
+  &quot;weekEndDate&quot;: &quot;2026-06-07&quot;,
+  &quot;summary&quot;: {
+    &quot;totalRevenue&quot;: 680
+  }
+}</code></pre>
+          </div>
+          <h4>Response fields</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>id</code></td>
+                <td>string</td>
+                <td>Weekly report id.</td>
+              </tr>
+              <tr>
+                <td><code>sourceClosingIds</code></td>
+                <td>string[]?</td>
+                <td>Closing ids dùng để generate.</td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Failed response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>409 error</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;type&quot;: &quot;/weekly-report/already-exists&quot;,
+  &quot;message&quot;: &quot;Weekly report already exists for this week&quot;
+}</code></pre>
+          </div>
+          <h4>Notes</h4>
+          <ul>
+            <li>Chỉ owner role manage weekly reports.</li>
+          </ul>
+        </article>
+      </main>
+    </div>
+    <script src="../assets/app.js"></script>
+  </body>
+</html>

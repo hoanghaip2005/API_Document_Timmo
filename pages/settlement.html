@@ -1,0 +1,768 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Settlement API - Timmo API</title>
+    <link rel="stylesheet" href="../assets/styles.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <aside class="sidebar">
+        <a class="brand" href="../index.html"
+          ><span class="logo">T</span
+          ><span
+            ><strong>Timmo API v1</strong
+            ><small>Nail Salon Management System</small></span
+          ></a
+        ><input class="search" data-search placeholder="Tìm trong trang..." />
+        <nav>
+          <a class="nav-link" href="../index.html">Tổng quan</a
+          ><a class="nav-link" href="../pages/auth.html">Auth</a
+          ><a class="nav-link" href="../pages/account.html">Account</a
+          ><a class="nav-link" href="../pages/shop-branch.html">Branch</a
+          ><a class="nav-link" href="../pages/shop-service.html">Service</a
+          ><a class="nav-link" href="../pages/employee.html">Employee</a
+          ><a class="nav-link" href="../pages/attendance.html">Attendance</a
+          ><a class="nav-link active" href="../pages/settlement.html"
+            >Settlement</a
+          ><a class="nav-link" href="../pages/reports-salary.html"
+            >Reports &amp; Salary</a
+          ><a class="nav-link" href="../pages/notifications-monitoring.html"
+            >Notifications &amp; Monitoring</a
+          ><a class="nav-link" href="../pages/schemas-errors.html"
+            >Schemas &amp; Errors</a
+          >
+        </nav>
+      </aside>
+      <main class="content">
+        <header class="page-head">
+          <p class="eyebrow">API Documentation</p>
+          <h1>Settlement API</h1>
+          <p>Owner chốt sổ V2 với revenue_share và owner discount coverage.</p>
+        </header>
+        <section class="card">
+          <h2>Endpoints</h2>
+          <div class="endpoint-list">
+            <a href="#get-employee-session-settlements"
+              ><span class="method get">GET</span
+              ><code>/api/v1/employee/session/settlements</code></a
+            ><a href="#get-employee-session-settlement-preview"
+              ><span class="method get">GET</span
+              ><code>/api/v1/employee/session/settlement-preview</code></a
+            ><a href="#post-employee-session-close"
+              ><span class="method post">POST</span
+              ><code>/api/v1/employee/session/close</code></a
+            ><a href="#get-employee-session"
+              ><span class="method get">GET</span
+              ><code>/api/v1/employee/session</code></a
+            >
+          </div>
+        </section>
+        <article class="endpoint" id="get-employee-session-settlements">
+          <div class="endpoint-title">
+            <span class="method get">GET</span
+            ><code>/api/v1/employee/session/settlements</code>
+          </div>
+          <p>List ngày chốt sổ theo branch/range.</p>
+          <div class="meta-row">
+            <span>Auth: Backend access token</span
+            ><span>Scope: owner + branch access</span
+            ><span>Used by: /daily-settlement list</span>
+          </div>
+          <h4>Headers</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>Authorization</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Bearer accessToken sau signin/refresh-token.</td>
+                <td><code>Bearer eyJ...</code></td>
+              </tr>
+              <tr>
+                <td><code>X-Firebase-AppCheck</code></td>
+                <td>string</td>
+                <td>Prod</td>
+                <td>Firebase App Check token. Monitoring không cần.</td>
+                <td><code>eyJ...</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Query params</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>branchId/storeId</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Branch id.</td>
+                <td><code>branch_123</code></td>
+              </tr>
+              <tr>
+                <td><code>fromWorkDate</code></td>
+                <td>date</td>
+                <td>Yes</td>
+                <td>YYYY-MM-DD.</td>
+                <td><code>2026-06-01</code></td>
+              </tr>
+              <tr>
+                <td><code>toWorkDate</code></td>
+                <td>date</td>
+                <td>Yes</td>
+                <td>YYYY-MM-DD, range <= 31 ngày.</td>
+                <td><code>2026-06-30</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Request body</h4>
+          <p class="muted">GET không có body.</p>
+
+          <h4>cURL</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>curl</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>curl -X GET &quot;$API_BASE/employee/session/settlements?branchId=branch_123&amp;fromWorkDate=2026-06-01&amp;toWorkDate=2026-06-30&quot; \
+  -H &quot;Authorization: Bearer eyJ...&quot; \
+  -H &quot;X-Firebase-AppCheck: $APP_CHECK_TOKEN&quot;</code></pre>
+          </div>
+          <h4>Successful response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>200 response</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;branchId&quot;: &quot;branch_123&quot;,
+  &quot;storeId&quot;: &quot;branch_123&quot;,
+  &quot;fromWorkDate&quot;: &quot;2026-06-01&quot;,
+  &quot;toWorkDate&quot;: &quot;2026-06-30&quot;,
+  &quot;rangeDayCount&quot;: 30,
+  &quot;items&quot;: [
+    {
+      &quot;workDate&quot;: &quot;2026-06-06&quot;,
+      &quot;status&quot;: &quot;ready&quot;,
+      &quot;attendance&quot;: {
+        &quot;totalCount&quot;: 2,
+        &quot;openCount&quot;: 0,
+        &quot;closedCount&quot;: 2,
+        &quot;incompleteCount&quot;: 0
+      },
+      &quot;totalRevenue&quot;: 105,
+      &quot;totalDiscount&quot;: 5,
+      &quot;totalNetAmount&quot;: 100,
+      &quot;totalOwnerNetAfterDiscount&quot;: 65
+    }
+  ]
+}</code></pre>
+          </div>
+          <h4>Response fields</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>items[].status</code></td>
+                <td>open|ready|closed</td>
+                <td>Trạng thái ngày.</td>
+              </tr>
+              <tr>
+                <td><code>items[].totalOwnerNetAfterDiscount</code></td>
+                <td>number</td>
+                <td>Số chủ thực nhận hiển thị list.</td>
+              </tr>
+              <tr>
+                <td><code>items[].closing</code></td>
+                <td>object?</td>
+                <td>Có nếu đã chốt.</td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Failed response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>400 error</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;type&quot;: &quot;/employee/invalid-request&quot;,
+  &quot;message&quot;: &quot;Invalid request&quot;
+}</code></pre>
+          </div>
+          <h4>Notes</h4>
+          <ul>
+            <li>List chỉ hiện ngày có attendance hoặc closing.</li>
+            <li>Range tối đa 31 ngày.</li>
+          </ul>
+        </article>
+        <article class="endpoint" id="get-employee-session-settlement-preview">
+          <div class="endpoint-title">
+            <span class="method get">GET</span
+            ><code>/api/v1/employee/session/settlement-preview</code>
+          </div>
+          <p>Preview tiền chốt sổ chi tiết.</p>
+          <div class="meta-row">
+            <span>Auth: Backend access token</span
+            ><span>Scope: owner + branch access</span
+            ><span>Used by: /daily-settlement?workDate=...</span>
+          </div>
+          <h4>Headers</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>Authorization</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Bearer accessToken sau signin/refresh-token.</td>
+                <td><code>Bearer eyJ...</code></td>
+              </tr>
+              <tr>
+                <td><code>X-Firebase-AppCheck</code></td>
+                <td>string</td>
+                <td>Prod</td>
+                <td>Firebase App Check token. Monitoring không cần.</td>
+                <td><code>eyJ...</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Query params</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>branchId/storeId</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Branch id.</td>
+                <td><code>branch_123</code></td>
+              </tr>
+              <tr>
+                <td><code>workDate/date</code></td>
+                <td>date</td>
+                <td>Yes</td>
+                <td>YYYY-MM-DD.</td>
+                <td><code>2026-06-06</code></td>
+              </tr>
+              <tr>
+                <td>
+                  <code
+                    >ownerDiscountCoverageRate/ownerDiscountSharePercent</code
+                  >
+                </td>
+                <td>number</td>
+                <td>No</td>
+                <td>0|50|100, default 50 hoặc closing đã lưu.</td>
+                <td><code>50</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Request body</h4>
+          <p class="muted">GET không có body.</p>
+
+          <h4>cURL</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>curl</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>curl -X GET &quot;$API_BASE/employee/session/settlement-preview?branchId=branch_123&amp;workDate=2026-06-06&amp;ownerDiscountCoverageRate=50&quot; \
+  -H &quot;Authorization: Bearer eyJ...&quot; \
+  -H &quot;X-Firebase-AppCheck: $APP_CHECK_TOKEN&quot;</code></pre>
+          </div>
+          <h4>Successful response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>200 response</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;workDate&quot;: &quot;2026-06-06&quot;,
+  &quot;branchId&quot;: &quot;branch_123&quot;,
+  &quot;storeId&quot;: &quot;branch_123&quot;,
+  &quot;employees&quot;: [
+    {
+      &quot;id&quot;: &quot;emp_1&quot;,
+      &quot;uid&quot;: &quot;emp_1&quot;,
+      &quot;email&quot;: &quot;hai@example.com&quot;,
+      &quot;name&quot;: &quot;Hải&quot;,
+      &quot;role&quot;: &quot;employee&quot;,
+      &quot;active&quot;: true,
+      &quot;status&quot;: &quot;active&quot;,
+      &quot;branchId&quot;: &quot;branch_123&quot;,
+      &quot;storeId&quot;: &quot;branch_123&quot;,
+      &quot;compensationModel&quot;: &quot;commission&quot;,
+      &quot;label&quot;: &quot;Hải&quot;,
+      &quot;value&quot;: &quot;emp_1&quot;
+    }
+  ],
+  &quot;discountEligibleEmployees&quot;: [
+    {
+      &quot;id&quot;: &quot;emp_1&quot;,
+      &quot;uid&quot;: &quot;emp_1&quot;,
+      &quot;email&quot;: &quot;hai@example.com&quot;,
+      &quot;name&quot;: &quot;Hải&quot;,
+      &quot;role&quot;: &quot;employee&quot;,
+      &quot;active&quot;: true,
+      &quot;status&quot;: &quot;active&quot;,
+      &quot;branchId&quot;: &quot;branch_123&quot;,
+      &quot;storeId&quot;: &quot;branch_123&quot;,
+      &quot;compensationModel&quot;: &quot;commission&quot;,
+      &quot;label&quot;: &quot;Hải&quot;,
+      &quot;value&quot;: &quot;emp_1&quot;
+    }
+  ],
+  &quot;attendances&quot;: [
+    {
+      &quot;id&quot;: &quot;att_1&quot;,
+      &quot;workDate&quot;: &quot;2026-06-06&quot;,
+      &quot;branchId&quot;: &quot;branch_123&quot;,
+      &quot;branchName&quot;: &quot;Cửa hàng Bình Thạnh&quot;,
+      &quot;status&quot;: &quot;open&quot;,
+      &quot;services&quot;: [
+        {
+          &quot;id&quot;: &quot;svc_1&quot;,
+          &quot;type&quot;: &quot;predefined&quot;,
+          &quot;name&quot;: &quot;Gel manicure&quot;,
+          &quot;price&quot;: 45,
+          &quot;employees&quot;: [
+            {
+              &quot;employeeUserId&quot;: &quot;emp_1&quot;,
+              &quot;employeeName&quot;: &quot;Hải&quot;,
+              &quot;percentage&quot;: 100,
+              &quot;shareAmount&quot;: 45
+            }
+          ]
+        }
+      ],
+      &quot;assignees&quot;: [
+        {
+          &quot;employeeUserId&quot;: &quot;emp_1&quot;,
+          &quot;employeeName&quot;: &quot;Hải&quot;,
+          &quot;percentage&quot;: 100,
+          &quot;shareAmount&quot;: 45
+        }
+      ],
+      &quot;subtotalAmount&quot;: 45,
+      &quot;discount&quot;: {
+        &quot;type&quot;: &quot;amount&quot;,
+        &quot;value&quot;: 5,
+        &quot;amount&quot;: 5
+      },
+      &quot;totalAmount&quot;: 40
+    }
+  ],
+  &quot;items&quot;: [
+    {
+      &quot;id&quot;: &quot;att_1&quot;,
+      &quot;workDate&quot;: &quot;2026-06-06&quot;,
+      &quot;totalAmount&quot;: 40,
+      &quot;status&quot;: &quot;closed&quot;
+    }
+  ],
+  &quot;closing&quot;: null,
+  &quot;preview&quot;: {
+    &quot;ownerDiscountCoverageRate&quot;: 50,
+    &quot;discountAllocationMethod&quot;: &quot;revenue_share&quot;,
+    &quot;totalRevenue&quot;: 105,
+    &quot;totalDiscount&quot;: 5,
+    &quot;totalNetAmount&quot;: 100,
+    &quot;totalOwnerDiscount&quot;: 3,
+    &quot;totalOwnerCommission&quot;: 68,
+    &quot;totalOwnerNetAfterDiscount&quot;: 65,
+    &quot;totalEmployeeEarning&quot;: 32,
+    &quot;employeeSummaries&quot;: [
+      {
+        &quot;employeeUserId&quot;: &quot;emp_1&quot;,
+        &quot;employeeName&quot;: &quot;Hải&quot;,
+        &quot;compensationModel&quot;: &quot;commission&quot;,
+        &quot;totalRevenue&quot;: 45,
+        &quot;discountAllocated&quot;: 2,
+        &quot;ownerDiscountSupported&quot;: 0,
+        &quot;employeeEarning&quot;: 32
+      }
+    ]
+  },
+  &quot;pendingEmployeeUserIds&quot;: [],
+  &quot;pendingEmployees&quot;: []
+}</code></pre>
+          </div>
+          <h4>Response fields</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>preview.discountAllocationMethod</code></td>
+                <td>revenue_share</td>
+                <td>Method mới.</td>
+              </tr>
+              <tr>
+                <td><code>preview.totalOwnerDiscount</code></td>
+                <td>number</td>
+                <td>Chủ chịu discount.</td>
+              </tr>
+              <tr>
+                <td><code>employeeSummaries[].ownerDiscountSupported</code></td>
+                <td>number</td>
+                <td>Phần fixed/hourly chuyển chủ chịu.</td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Failed response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>403 error</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;type&quot;: &quot;/employee/forbidden-branch&quot;,
+  &quot;message&quot;: &quot;Forbidden: branch access denied&quot;
+}</code></pre>
+          </div>
+          <h4>Notes</h4>
+          <ul>
+            <li>Backend preview là source tiền duy nhất cho UI detail.</li>
+          </ul>
+        </article>
+        <article class="endpoint" id="post-employee-session-close">
+          <div class="endpoint-title">
+            <span class="method post">POST</span
+            ><code>/api/v1/employee/session/close</code>
+          </div>
+          <p>Owner xác nhận chốt sổ ngày.</p>
+          <div class="meta-row">
+            <span>Auth: Backend access token</span
+            ><span>Scope: owner + branch access</span
+            ><span>Used by: Settlement confirm</span>
+          </div>
+          <h4>Headers</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>Authorization</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Bearer accessToken sau signin/refresh-token.</td>
+                <td><code>Bearer eyJ...</code></td>
+              </tr>
+              <tr>
+                <td><code>X-Firebase-AppCheck</code></td>
+                <td>string</td>
+                <td>Prod</td>
+                <td>Firebase App Check token. Monitoring không cần.</td>
+                <td><code>eyJ...</code></td>
+              </tr>
+              <tr>
+                <td><code>Content-Type</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>application/json.</td>
+                <td><code>application/json</code></td>
+              </tr>
+              <tr>
+                <td><code>X-Idempotency-Key</code></td>
+                <td>string</td>
+                <td>Recommended</td>
+                <td>Key ổn định cho POST/PATCH/DELETE để tránh ghi trùng.</td>
+                <td><code>attendance-2026-06-06-001</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Query params</h4>
+          <p class="muted">Không có query params.</p>
+          <h4>Request body</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>branchId/storeId</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Branch id.</td>
+                <td><code>branch_123</code></td>
+              </tr>
+              <tr>
+                <td><code>workDate/date</code></td>
+                <td>date</td>
+                <td>Yes</td>
+                <td>YYYY-MM-DD.</td>
+                <td><code>2026-06-06</code></td>
+              </tr>
+              <tr>
+                <td><code>ownerDiscountCoverageRate</code></td>
+                <td>number</td>
+                <td>No</td>
+                <td>0|50|100, default 50.</td>
+                <td><code>50</code></td>
+              </tr>
+              <tr>
+                <td><code>closedAt</code></td>
+                <td>number</td>
+                <td>No</td>
+                <td>Unix ms timestamp.</td>
+                <td><code>1780000000000</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="codebox">
+            <div class="codebar">
+              <span>request.json</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;branchId&quot;: &quot;branch_123&quot;,
+  &quot;workDate&quot;: &quot;2026-06-06&quot;,
+  &quot;ownerDiscountCoverageRate&quot;: 50
+}</code></pre>
+          </div>
+          <h4>cURL</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>curl</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>curl -X POST &quot;$API_BASE/employee/session/close&quot; \
+  -H &quot;Authorization: Bearer eyJ...&quot; \
+  -H &quot;X-Firebase-AppCheck: $APP_CHECK_TOKEN&quot; \
+  -H &quot;Content-Type: application/json&quot; \
+  -H &quot;X-Idempotency-Key: attendance-2026-06-06-001&quot; \
+  -d &#39;{&quot;branchId&quot;:&quot;branch_123&quot;,&quot;workDate&quot;:&quot;2026-06-06&quot;,&quot;ownerDiscountCoverageRate&quot;:50}&#39;</code></pre>
+          </div>
+          <h4>Successful response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>200 response</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;id&quot;: &quot;closing_1&quot;,
+  &quot;workDate&quot;: &quot;2026-06-06&quot;,
+  &quot;branchId&quot;: &quot;branch_123&quot;,
+  &quot;storeId&quot;: &quot;branch_123&quot;,
+  &quot;ownerDiscountCoverageRate&quot;: 50,
+  &quot;discountAllocationMethod&quot;: &quot;revenue_share&quot;,
+  &quot;employeeSummaries&quot;: [
+    {
+      &quot;employeeUserId&quot;: &quot;emp_1&quot;,
+      &quot;employeeName&quot;: &quot;Hải&quot;,
+      &quot;compensationModel&quot;: &quot;commission&quot;,
+      &quot;totalRevenue&quot;: 45,
+      &quot;discountAllocated&quot;: 2,
+      &quot;ownerDiscountSupported&quot;: 0,
+      &quot;employeeEarning&quot;: 32
+    }
+  ],
+  &quot;summary&quot;: {
+    &quot;totalEntries&quot;: 2,
+    &quot;subtotalAmount&quot;: 105,
+    &quot;totalDiscountAmount&quot;: 5,
+    &quot;totalEmployeeDiscountAmount&quot;: 2,
+    &quot;totalOwnerDiscountAmount&quot;: 3,
+    &quot;totalNetAmount&quot;: 100,
+    &quot;totalOwnerCommission&quot;: 68,
+    &quot;totalEmployeeEarning&quot;: 32
+  }
+}</code></pre>
+          </div>
+          <h4>Response fields</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>id</code></td>
+                <td>string</td>
+                <td>Closing id.</td>
+              </tr>
+              <tr>
+                <td><code>discountAllocationMethod</code></td>
+                <td>revenue_share</td>
+                <td>Method lưu vào closing.</td>
+              </tr>
+              <tr>
+                <td><code>summary.totalOwnerDiscountAmount</code></td>
+                <td>number</td>
+                <td>Tổng chủ chịu discount.</td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Failed response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>409 error</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;type&quot;: &quot;/employee/invalid-settlement-state&quot;,
+  &quot;message&quot;: &quot;The selected branch work day is not ready to be settled&quot;
+}</code></pre>
+          </div>
+          <h4>Notes</h4>
+          <ul>
+            <li>
+              Chỉ close khi có attendance, tất cả closed, không incomplete.
+            </li>
+            <li>Ngày all-fixed vẫn close được; fixed share chuyển chủ chịu.</li>
+          </ul>
+        </article>
+        <article class="endpoint" id="get-employee-session">
+          <div class="endpoint-title">
+            <span class="method get">GET</span
+            ><code>/api/v1/employee/session</code>
+          </div>
+          <p>Legacy session summary.</p>
+          <div class="meta-row">
+            <span>Auth: Backend access token</span
+            ><span>Scope: owner/legacy</span><span>Used by: Legacy only</span>
+          </div>
+          <h4>Headers</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>Authorization</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Bearer accessToken sau signin/refresh-token.</td>
+                <td><code>Bearer eyJ...</code></td>
+              </tr>
+              <tr>
+                <td><code>X-Firebase-AppCheck</code></td>
+                <td>string</td>
+                <td>Prod</td>
+                <td>Firebase App Check token. Monitoring không cần.</td>
+                <td><code>eyJ...</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Query params</h4>
+          <p class="muted">Không có query params.</p>
+          <h4>Request body</h4>
+          <p class="muted">GET không có body.</p>
+
+          <h4>cURL</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>curl</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>curl -X GET &quot;$API_BASE/employee/session&quot; \
+  -H &quot;Authorization: Bearer eyJ...&quot; \
+  -H &quot;X-Firebase-AppCheck: $APP_CHECK_TOKEN&quot;</code></pre>
+          </div>
+          <h4>Successful response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>200 response</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;items&quot;: [],
+  &quot;summary&quot;: {}
+}</code></pre>
+          </div>
+          <h4>Response fields</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>items</code></td>
+                <td>array</td>
+                <td>Legacy data.</td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Failed response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>403 error</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;type&quot;: &quot;/employee/forbidden-role&quot;,
+  &quot;message&quot;: &quot;Forbidden: insufficient permissions&quot;
+}</code></pre>
+          </div>
+          <h4>Notes</h4>
+          <ul>
+            <li>
+              UI chốt sổ mới dùng settlements + preview, không dùng endpoint
+              này.
+            </li>
+          </ul>
+        </article>
+      </main>
+    </div>
+    <script src="../assets/app.js"></script>
+  </body>
+</html>

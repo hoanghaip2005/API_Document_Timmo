@@ -1,4 +1,4 @@
-name: Deploy GitHub Pages
+﻿name: Deploy GitHub Pages
 
 on:
   push:
@@ -31,6 +31,8 @@ jobs:
           mkdir -p _site
           cp index.html _site/index.html
           cp backend-api-documentation.html _site/backend-api-documentation.html
+          cp -R pages _site/pages
+          cp -R assets _site/assets
           touch _site/.nojekyll
 
       - name: Configure Pages

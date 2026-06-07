@@ -1,0 +1,1402 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Auth API - Timmo API</title>
+    <link rel="stylesheet" href="../assets/styles.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <aside class="sidebar">
+        <a class="brand" href="../index.html"
+          ><span class="logo">T</span
+          ><span
+            ><strong>Timmo API v1</strong
+            ><small>Nail Salon Management System</small></span
+          ></a
+        ><input class="search" data-search placeholder="Tìm trong trang..." />
+        <nav>
+          <a class="nav-link" href="../index.html">Tổng quan</a
+          ><a class="nav-link active" href="../pages/auth.html">Auth</a
+          ><a class="nav-link" href="../pages/account.html">Account</a
+          ><a class="nav-link" href="../pages/shop-branch.html">Branch</a
+          ><a class="nav-link" href="../pages/shop-service.html">Service</a
+          ><a class="nav-link" href="../pages/employee.html">Employee</a
+          ><a class="nav-link" href="../pages/attendance.html">Attendance</a
+          ><a class="nav-link" href="../pages/settlement.html">Settlement</a
+          ><a class="nav-link" href="../pages/reports-salary.html"
+            >Reports &amp; Salary</a
+          ><a class="nav-link" href="../pages/notifications-monitoring.html"
+            >Notifications &amp; Monitoring</a
+          ><a class="nav-link" href="../pages/schemas-errors.html"
+            >Schemas &amp; Errors</a
+          >
+        </nav>
+      </aside>
+      <main class="content">
+        <header class="page-head">
+          <p class="eyebrow">API Documentation</p>
+          <h1>Auth API</h1>
+          <p>
+            Đăng nhập, session, refresh token, đổi mật khẩu, OTP và admin
+            onboarding.
+          </p>
+        </header>
+        <section class="card">
+          <h2>Endpoints</h2>
+          <div class="endpoint-list">
+            <a href="#post-auth-signin"
+              ><span class="method post">POST</span
+              ><code>/api/v1/auth/signin</code></a
+            ><a href="#post-auth-refresh-token"
+              ><span class="method post">POST</span
+              ><code>/api/v1/auth/refresh-token</code></a
+            ><a href="#post-auth-logout"
+              ><span class="method post">POST</span
+              ><code>/api/v1/auth/logout</code></a
+            ><a href="#post-auth-change-password"
+              ><span class="method post">POST</span
+              ><code>/api/v1/auth/change-password</code></a
+            ><a href="#post-auth-register-owner"
+              ><span class="method post">POST</span
+              ><code>/api/v1/auth/register-owner</code></a
+            ><a href="#post-admin-signin"
+              ><span class="method post">POST</span
+              ><code>/api/v1/admin/signin</code></a
+            ><a href="#post-admin-register-owner"
+              ><span class="method post">POST</span
+              ><code>/api/v1/admin/register-owner</code></a
+            ><a href="#post-auth-forgot-password-request-otp"
+              ><span class="method post">POST</span
+              ><code>/api/v1/auth/forgot-password/request-otp</code></a
+            ><a href="#post-auth-forgot-password-verify-otp"
+              ><span class="method post">POST</span
+              ><code>/api/v1/auth/forgot-password/verify-otp</code></a
+            ><a href="#post-auth-forgot-password-reset-password"
+              ><span class="method post">POST</span
+              ><code>/api/v1/auth/forgot-password/reset-password</code></a
+            >
+          </div>
+        </section>
+        <article class="endpoint" id="post-auth-signin">
+          <div class="endpoint-title">
+            <span class="method post">POST</span
+            ><code>/api/v1/auth/signin</code>
+          </div>
+          <p>Đổi Firebase ID token của user hiện tại thành backend session.</p>
+          <div class="meta-row">
+            <span>Auth: Firebase ID token</span
+            ><span>Scope: owner|employee; admin dùng endpoint riêng</span
+            ><span>Used by: Sign-in guard</span>
+          </div>
+          <h4>Headers</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>Authorization</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>
+                  Bearer Firebase ID token, không phải backend accessToken.
+                </td>
+                <td><code>Bearer eyJfirebase...</code></td>
+              </tr>
+              <tr>
+                <td><code>X-Firebase-AppCheck</code></td>
+                <td>string</td>
+                <td>Prod</td>
+                <td>Firebase App Check token.</td>
+                <td><code>eyJ...</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Query params</h4>
+          <p class="muted">Không có query params.</p>
+          <h4>Request body</h4>
+          <p class="muted">Không có body.</p>
+
+          <h4>cURL</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>curl</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>curl -X POST &quot;$API_BASE/auth/signin&quot; \
+  -H &quot;Authorization: Bearer eyJfirebase...&quot; \
+  -H &quot;X-Firebase-AppCheck: $APP_CHECK_TOKEN&quot;</code></pre>
+          </div>
+          <h4>Successful response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>201 response</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;accessToken&quot;: &quot;Bearer eyJ...&quot;,
+  &quot;refreshToken&quot;: &quot;Bearer eyJ...&quot;,
+  &quot;tokenType&quot;: &quot;Bearer&quot;,
+  &quot;sessionId&quot;: &quot;session_123&quot;,
+  &quot;accessTokenExpiresAt&quot;: 1780000000000,
+  &quot;user&quot;: {
+    &quot;uid&quot;: &quot;user_123&quot;,
+    &quot;email&quot;: &quot;owner@example.com&quot;,
+    &quot;shopId&quot;: &quot;shop_123&quot;,
+    &quot;role&quot;: &quot;owner&quot;,
+    &quot;name&quot;: &quot;Owner&quot;
+  },
+  &quot;scope&quot;: {
+    &quot;shopId&quot;: &quot;shop_123&quot;
+  }
+}</code></pre>
+          </div>
+          <h4>Response fields</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>accessToken</code></td>
+                <td>string</td>
+                <td>Token dùng cho business API.</td>
+              </tr>
+              <tr>
+                <td><code>refreshToken</code></td>
+                <td>string</td>
+                <td>Token cấp accessToken mới.</td>
+              </tr>
+              <tr>
+                <td><code>user.role</code></td>
+                <td>owner|employee</td>
+                <td>Role private app.</td>
+              </tr>
+              <tr>
+                <td><code>scope.shopId</code></td>
+                <td>string</td>
+                <td>Shop scope.</td>
+              </tr>
+              <tr>
+                <td><code>scope.branchId</code></td>
+                <td>string?</td>
+                <td>Có với employee.</td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Failed response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>403 error</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;type&quot;: &quot;/auth/branch-not-configured&quot;,
+  &quot;message&quot;: &quot;Branch-scoped account is missing branch configuration&quot;
+}</code></pre>
+          </div>
+          <h4>Notes</h4>
+          <ul>
+            <li>Body không bắt buộc; uid lấy từ Firebase token.</li>
+            <li>Employee phải có branchId active.</li>
+          </ul>
+        </article>
+        <article class="endpoint" id="post-auth-refresh-token">
+          <div class="endpoint-title">
+            <span class="method post">POST</span
+            ><code>/api/v1/auth/refresh-token</code>
+          </div>
+          <p>Cấp access token mới từ refreshToken.</p>
+          <div class="meta-row">
+            <span>Auth: Refresh token body</span
+            ><span>Scope: Session hiện tại</span
+            ><span>Used by: authorizedApiRequest/session refresh</span>
+          </div>
+          <h4>Headers</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>Content-Type</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>application/json.</td>
+                <td><code>application/json</code></td>
+              </tr>
+              <tr>
+                <td><code>X-Firebase-AppCheck</code></td>
+                <td>Prod</td>
+                <td>Prod</td>
+                <td>Firebase App Check token nếu production bật App Check.</td>
+                <td><code>eyJ...</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Query params</h4>
+          <p class="muted">Không có query params.</p>
+          <h4>Request body</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>refreshToken</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Có hoặc không có prefix Bearer.</td>
+                <td><code>Bearer eyJ...</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="codebox">
+            <div class="codebar">
+              <span>request.json</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;refreshToken&quot;: &quot;Bearer eyJ...&quot;
+}</code></pre>
+          </div>
+          <h4>cURL</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>curl</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>curl -X POST &quot;$API_BASE/auth/refresh-token&quot; \
+  -H &quot;Content-Type: application/json&quot; \
+  -H &quot;X-Firebase-AppCheck: $APP_CHECK_TOKEN&quot; \
+  -d &#39;{&quot;refreshToken&quot;:&quot;Bearer eyJ...&quot;}&#39;</code></pre>
+          </div>
+          <h4>Successful response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>200 response</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;accessToken&quot;: &quot;Bearer eyJ...&quot;,
+  &quot;refreshToken&quot;: &quot;Bearer eyJ...&quot;,
+  &quot;tokenType&quot;: &quot;Bearer&quot;,
+  &quot;sessionId&quot;: &quot;session_123&quot;,
+  &quot;accessTokenExpiresAt&quot;: 1780000000000,
+  &quot;scope&quot;: {
+    &quot;shopId&quot;: &quot;shop_123&quot;
+  }
+}</code></pre>
+          </div>
+          <h4>Response fields</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>accessToken</code></td>
+                <td>string</td>
+                <td>Access token mới.</td>
+              </tr>
+              <tr>
+                <td><code>refreshToken</code></td>
+                <td>string</td>
+                <td>Refresh token cũ, giữ prefix Bearer.</td>
+              </tr>
+              <tr>
+                <td><code>permissions</code></td>
+                <td>string[]</td>
+                <td>Permission theo role.</td>
+              </tr>
+              <tr>
+                <td><code>scope</code></td>
+                <td>object</td>
+                <td>Shop/branch scope.</td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Failed response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>401 error</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;type&quot;: &quot;/auth/refresh-token-expired&quot;,
+  &quot;message&quot;: &quot;Refresh token expired&quot;
+}</code></pre>
+          </div>
+          <h4>Notes</h4>
+          <ul>
+            <li>Nếu token revoked/hết hạn thì logout local.</li>
+          </ul>
+        </article>
+        <article class="endpoint" id="post-auth-logout">
+          <div class="endpoint-title">
+            <span class="method post">POST</span
+            ><code>/api/v1/auth/logout</code>
+          </div>
+          <p>Revoke session hiện tại.</p>
+          <div class="meta-row">
+            <span>Auth: Backend access token</span
+            ><span>Scope: owner|employee</span
+            ><span>Used by: Account security/logout</span>
+          </div>
+          <h4>Headers</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>Authorization</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Bearer accessToken sau signin/refresh-token.</td>
+                <td><code>Bearer eyJ...</code></td>
+              </tr>
+              <tr>
+                <td><code>X-Firebase-AppCheck</code></td>
+                <td>string</td>
+                <td>Prod</td>
+                <td>Firebase App Check token. Monitoring không cần.</td>
+                <td><code>eyJ...</code></td>
+              </tr>
+              <tr>
+                <td><code>Content-Type</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>application/json.</td>
+                <td><code>application/json</code></td>
+              </tr>
+              <tr>
+                <td><code>X-Idempotency-Key</code></td>
+                <td>string</td>
+                <td>Recommended</td>
+                <td>Key ổn định cho POST/PATCH/DELETE để tránh ghi trùng.</td>
+                <td><code>attendance-2026-06-06-001</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Query params</h4>
+          <p class="muted">Không có query params.</p>
+          <h4>Request body</h4>
+          <p class="muted">Không có body.</p>
+          <div class="codebox">
+            <div class="codebar">
+              <span>request.json</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{}</code></pre>
+          </div>
+          <h4>cURL</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>curl</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>curl -X POST &quot;$API_BASE/auth/logout&quot; \
+  -H &quot;Authorization: Bearer eyJ...&quot; \
+  -H &quot;X-Firebase-AppCheck: $APP_CHECK_TOKEN&quot; \
+  -H &quot;Content-Type: application/json&quot; \
+  -H &quot;X-Idempotency-Key: attendance-2026-06-06-001&quot; \
+  -d &#39;{}&#39;</code></pre>
+          </div>
+          <h4>Successful response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>200 response</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;success&quot;: true
+}</code></pre>
+          </div>
+          <h4>Response fields</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>success</code></td>
+                <td>boolean</td>
+                <td>Logout thành công.</td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Failed response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>401 error</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;type&quot;: &quot;/auth/invalid-token&quot;,
+  &quot;message&quot;: &quot;Invalid authorization token&quot;
+}</code></pre>
+          </div>
+          <h4>Notes</h4>
+          <ul>
+            <li>Client phải xoá local session/cache sau response.</li>
+          </ul>
+        </article>
+        <article class="endpoint" id="post-auth-change-password">
+          <div class="endpoint-title">
+            <span class="method post">POST</span
+            ><code>/api/v1/auth/change-password</code>
+          </div>
+          <p>Đổi mật khẩu Firebase user.</p>
+          <div class="meta-row">
+            <span>Auth: Firebase recent ID token</span
+            ><span>Scope: Current user</span
+            ><span>Used by: Account security</span>
+          </div>
+          <h4>Headers</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>Authorization</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>
+                  Bearer Firebase ID token, không phải backend accessToken.
+                </td>
+                <td><code>Bearer eyJfirebase...</code></td>
+              </tr>
+              <tr>
+                <td><code>X-Firebase-AppCheck</code></td>
+                <td>string</td>
+                <td>Prod</td>
+                <td>Firebase App Check token.</td>
+                <td><code>eyJ...</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Query params</h4>
+          <p class="muted">Không có query params.</p>
+          <h4>Request body</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>newPassword</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Tối thiểu 8 ký tự.</td>
+                <td><code>newStrongPassword</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="codebox">
+            <div class="codebar">
+              <span>request.json</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;newPassword&quot;: &quot;newStrongPassword&quot;
+}</code></pre>
+          </div>
+          <h4>cURL</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>curl</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>curl -X POST &quot;$API_BASE/auth/change-password&quot; \
+  -H &quot;Authorization: Bearer eyJfirebase...&quot; \
+  -H &quot;X-Firebase-AppCheck: $APP_CHECK_TOKEN&quot; \
+  -d &#39;{&quot;newPassword&quot;:&quot;newStrongPassword&quot;}&#39;</code></pre>
+          </div>
+          <h4>Successful response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>200 response</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;success&quot;: true
+}</code></pre>
+          </div>
+          <h4>Response fields</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>success</code></td>
+                <td>boolean</td>
+                <td>Đổi mật khẩu xong, refresh token bị revoke.</td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Failed response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>401 error</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;type&quot;: &quot;/auth/recent-signin-required&quot;,
+  &quot;message&quot;: &quot;Recent sign-in is required to change password&quot;
+}</code></pre>
+          </div>
+          <h4>Notes</h4>
+          <ul>
+            <li>Firebase authTime phải trong 5 phút.</li>
+          </ul>
+        </article>
+        <article class="endpoint" id="post-auth-register-owner">
+          <div class="endpoint-title">
+            <span class="method post">POST</span
+            ><code>/api/v1/auth/register-owner</code>
+          </div>
+          <p>Public onboarding tạo owner + shop draft.</p>
+          <div class="meta-row">
+            <span>Auth: Public + AppCheck prod</span><span>Scope: New shop</span
+            ><span>Used by: Owner registration</span>
+          </div>
+          <h4>Headers</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>Content-Type</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>application/json.</td>
+                <td><code>application/json</code></td>
+              </tr>
+              <tr>
+                <td><code>X-Firebase-AppCheck</code></td>
+                <td>Prod</td>
+                <td>Prod</td>
+                <td>Firebase App Check token nếu production bật App Check.</td>
+                <td><code>eyJ...</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Query params</h4>
+          <p class="muted">Không có query params.</p>
+          <h4>Request body</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>email</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Email hợp lệ.</td>
+                <td><code>owner@example.com</code></td>
+              </tr>
+              <tr>
+                <td><code>name</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>2..100 ký tự.</td>
+                <td><code>Owner</code></td>
+              </tr>
+              <tr>
+                <td><code>password</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Tối thiểu 6 ký tự.</td>
+                <td><code>secret123</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="codebox">
+            <div class="codebar">
+              <span>request.json</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;email&quot;: &quot;owner@example.com&quot;,
+  &quot;name&quot;: &quot;Owner&quot;,
+  &quot;password&quot;: &quot;secret123&quot;
+}</code></pre>
+          </div>
+          <h4>cURL</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>curl</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>curl -X POST &quot;$API_BASE/auth/register-owner&quot; \
+  -H &quot;Content-Type: application/json&quot; \
+  -H &quot;X-Firebase-AppCheck: $APP_CHECK_TOKEN&quot; \
+  -d &#39;{&quot;email&quot;:&quot;owner@example.com&quot;,&quot;name&quot;:&quot;Owner&quot;,&quot;password&quot;:&quot;secret123&quot;}&#39;</code></pre>
+          </div>
+          <h4>Successful response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>201 response</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;uid&quot;: &quot;user_123&quot;,
+  &quot;email&quot;: &quot;owner@example.com&quot;,
+  &quot;shopId&quot;: &quot;shop_123&quot;
+}</code></pre>
+          </div>
+          <h4>Response fields</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>uid</code></td>
+                <td>string</td>
+                <td>Firebase uid.</td>
+              </tr>
+              <tr>
+                <td><code>email</code></td>
+                <td>string</td>
+                <td>Email owner.</td>
+              </tr>
+              <tr>
+                <td><code>shopId</code></td>
+                <td>string</td>
+                <td>Shop mới, status draft, currency EUR.</td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Failed response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>409 error</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;type&quot;: &quot;/auth/email-already-in-use&quot;,
+  &quot;message&quot;: &quot;Email is already in use&quot;
+}</code></pre>
+          </div>
+          <h4>Notes</h4>
+          <ul>
+            <li>Shop mặc định currency EUR.</li>
+          </ul>
+        </article>
+        <article class="endpoint" id="post-admin-signin">
+          <div class="endpoint-title">
+            <span class="method post">POST</span
+            ><code>/api/v1/admin/signin</code>
+          </div>
+          <p>Platform admin signin.</p>
+          <div class="meta-row">
+            <span>Auth: Admin credentials/Firebase flow</span
+            ><span>Scope: admin</span><span>Used by: Admin console only</span>
+          </div>
+          <h4>Headers</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>Authorization</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>
+                  Bearer Firebase ID token, không phải backend accessToken.
+                </td>
+                <td><code>Bearer eyJfirebase...</code></td>
+              </tr>
+              <tr>
+                <td><code>X-Firebase-AppCheck</code></td>
+                <td>string</td>
+                <td>Prod</td>
+                <td>Firebase App Check token.</td>
+                <td><code>eyJ...</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Query params</h4>
+          <p class="muted">Không có query params.</p>
+          <h4>Request body</h4>
+          <p class="muted">Không có body.</p>
+
+          <h4>cURL</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>curl</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>curl -X POST &quot;$API_BASE/admin/signin&quot; \
+  -H &quot;Authorization: Bearer eyJfirebase...&quot; \
+  -H &quot;X-Firebase-AppCheck: $APP_CHECK_TOKEN&quot;</code></pre>
+          </div>
+          <h4>Successful response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>201 response</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;accessToken&quot;: &quot;Bearer eyJ...&quot;,
+  &quot;refreshToken&quot;: &quot;Bearer eyJ...&quot;,
+  &quot;tokenType&quot;: &quot;Bearer&quot;,
+  &quot;sessionId&quot;: &quot;session_123&quot;,
+  &quot;accessTokenExpiresAt&quot;: 1780000000000,
+  &quot;user&quot;: {
+    &quot;uid&quot;: &quot;admin_1&quot;,
+    &quot;email&quot;: &quot;admin@example.com&quot;,
+    &quot;shopId&quot;: &quot;platform&quot;,
+    &quot;role&quot;: &quot;admin&quot;,
+    &quot;name&quot;: &quot;Admin&quot;
+  },
+  &quot;scope&quot;: {
+    &quot;shopId&quot;: &quot;shop_123&quot;
+  }
+}</code></pre>
+          </div>
+          <h4>Response fields</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>user.role</code></td>
+                <td>admin</td>
+                <td>Platform admin role.</td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Failed response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>403 error</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;type&quot;: &quot;/admin/forbidden-role&quot;,
+  &quot;message&quot;: &quot;not a platform admin&quot;
+}</code></pre>
+          </div>
+          <h4>Notes</h4>
+          <ul>
+            <li>Không dùng trong owner/employee frontend.</li>
+          </ul>
+        </article>
+        <article class="endpoint" id="post-admin-register-owner">
+          <div class="endpoint-title">
+            <span class="method post">POST</span
+            ><code>/api/v1/admin/register-owner</code>
+          </div>
+          <p>Admin tạo owner + shop active.</p>
+          <div class="meta-row">
+            <span>Auth: Backend admin token</span><span>Scope: admin</span
+            ><span>Used by: Admin onboarding</span>
+          </div>
+          <h4>Headers</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>Authorization</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Bearer accessToken sau signin/refresh-token.</td>
+                <td><code>Bearer eyJ...</code></td>
+              </tr>
+              <tr>
+                <td><code>X-Firebase-AppCheck</code></td>
+                <td>string</td>
+                <td>Prod</td>
+                <td>Firebase App Check token. Monitoring không cần.</td>
+                <td><code>eyJ...</code></td>
+              </tr>
+              <tr>
+                <td><code>Content-Type</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>application/json.</td>
+                <td><code>application/json</code></td>
+              </tr>
+              <tr>
+                <td><code>X-Idempotency-Key</code></td>
+                <td>string</td>
+                <td>Recommended</td>
+                <td>Key ổn định cho POST/PATCH/DELETE để tránh ghi trùng.</td>
+                <td><code>attendance-2026-06-06-001</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Query params</h4>
+          <p class="muted">Không có query params.</p>
+          <h4>Request body</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>email</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Email owner.</td>
+                <td><code>owner@example.com</code></td>
+              </tr>
+              <tr>
+                <td><code>name</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Tên owner.</td>
+                <td><code>Owner</code></td>
+              </tr>
+              <tr>
+                <td><code>password</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Tối thiểu 6 ký tự.</td>
+                <td><code>secret123</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="codebox">
+            <div class="codebar">
+              <span>request.json</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;email&quot;: &quot;owner@example.com&quot;,
+  &quot;name&quot;: &quot;Owner&quot;,
+  &quot;password&quot;: &quot;secret123&quot;
+}</code></pre>
+          </div>
+          <h4>cURL</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>curl</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>curl -X POST &quot;$API_BASE/admin/register-owner&quot; \
+  -H &quot;Authorization: Bearer eyJ...&quot; \
+  -H &quot;X-Firebase-AppCheck: $APP_CHECK_TOKEN&quot; \
+  -H &quot;Content-Type: application/json&quot; \
+  -H &quot;X-Idempotency-Key: attendance-2026-06-06-001&quot; \
+  -d &#39;{&quot;email&quot;:&quot;owner@example.com&quot;,&quot;name&quot;:&quot;Owner&quot;,&quot;password&quot;:&quot;secret123&quot;}&#39;</code></pre>
+          </div>
+          <h4>Successful response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>201 response</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;uid&quot;: &quot;user_123&quot;,
+  &quot;email&quot;: &quot;owner@example.com&quot;,
+  &quot;shopId&quot;: &quot;shop_123&quot;
+}</code></pre>
+          </div>
+          <h4>Response fields</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>shopId</code></td>
+                <td>string</td>
+                <td>Shop status active khi admin tạo.</td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Failed response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>403 error</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;type&quot;: &quot;/admin/forbidden-role&quot;,
+  &quot;message&quot;: &quot;not a platform admin&quot;
+}</code></pre>
+          </div>
+          <h4>Notes</h4>
+          <ul>
+            <li>Chỉ platform admin.</li>
+          </ul>
+        </article>
+        <article class="endpoint" id="post-auth-forgot-password-request-otp">
+          <div class="endpoint-title">
+            <span class="method post">POST</span
+            ><code>/api/v1/auth/forgot-password/request-otp</code>
+          </div>
+          <p>Gửi OTP reset password.</p>
+          <div class="meta-row">
+            <span>Auth: Public + AppCheck prod</span><span>Scope: Email</span
+            ><span>Used by: Forgot password</span>
+          </div>
+          <h4>Headers</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>Content-Type</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>application/json.</td>
+                <td><code>application/json</code></td>
+              </tr>
+              <tr>
+                <td><code>X-Firebase-AppCheck</code></td>
+                <td>Prod</td>
+                <td>Prod</td>
+                <td>Firebase App Check token nếu production bật App Check.</td>
+                <td><code>eyJ...</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Query params</h4>
+          <p class="muted">Không có query params.</p>
+          <h4>Request body</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>email</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Email hợp lệ.</td>
+                <td><code>user@example.com</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="codebox">
+            <div class="codebar">
+              <span>request.json</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;email&quot;: &quot;user@example.com&quot;
+}</code></pre>
+          </div>
+          <h4>cURL</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>curl</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>curl -X POST &quot;$API_BASE/auth/forgot-password/request-otp&quot; \
+  -H &quot;Content-Type: application/json&quot; \
+  -H &quot;X-Firebase-AppCheck: $APP_CHECK_TOKEN&quot; \
+  -d &#39;{&quot;email&quot;:&quot;user@example.com&quot;}&#39;</code></pre>
+          </div>
+          <h4>Successful response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>200 response</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;success&quot;: true,
+  &quot;expiresInSeconds&quot;: 600
+}</code></pre>
+          </div>
+          <h4>Response fields</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>success</code></td>
+                <td>boolean</td>
+                <td>OTP đã được gửi nếu email hợp lệ.</td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Failed response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>429 error</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;type&quot;: &quot;/rate-limit/exceeded&quot;,
+  &quot;message&quot;: &quot;Too many OTP requests&quot;
+}</code></pre>
+          </div>
+          <h4>Notes</h4>
+          <ul>
+            <li>Rate limit theo IP và email.</li>
+          </ul>
+        </article>
+        <article class="endpoint" id="post-auth-forgot-password-verify-otp">
+          <div class="endpoint-title">
+            <span class="method post">POST</span
+            ><code>/api/v1/auth/forgot-password/verify-otp</code>
+          </div>
+          <p>Verify OTP 6 số.</p>
+          <div class="meta-row">
+            <span>Auth: Public + AppCheck prod</span><span>Scope: Email</span
+            ><span>Used by: Forgot password</span>
+          </div>
+          <h4>Headers</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>Content-Type</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>application/json.</td>
+                <td><code>application/json</code></td>
+              </tr>
+              <tr>
+                <td><code>X-Firebase-AppCheck</code></td>
+                <td>Prod</td>
+                <td>Prod</td>
+                <td>Firebase App Check token nếu production bật App Check.</td>
+                <td><code>eyJ...</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Query params</h4>
+          <p class="muted">Không có query params.</p>
+          <h4>Request body</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>email</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Email.</td>
+                <td><code>user@example.com</code></td>
+              </tr>
+              <tr>
+                <td><code>otp</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>6 chữ số.</td>
+                <td><code>123456</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="codebox">
+            <div class="codebar">
+              <span>request.json</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;email&quot;: &quot;user@example.com&quot;,
+  &quot;otp&quot;: &quot;123456&quot;
+}</code></pre>
+          </div>
+          <h4>cURL</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>curl</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>curl -X POST &quot;$API_BASE/auth/forgot-password/verify-otp&quot; \
+  -H &quot;Content-Type: application/json&quot; \
+  -H &quot;X-Firebase-AppCheck: $APP_CHECK_TOKEN&quot; \
+  -d &#39;{&quot;email&quot;:&quot;user@example.com&quot;,&quot;otp&quot;:&quot;123456&quot;}&#39;</code></pre>
+          </div>
+          <h4>Successful response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>200 response</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;resetToken&quot;: &quot;reset_15m_token&quot;,
+  &quot;expiresInSeconds&quot;: 900
+}</code></pre>
+          </div>
+          <h4>Response fields</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>resetToken</code></td>
+                <td>string</td>
+                <td>Token dùng reset password.</td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Failed response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>400 error</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;type&quot;: &quot;/auth/invalid-otp&quot;,
+  &quot;message&quot;: &quot;Invalid OTP&quot;
+}</code></pre>
+          </div>
+          <h4>Notes</h4>
+          <ul>
+            <li>resetToken hết hạn ngắn.</li>
+          </ul>
+        </article>
+        <article class="endpoint" id="post-auth-forgot-password-reset-password">
+          <div class="endpoint-title">
+            <span class="method post">POST</span
+            ><code>/api/v1/auth/forgot-password/reset-password</code>
+          </div>
+          <p>Reset password bằng resetToken hoặc email+otp.</p>
+          <div class="meta-row">
+            <span>Auth: Public + AppCheck prod</span><span>Scope: Email</span
+            ><span>Used by: Forgot password</span>
+          </div>
+          <h4>Headers</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>Content-Type</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>application/json.</td>
+                <td><code>application/json</code></td>
+              </tr>
+              <tr>
+                <td><code>X-Firebase-AppCheck</code></td>
+                <td>Prod</td>
+                <td>Prod</td>
+                <td>Firebase App Check token nếu production bật App Check.</td>
+                <td><code>eyJ...</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Query params</h4>
+          <p class="muted">Không có query params.</p>
+          <h4>Request body</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>resetToken</code></td>
+                <td>string</td>
+                <td>Either</td>
+                <td>Token từ verify OTP.</td>
+                <td><code>reset_15m_token</code></td>
+              </tr>
+              <tr>
+                <td><code>email</code></td>
+                <td>string</td>
+                <td>Either</td>
+                <td>Dùng nếu reset bằng OTP trực tiếp.</td>
+                <td><code>user@example.com</code></td>
+              </tr>
+              <tr>
+                <td><code>otp</code></td>
+                <td>string</td>
+                <td>Either</td>
+                <td>6 chữ số.</td>
+                <td><code>123456</code></td>
+              </tr>
+              <tr>
+                <td><code>password</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Tối thiểu 6 ký tự.</td>
+                <td><code>newSecret123</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="codebox">
+            <div class="codebar">
+              <span>request.json</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;resetToken&quot;: &quot;reset_15m_token&quot;,
+  &quot;password&quot;: &quot;newSecret123&quot;
+}</code></pre>
+          </div>
+          <h4>cURL</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>curl</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>curl -X POST &quot;$API_BASE/auth/forgot-password/reset-password&quot; \
+  -H &quot;Content-Type: application/json&quot; \
+  -H &quot;X-Firebase-AppCheck: $APP_CHECK_TOKEN&quot; \
+  -d &#39;{&quot;resetToken&quot;:&quot;reset_15m_token&quot;,&quot;password&quot;:&quot;newSecret123&quot;}&#39;</code></pre>
+          </div>
+          <h4>Successful response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>200 response</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;success&quot;: true
+}</code></pre>
+          </div>
+          <h4>Response fields</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>success</code></td>
+                <td>boolean</td>
+                <td>Password đã đổi.</td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Failed response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>400 error</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;type&quot;: &quot;/auth/invalid-request&quot;,
+  &quot;message&quot;: &quot;Invalid request&quot;
+}</code></pre>
+          </div>
+          <h4>Notes</h4>
+          <ul>
+            <li>Sau reset, user đăng nhập lại.</li>
+          </ul>
+        </article>
+      </main>
+    </div>
+    <script src="../assets/app.js"></script>
+  </body>
+</html>

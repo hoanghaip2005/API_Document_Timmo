@@ -1,0 +1,2089 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Attendance API - Timmo API</title>
+    <link rel="stylesheet" href="../assets/styles.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <aside class="sidebar">
+        <a class="brand" href="../index.html"
+          ><span class="logo">T</span
+          ><span
+            ><strong>Timmo API v1</strong
+            ><small>Nail Salon Management System</small></span
+          ></a
+        ><input class="search" data-search placeholder="Tìm trong trang..." />
+        <nav>
+          <a class="nav-link" href="../index.html">Tổng quan</a
+          ><a class="nav-link" href="../pages/auth.html">Auth</a
+          ><a class="nav-link" href="../pages/account.html">Account</a
+          ><a class="nav-link" href="../pages/shop-branch.html">Branch</a
+          ><a class="nav-link" href="../pages/shop-service.html">Service</a
+          ><a class="nav-link" href="../pages/employee.html">Employee</a
+          ><a class="nav-link active" href="../pages/attendance.html"
+            >Attendance</a
+          ><a class="nav-link" href="../pages/settlement.html">Settlement</a
+          ><a class="nav-link" href="../pages/reports-salary.html"
+            >Reports &amp; Salary</a
+          ><a class="nav-link" href="../pages/notifications-monitoring.html"
+            >Notifications &amp; Monitoring</a
+          ><a class="nav-link" href="../pages/schemas-errors.html"
+            >Schemas &amp; Errors</a
+          >
+        </nav>
+      </aside>
+      <main class="content">
+        <header class="page-head">
+          <p class="eyebrow">API Documentation</p>
+          <h1>Attendance API</h1>
+          <p>
+            Chấm công, employee close-day, legacy close và correction requests.
+          </p>
+        </header>
+        <section class="card">
+          <h2>Endpoints</h2>
+          <div class="endpoint-list">
+            <a href="#get-employee-attendance-bootstrap"
+              ><span class="method get">GET</span
+              ><code>/api/v1/employee/attendance/bootstrap</code></a
+            ><a href="#get-employee-attendance"
+              ><span class="method get">GET</span
+              ><code>/api/v1/employee/attendance</code></a
+            ><a href="#get-employee-attendance-attendanceid"
+              ><span class="method get">GET</span
+              ><code>/api/v1/employee/attendance/:attendanceId</code></a
+            ><a href="#post-employee-attendance"
+              ><span class="method post">POST</span
+              ><code>/api/v1/employee/attendance</code></a
+            ><a href="#patch-employee-attendance-attendanceid"
+              ><span class="method patch">PATCH</span
+              ><code>/api/v1/employee/attendance/:attendanceId</code></a
+            ><a href="#post-employee-me-attendance-close-day"
+              ><span class="method post">POST</span
+              ><code>/api/v1/employee/me/attendance/close-day</code></a
+            ><a href="#post-employee-attendance-attendanceid-close"
+              ><span class="method post">POST</span
+              ><code>/api/v1/employee/attendance/:attendanceId/close</code></a
+            ><a href="#get-employee-attendance-correction-requests"
+              ><span class="method get">GET</span
+              ><code>/api/v1/employee/attendance/correction-requests</code></a
+            ><a
+              href="#post-employee-attendance-attendanceid-correction-requests"
+              ><span class="method post">POST</span
+              ><code
+                >/api/v1/employee/attendance/:attendanceId/correction-requests</code
+              ></a
+            ><a
+              href="#post-employee-attendance-correction-requests-requestid-cancel"
+              ><span class="method post">POST</span
+              ><code
+                >/api/v1/employee/attendance/correction-requests/:requestId/cancel</code
+              ></a
+            ><a
+              href="#post-employee-attendance-correction-requests-requestid-review"
+              ><span class="method post">POST</span
+              ><code
+                >/api/v1/employee/attendance/correction-requests/:requestId/review</code
+              ></a
+            >
+          </div>
+        </section>
+        <article class="endpoint" id="get-employee-attendance-bootstrap">
+          <div class="endpoint-title">
+            <span class="method get">GET</span
+            ><code>/api/v1/employee/attendance/bootstrap</code>
+          </div>
+          <p>Bootstrap owner attendance/home/check-in.</p>
+          <div class="meta-row">
+            <span>Auth: Backend access token</span><span>Scope: owner</span
+            ><span>Used by: Owner home, check-in, add-attendance</span>
+          </div>
+          <h4>Headers</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>Authorization</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Bearer accessToken sau signin/refresh-token.</td>
+                <td><code>Bearer eyJ...</code></td>
+              </tr>
+              <tr>
+                <td><code>X-Firebase-AppCheck</code></td>
+                <td>string</td>
+                <td>Prod</td>
+                <td>Firebase App Check token. Monitoring không cần.</td>
+                <td><code>eyJ...</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Query params</h4>
+          <p class="muted">Không có query params.</p>
+          <h4>Request body</h4>
+          <p class="muted">GET không có body.</p>
+
+          <h4>cURL</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>curl</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>curl -X GET &quot;$API_BASE/employee/attendance/bootstrap&quot; \
+  -H &quot;Authorization: Bearer eyJ...&quot; \
+  -H &quot;X-Firebase-AppCheck: $APP_CHECK_TOKEN&quot;</code></pre>
+          </div>
+          <h4>Successful response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>200 response</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;branches&quot;: [
+    {
+      &quot;id&quot;: &quot;branch_123&quot;,
+      &quot;shopId&quot;: &quot;shop_123&quot;,
+      &quot;name&quot;: &quot;Cửa hàng Bình Thạnh&quot;,
+      &quot;settlementCutoffTime&quot;: &quot;04:00&quot;,
+      &quot;status&quot;: &quot;active&quot;,
+      &quot;storeId&quot;: &quot;branch_123&quot;,
+      &quot;addressText&quot;: &quot;Bình Thạnh, HCM&quot;,
+      &quot;label&quot;: &quot;Cửa hàng Bình Thạnh&quot;,
+      &quot;value&quot;: &quot;branch_123&quot;
+    }
+  ],
+  &quot;employees&quot;: [
+    {
+      &quot;id&quot;: &quot;emp_1&quot;,
+      &quot;uid&quot;: &quot;emp_1&quot;,
+      &quot;email&quot;: &quot;hai@example.com&quot;,
+      &quot;name&quot;: &quot;Hải&quot;,
+      &quot;role&quot;: &quot;employee&quot;,
+      &quot;active&quot;: true,
+      &quot;status&quot;: &quot;active&quot;,
+      &quot;branchId&quot;: &quot;branch_123&quot;,
+      &quot;storeId&quot;: &quot;branch_123&quot;,
+      &quot;compensationModel&quot;: &quot;commission&quot;,
+      &quot;label&quot;: &quot;Hải&quot;,
+      &quot;value&quot;: &quot;emp_1&quot;
+    }
+  ],
+  &quot;services&quot;: [
+    {
+      &quot;id&quot;: &quot;svc_1&quot;,
+      &quot;branchId&quot;: &quot;branch_123&quot;,
+      &quot;name&quot;: &quot;Gel manicure&quot;,
+      &quot;price&quot;: 45,
+      &quot;amount&quot;: &quot;45&quot;,
+      &quot;category&quot;: &quot;manicure&quot;,
+      &quot;groupService&quot;: &quot;Gel&quot;,
+      &quot;durationMin&quot;: 60,
+      &quot;durationMax&quot;: 60,
+      &quot;duration&quot;: &quot;60&quot;,
+      &quot;images&quot;: []
+    }
+  ],
+  &quot;attendances&quot;: [
+    {
+      &quot;id&quot;: &quot;att_1&quot;,
+      &quot;workDate&quot;: &quot;2026-06-06&quot;,
+      &quot;branchId&quot;: &quot;branch_123&quot;,
+      &quot;branchName&quot;: &quot;Cửa hàng Bình Thạnh&quot;,
+      &quot;status&quot;: &quot;open&quot;,
+      &quot;services&quot;: [
+        {
+          &quot;id&quot;: &quot;svc_1&quot;,
+          &quot;type&quot;: &quot;predefined&quot;,
+          &quot;name&quot;: &quot;Gel manicure&quot;,
+          &quot;price&quot;: 45,
+          &quot;employees&quot;: [
+            {
+              &quot;employeeUserId&quot;: &quot;emp_1&quot;,
+              &quot;employeeName&quot;: &quot;Hải&quot;,
+              &quot;percentage&quot;: 100,
+              &quot;shareAmount&quot;: 45
+            }
+          ]
+        }
+      ],
+      &quot;assignees&quot;: [
+        {
+          &quot;employeeUserId&quot;: &quot;emp_1&quot;,
+          &quot;employeeName&quot;: &quot;Hải&quot;,
+          &quot;percentage&quot;: 100,
+          &quot;shareAmount&quot;: 45
+        }
+      ],
+      &quot;subtotalAmount&quot;: 45,
+      &quot;discount&quot;: {
+        &quot;type&quot;: &quot;amount&quot;,
+        &quot;value&quot;: 5,
+        &quot;amount&quot;: 5
+      },
+      &quot;totalAmount&quot;: 40
+    }
+  ]
+}</code></pre>
+          </div>
+          <h4>Response fields</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>branches[]</code></td>
+                <td>Branch[]</td>
+                <td>Stores.</td>
+              </tr>
+              <tr>
+                <td><code>employees[]</code></td>
+                <td>Employee[]</td>
+                <td>Nhân viên active.</td>
+              </tr>
+              <tr>
+                <td><code>services[]</code></td>
+                <td>Service[]</td>
+                <td>Service catalog.</td>
+              </tr>
+              <tr>
+                <td><code>attendances[]</code></td>
+                <td>Attendance[]</td>
+                <td>Chấm công visible.</td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Failed response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>403 error</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;type&quot;: &quot;/employee/forbidden-role&quot;,
+  &quot;message&quot;: &quot;Forbidden: insufficient permissions&quot;
+}</code></pre>
+          </div>
+          <h4>Notes</h4>
+          <ul>
+            <li>Owner cache source chính cho nhiều màn.</li>
+          </ul>
+        </article>
+        <article class="endpoint" id="get-employee-attendance">
+          <div class="endpoint-title">
+            <span class="method get">GET</span
+            ><code>/api/v1/employee/attendance</code>
+          </div>
+          <p>List attendance.</p>
+          <div class="meta-row">
+            <span>Auth: Backend access token</span
+            ><span>Scope: owner hoặc employee scoped</span
+            ><span>Used by: Attendance/calendar/check-ins</span>
+          </div>
+          <h4>Headers</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>Authorization</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Bearer accessToken sau signin/refresh-token.</td>
+                <td><code>Bearer eyJ...</code></td>
+              </tr>
+              <tr>
+                <td><code>X-Firebase-AppCheck</code></td>
+                <td>string</td>
+                <td>Prod</td>
+                <td>Firebase App Check token. Monitoring không cần.</td>
+                <td><code>eyJ...</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Query params</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>branchId</code></td>
+                <td>string</td>
+                <td>No</td>
+                <td>Branch filter.</td>
+                <td><code>branch_123</code></td>
+              </tr>
+              <tr>
+                <td><code>fromWorkDate/toWorkDate</code></td>
+                <td>date</td>
+                <td>No</td>
+                <td>Range workDate.</td>
+                <td><code>2026-06-01</code></td>
+              </tr>
+              <tr>
+                <td><code>employeeUserId</code></td>
+                <td>string</td>
+                <td>No</td>
+                <td>Filter employee nếu role cho phép.</td>
+                <td><code>emp_1</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Request body</h4>
+          <p class="muted">GET không có body.</p>
+
+          <h4>cURL</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>curl</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>curl -X GET &quot;$API_BASE/employee/attendance?branchId=branch_123&amp;fromWorkDate=2026-06-01&amp;toWorkDate=2026-06-30&quot; \
+  -H &quot;Authorization: Bearer eyJ...&quot; \
+  -H &quot;X-Firebase-AppCheck: $APP_CHECK_TOKEN&quot;</code></pre>
+          </div>
+          <h4>Successful response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>200 response</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;items&quot;: [
+    {
+      &quot;id&quot;: &quot;att_1&quot;,
+      &quot;workDate&quot;: &quot;2026-06-06&quot;,
+      &quot;branchId&quot;: &quot;branch_123&quot;,
+      &quot;branchName&quot;: &quot;Cửa hàng Bình Thạnh&quot;,
+      &quot;status&quot;: &quot;open&quot;,
+      &quot;services&quot;: [
+        {
+          &quot;id&quot;: &quot;svc_1&quot;,
+          &quot;type&quot;: &quot;predefined&quot;,
+          &quot;name&quot;: &quot;Gel manicure&quot;,
+          &quot;price&quot;: 45,
+          &quot;employees&quot;: [
+            {
+              &quot;employeeUserId&quot;: &quot;emp_1&quot;,
+              &quot;employeeName&quot;: &quot;Hải&quot;,
+              &quot;percentage&quot;: 100,
+              &quot;shareAmount&quot;: 45
+            }
+          ]
+        }
+      ],
+      &quot;assignees&quot;: [
+        {
+          &quot;employeeUserId&quot;: &quot;emp_1&quot;,
+          &quot;employeeName&quot;: &quot;Hải&quot;,
+          &quot;percentage&quot;: 100,
+          &quot;shareAmount&quot;: 45
+        }
+      ],
+      &quot;subtotalAmount&quot;: 45,
+      &quot;discount&quot;: {
+        &quot;type&quot;: &quot;amount&quot;,
+        &quot;value&quot;: 5,
+        &quot;amount&quot;: 5
+      },
+      &quot;totalAmount&quot;: 40
+    }
+  ]
+}</code></pre>
+          </div>
+          <h4>Response fields</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>items[]</code></td>
+                <td>Attendance[]</td>
+                <td>Danh sách attendance.</td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Failed response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>403 error</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;type&quot;: &quot;/employee/forbidden-branch&quot;,
+  &quot;message&quot;: &quot;Forbidden: branch access denied&quot;
+}</code></pre>
+          </div>
+          <h4>Notes</h4>
+          <ul>
+            <li>Employee chỉ đọc attendance do mình tạo hoặc được assign.</li>
+          </ul>
+        </article>
+        <article class="endpoint" id="get-employee-attendance-attendanceid">
+          <div class="endpoint-title">
+            <span class="method get">GET</span
+            ><code>/api/v1/employee/attendance/:attendanceId</code>
+          </div>
+          <p>Attendance detail.</p>
+          <div class="meta-row">
+            <span>Auth: Backend access token</span
+            ><span>Scope: owner hoặc employee scoped</span
+            ><span>Used by: Attendance detail, correction flow</span>
+          </div>
+          <h4>Headers</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>Authorization</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Bearer accessToken sau signin/refresh-token.</td>
+                <td><code>Bearer eyJ...</code></td>
+              </tr>
+              <tr>
+                <td><code>X-Firebase-AppCheck</code></td>
+                <td>string</td>
+                <td>Prod</td>
+                <td>Firebase App Check token. Monitoring không cần.</td>
+                <td><code>eyJ...</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Query params</h4>
+          <p class="muted">Không có query params.</p>
+          <h4>Request body</h4>
+          <p class="muted">GET không có body.</p>
+
+          <h4>cURL</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>curl</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>curl -X GET &quot;$API_BASE/employee/attendance/:attendanceId&quot; \
+  -H &quot;Authorization: Bearer eyJ...&quot; \
+  -H &quot;X-Firebase-AppCheck: $APP_CHECK_TOKEN&quot;</code></pre>
+          </div>
+          <h4>Successful response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>200 response</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;attendance&quot;: {
+    &quot;id&quot;: &quot;att_1&quot;,
+    &quot;workDate&quot;: &quot;2026-06-06&quot;,
+    &quot;branchId&quot;: &quot;branch_123&quot;,
+    &quot;branchName&quot;: &quot;Cửa hàng Bình Thạnh&quot;,
+    &quot;status&quot;: &quot;open&quot;,
+    &quot;services&quot;: [
+      {
+        &quot;id&quot;: &quot;svc_1&quot;,
+        &quot;type&quot;: &quot;predefined&quot;,
+        &quot;name&quot;: &quot;Gel manicure&quot;,
+        &quot;price&quot;: 45,
+        &quot;employees&quot;: [
+          {
+            &quot;employeeUserId&quot;: &quot;emp_1&quot;,
+            &quot;employeeName&quot;: &quot;Hải&quot;,
+            &quot;percentage&quot;: 100,
+            &quot;shareAmount&quot;: 45
+          }
+        ]
+      }
+    ],
+    &quot;assignees&quot;: [
+      {
+        &quot;employeeUserId&quot;: &quot;emp_1&quot;,
+        &quot;employeeName&quot;: &quot;Hải&quot;,
+        &quot;percentage&quot;: 100,
+        &quot;shareAmount&quot;: 45
+      }
+    ],
+    &quot;subtotalAmount&quot;: 45,
+    &quot;discount&quot;: {
+      &quot;type&quot;: &quot;amount&quot;,
+      &quot;value&quot;: 5,
+      &quot;amount&quot;: 5
+    },
+    &quot;totalAmount&quot;: 40
+  },
+  &quot;item&quot;: {
+    &quot;id&quot;: &quot;att_1&quot;,
+    &quot;workDate&quot;: &quot;2026-06-06&quot;,
+    &quot;totalAmount&quot;: 40,
+    &quot;status&quot;: &quot;open&quot;
+  }
+}</code></pre>
+          </div>
+          <h4>Response fields</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>attendance</code></td>
+                <td>Attendance</td>
+                <td>Canonical normalized attendance.</td>
+              </tr>
+              <tr>
+                <td><code>item</code></td>
+                <td>FrontendAttendanceItem</td>
+                <td>Compatibility shape cho UI.</td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Failed response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>404 error</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;type&quot;: &quot;/employee/attendance-not-found&quot;,
+  &quot;message&quot;: &quot;Attendance not found&quot;
+}</code></pre>
+          </div>
+          <h4>Notes</h4>
+          <ul>
+            <li>Employee cần là creator hoặc assignee.</li>
+          </ul>
+        </article>
+        <article class="endpoint" id="post-employee-attendance">
+          <div class="endpoint-title">
+            <span class="method post">POST</span
+            ><code>/api/v1/employee/attendance</code>
+          </div>
+          <p>Tạo attendance/check-in.</p>
+          <div class="meta-row">
+            <span>Auth: Backend access token</span
+            ><span>Scope: owner hoặc employee branch</span
+            ><span>Used by: Add attendance, employee new check-in</span>
+          </div>
+          <h4>Headers</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>Authorization</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Bearer accessToken sau signin/refresh-token.</td>
+                <td><code>Bearer eyJ...</code></td>
+              </tr>
+              <tr>
+                <td><code>X-Firebase-AppCheck</code></td>
+                <td>string</td>
+                <td>Prod</td>
+                <td>Firebase App Check token. Monitoring không cần.</td>
+                <td><code>eyJ...</code></td>
+              </tr>
+              <tr>
+                <td><code>Content-Type</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>application/json.</td>
+                <td><code>application/json</code></td>
+              </tr>
+              <tr>
+                <td><code>X-Idempotency-Key</code></td>
+                <td>string</td>
+                <td>Recommended</td>
+                <td>Key ổn định cho POST/PATCH/DELETE để tránh ghi trùng.</td>
+                <td><code>attendance-2026-06-06-001</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Query params</h4>
+          <p class="muted">Không có query params.</p>
+          <h4>Request body</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>workDate</code></td>
+                <td>date</td>
+                <td>Yes</td>
+                <td>YYYY-MM-DD.</td>
+                <td><code>2026-06-06</code></td>
+              </tr>
+              <tr>
+                <td><code>branchId</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Branch id.</td>
+                <td><code>branch_123</code></td>
+              </tr>
+              <tr>
+                <td><code>branchName</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Branch name.</td>
+                <td><code>Cửa hàng Bình Thạnh</code></td>
+              </tr>
+              <tr>
+                <td><code>startTime/endTime</code></td>
+                <td>number</td>
+                <td>Yes</td>
+                <td>Minutes in day, end > start.</td>
+                <td><code>540/600</code></td>
+              </tr>
+              <tr>
+                <td><code>customerName</code></td>
+                <td>string</td>
+                <td>No</td>
+                <td>1..100.</td>
+                <td><code>Khách A</code></td>
+              </tr>
+              <tr>
+                <td><code>service or services</code></td>
+                <td>object</td>
+                <td>Yes</td>
+                <td>Exactly one; services length 1 hiện tại.</td>
+                <td><code>{}</code></td>
+              </tr>
+              <tr>
+                <td><code>assignees</code></td>
+                <td>array</td>
+                <td>Yes</td>
+                <td>Max 20; percentage nếu có phải đủ và tổng <= 100.</td>
+                <td><code>[{employeeUserId,percentage}]</code></td>
+              </tr>
+              <tr>
+                <td><code>discount</code></td>
+                <td>object</td>
+                <td>No</td>
+                <td>{type: amount|percentage, value}.</td>
+                <td><code>{type:&quot;amount&quot;,value:5}</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="codebox">
+            <div class="codebar">
+              <span>request.json</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;workDate&quot;: &quot;2026-06-06&quot;,
+  &quot;branchId&quot;: &quot;branch_123&quot;,
+  &quot;branchName&quot;: &quot;Cửa hàng Bình Thạnh&quot;,
+  &quot;startTime&quot;: 540,
+  &quot;endTime&quot;: 600,
+  &quot;customerName&quot;: &quot;Khách A&quot;,
+  &quot;service&quot;: {
+    &quot;mode&quot;: &quot;existing&quot;,
+    &quot;serviceId&quot;: &quot;svc_1&quot;,
+    &quot;name&quot;: &quot;Gel manicure&quot;,
+    &quot;category&quot;: &quot;manicure&quot;,
+    &quot;price&quot;: 45
+  },
+  &quot;assignees&quot;: [
+    {
+      &quot;employeeUserId&quot;: &quot;emp_1&quot;,
+      &quot;percentage&quot;: 100
+    }
+  ],
+  &quot;discount&quot;: {
+    &quot;type&quot;: &quot;amount&quot;,
+    &quot;value&quot;: 5
+  }
+}</code></pre>
+          </div>
+          <h4>cURL</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>curl</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>curl -X POST &quot;$API_BASE/employee/attendance&quot; \
+  -H &quot;Authorization: Bearer eyJ...&quot; \
+  -H &quot;X-Firebase-AppCheck: $APP_CHECK_TOKEN&quot; \
+  -H &quot;Content-Type: application/json&quot; \
+  -H &quot;X-Idempotency-Key: attendance-2026-06-06-001&quot; \
+  -d &#39;{&quot;workDate&quot;:&quot;2026-06-06&quot;,&quot;branchId&quot;:&quot;branch_123&quot;,&quot;branchName&quot;:&quot;Cửa hàng Bình Thạnh&quot;,&quot;startTime&quot;:540,&quot;endTime&quot;:600,&quot;customerName&quot;:&quot;Khách A&quot;,&quot;service&quot;:{&quot;mode&quot;:&quot;existing&quot;,&quot;serviceId&quot;:&quot;svc_1&quot;,&quot;name&quot;:&quot;Gel manicure&quot;,&quot;category&quot;:&quot;manicure&quot;,&quot;price&quot;:45},&quot;assignees&quot;:[{&quot;employeeUserId&quot;:&quot;emp_1&quot;,&quot;percentage&quot;:100}],&quot;discount&quot;:{&quot;type&quot;:&quot;amount&quot;,&quot;value&quot;:5}}&#39;</code></pre>
+          </div>
+          <h4>Successful response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>201 response</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;attendance&quot;: {
+    &quot;id&quot;: &quot;att_1&quot;,
+    &quot;workDate&quot;: &quot;2026-06-06&quot;,
+    &quot;branchId&quot;: &quot;branch_123&quot;,
+    &quot;branchName&quot;: &quot;Cửa hàng Bình Thạnh&quot;,
+    &quot;status&quot;: &quot;open&quot;,
+    &quot;services&quot;: [
+      {
+        &quot;id&quot;: &quot;svc_1&quot;,
+        &quot;type&quot;: &quot;predefined&quot;,
+        &quot;name&quot;: &quot;Gel manicure&quot;,
+        &quot;price&quot;: 45,
+        &quot;employees&quot;: [
+          {
+            &quot;employeeUserId&quot;: &quot;emp_1&quot;,
+            &quot;employeeName&quot;: &quot;Hải&quot;,
+            &quot;percentage&quot;: 100,
+            &quot;shareAmount&quot;: 45
+          }
+        ]
+      }
+    ],
+    &quot;assignees&quot;: [
+      {
+        &quot;employeeUserId&quot;: &quot;emp_1&quot;,
+        &quot;employeeName&quot;: &quot;Hải&quot;,
+        &quot;percentage&quot;: 100,
+        &quot;shareAmount&quot;: 45
+      }
+    ],
+    &quot;subtotalAmount&quot;: 45,
+    &quot;discount&quot;: {
+      &quot;type&quot;: &quot;amount&quot;,
+      &quot;value&quot;: 5,
+      &quot;amount&quot;: 5
+    },
+    &quot;totalAmount&quot;: 40
+  },
+  &quot;item&quot;: {
+    &quot;id&quot;: &quot;att_1&quot;,
+    &quot;workDate&quot;: &quot;2026-06-06&quot;,
+    &quot;totalAmount&quot;: 40,
+    &quot;status&quot;: &quot;open&quot;
+  }
+}</code></pre>
+          </div>
+          <h4>Response fields</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>attendance</code></td>
+                <td>Attendance</td>
+                <td>Attendance đã normalize.</td>
+              </tr>
+              <tr>
+                <td><code>item</code></td>
+                <td>FrontendAttendanceItem</td>
+                <td>Shape frontend.</td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Failed response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>400 error</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;type&quot;: &quot;/employee/invalid-request&quot;,
+  &quot;message&quot;: &quot;Invalid request&quot;
+}</code></pre>
+          </div>
+          <h4>Notes</h4>
+          <ul>
+            <li>
+              Discount ở đây là khách được giảm; settlement mới quyết định
+              chủ/NV chịu.
+            </li>
+            <li>
+              Nếu assignee percentages có gửi thì mọi assignee phải có
+              percentage.
+            </li>
+          </ul>
+        </article>
+        <article class="endpoint" id="patch-employee-attendance-attendanceid">
+          <div class="endpoint-title">
+            <span class="method patch">PATCH</span
+            ><code>/api/v1/employee/attendance/:attendanceId</code>
+          </div>
+          <p>Cập nhật attendance.</p>
+          <div class="meta-row">
+            <span>Auth: Backend access token</span
+            ><span>Scope: owner hoặc creator</span
+            ><span>Used by: Edit attendance/correction apply</span>
+          </div>
+          <h4>Headers</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>Authorization</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Bearer accessToken sau signin/refresh-token.</td>
+                <td><code>Bearer eyJ...</code></td>
+              </tr>
+              <tr>
+                <td><code>X-Firebase-AppCheck</code></td>
+                <td>string</td>
+                <td>Prod</td>
+                <td>Firebase App Check token. Monitoring không cần.</td>
+                <td><code>eyJ...</code></td>
+              </tr>
+              <tr>
+                <td><code>Content-Type</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>application/json.</td>
+                <td><code>application/json</code></td>
+              </tr>
+              <tr>
+                <td><code>X-Idempotency-Key</code></td>
+                <td>string</td>
+                <td>Recommended</td>
+                <td>Key ổn định cho POST/PATCH/DELETE để tránh ghi trùng.</td>
+                <td><code>attendance-2026-06-06-001</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Query params</h4>
+          <p class="muted">Không có query params.</p>
+          <h4>Request body</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>workDate</code></td>
+                <td>date</td>
+                <td>Yes</td>
+                <td>YYYY-MM-DD.</td>
+                <td><code>2026-06-06</code></td>
+              </tr>
+              <tr>
+                <td><code>branchId</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Branch id.</td>
+                <td><code>branch_123</code></td>
+              </tr>
+              <tr>
+                <td><code>branchName</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Branch name.</td>
+                <td><code>Cửa hàng Bình Thạnh</code></td>
+              </tr>
+              <tr>
+                <td><code>startTime/endTime</code></td>
+                <td>number</td>
+                <td>Yes</td>
+                <td>Minutes in day, end > start.</td>
+                <td><code>540/600</code></td>
+              </tr>
+              <tr>
+                <td><code>customerName</code></td>
+                <td>string</td>
+                <td>No</td>
+                <td>1..100.</td>
+                <td><code>Khách A</code></td>
+              </tr>
+              <tr>
+                <td><code>service or services</code></td>
+                <td>object</td>
+                <td>Yes</td>
+                <td>Exactly one; services length 1 hiện tại.</td>
+                <td><code>{}</code></td>
+              </tr>
+              <tr>
+                <td><code>assignees</code></td>
+                <td>array</td>
+                <td>Yes</td>
+                <td>Max 20; percentage nếu có phải đủ và tổng <= 100.</td>
+                <td><code>[{employeeUserId,percentage}]</code></td>
+              </tr>
+              <tr>
+                <td><code>discount</code></td>
+                <td>object</td>
+                <td>No</td>
+                <td>{type: amount|percentage, value}.</td>
+                <td><code>{type:&quot;amount&quot;,value:5}</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="codebox">
+            <div class="codebar">
+              <span>request.json</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;workDate&quot;: &quot;2026-06-06&quot;,
+  &quot;branchId&quot;: &quot;branch_123&quot;,
+  &quot;branchName&quot;: &quot;Cửa hàng Bình Thạnh&quot;,
+  &quot;startTime&quot;: 540,
+  &quot;endTime&quot;: 600,
+  &quot;customerName&quot;: &quot;Khách B&quot;,
+  &quot;service&quot;: {
+    &quot;mode&quot;: &quot;existing&quot;,
+    &quot;serviceId&quot;: &quot;svc_1&quot;,
+    &quot;name&quot;: &quot;Gel manicure&quot;,
+    &quot;category&quot;: &quot;manicure&quot;,
+    &quot;price&quot;: 45
+  },
+  &quot;assignees&quot;: [
+    {
+      &quot;employeeUserId&quot;: &quot;emp_1&quot;,
+      &quot;percentage&quot;: 100
+    }
+  ],
+  &quot;discount&quot;: {
+    &quot;type&quot;: &quot;amount&quot;,
+    &quot;value&quot;: 5
+  }
+}</code></pre>
+          </div>
+          <h4>cURL</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>curl</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>curl -X PATCH &quot;$API_BASE/employee/attendance/:attendanceId&quot; \
+  -H &quot;Authorization: Bearer eyJ...&quot; \
+  -H &quot;X-Firebase-AppCheck: $APP_CHECK_TOKEN&quot; \
+  -H &quot;Content-Type: application/json&quot; \
+  -H &quot;X-Idempotency-Key: attendance-2026-06-06-001&quot; \
+  -d &#39;{&quot;workDate&quot;:&quot;2026-06-06&quot;,&quot;branchId&quot;:&quot;branch_123&quot;,&quot;branchName&quot;:&quot;Cửa hàng Bình Thạnh&quot;,&quot;startTime&quot;:540,&quot;endTime&quot;:600,&quot;customerName&quot;:&quot;Khách B&quot;,&quot;service&quot;:{&quot;mode&quot;:&quot;existing&quot;,&quot;serviceId&quot;:&quot;svc_1&quot;,&quot;name&quot;:&quot;Gel manicure&quot;,&quot;category&quot;:&quot;manicure&quot;,&quot;price&quot;:45},&quot;assignees&quot;:[{&quot;employeeUserId&quot;:&quot;emp_1&quot;,&quot;percentage&quot;:100}],&quot;discount&quot;:{&quot;type&quot;:&quot;amount&quot;,&quot;value&quot;:5}}&#39;</code></pre>
+          </div>
+          <h4>Successful response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>200 response</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;attendance&quot;: {
+    &quot;id&quot;: &quot;att_1&quot;,
+    &quot;workDate&quot;: &quot;2026-06-06&quot;,
+    &quot;branchId&quot;: &quot;branch_123&quot;,
+    &quot;branchName&quot;: &quot;Cửa hàng Bình Thạnh&quot;,
+    &quot;status&quot;: &quot;open&quot;,
+    &quot;services&quot;: [
+      {
+        &quot;id&quot;: &quot;svc_1&quot;,
+        &quot;type&quot;: &quot;predefined&quot;,
+        &quot;name&quot;: &quot;Gel manicure&quot;,
+        &quot;price&quot;: 45,
+        &quot;employees&quot;: [
+          {
+            &quot;employeeUserId&quot;: &quot;emp_1&quot;,
+            &quot;employeeName&quot;: &quot;Hải&quot;,
+            &quot;percentage&quot;: 100,
+            &quot;shareAmount&quot;: 45
+          }
+        ]
+      }
+    ],
+    &quot;assignees&quot;: [
+      {
+        &quot;employeeUserId&quot;: &quot;emp_1&quot;,
+        &quot;employeeName&quot;: &quot;Hải&quot;,
+        &quot;percentage&quot;: 100,
+        &quot;shareAmount&quot;: 45
+      }
+    ],
+    &quot;subtotalAmount&quot;: 45,
+    &quot;discount&quot;: {
+      &quot;type&quot;: &quot;amount&quot;,
+      &quot;value&quot;: 5,
+      &quot;amount&quot;: 5
+    },
+    &quot;totalAmount&quot;: 40,
+    &quot;customerName&quot;: &quot;Khách B&quot;
+  },
+  &quot;item&quot;: {
+    &quot;id&quot;: &quot;att_1&quot;,
+    &quot;customerName&quot;: &quot;Khách B&quot;,
+    &quot;totalAmount&quot;: 40,
+    &quot;status&quot;: &quot;open&quot;
+  }
+}</code></pre>
+          </div>
+          <h4>Response fields</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>attendance</code></td>
+                <td>Attendance</td>
+                <td>Attendance sau update.</td>
+              </tr>
+              <tr>
+                <td><code>item</code></td>
+                <td>FrontendAttendanceItem</td>
+                <td>Shape frontend.</td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Failed response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>409 error</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;type&quot;: &quot;/employee/attendance-locked&quot;,
+  &quot;message&quot;: &quot;Attendance cannot be changed after close-day confirmation&quot;
+}</code></pre>
+          </div>
+          <h4>Notes</h4>
+          <ul>
+            <li>
+              Không sửa nếu đã owner chốt sổ hoặc locked bởi close-day theo rule
+              backend.
+            </li>
+          </ul>
+        </article>
+        <article class="endpoint" id="post-employee-me-attendance-close-day">
+          <div class="endpoint-title">
+            <span class="method post">POST</span
+            ><code>/api/v1/employee/me/attendance/close-day</code>
+          </div>
+          <p>Employee chốt toàn bộ attendance trong ngày của mình.</p>
+          <div class="meta-row">
+            <span>Auth: Backend access token</span
+            ><span>Scope: employee branch</span
+            ><span>Used by: Employee check-ins sticky button</span>
+          </div>
+          <h4>Headers</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>Authorization</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Bearer accessToken sau signin/refresh-token.</td>
+                <td><code>Bearer eyJ...</code></td>
+              </tr>
+              <tr>
+                <td><code>X-Firebase-AppCheck</code></td>
+                <td>string</td>
+                <td>Prod</td>
+                <td>Firebase App Check token. Monitoring không cần.</td>
+                <td><code>eyJ...</code></td>
+              </tr>
+              <tr>
+                <td><code>Content-Type</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>application/json.</td>
+                <td><code>application/json</code></td>
+              </tr>
+              <tr>
+                <td><code>X-Idempotency-Key</code></td>
+                <td>string</td>
+                <td>Recommended</td>
+                <td>Key ổn định cho POST/PATCH/DELETE để tránh ghi trùng.</td>
+                <td><code>attendance-2026-06-06-001</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Query params</h4>
+          <p class="muted">Không có query params.</p>
+          <h4>Request body</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>workDate/date</code></td>
+                <td>date</td>
+                <td>Yes</td>
+                <td>YYYY-MM-DD hoặc parseable date.</td>
+                <td><code>2026-06-06</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="codebox">
+            <div class="codebar">
+              <span>request.json</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;workDate&quot;: &quot;2026-06-06&quot;
+}</code></pre>
+          </div>
+          <h4>cURL</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>curl</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>curl -X POST &quot;$API_BASE/employee/me/attendance/close-day&quot; \
+  -H &quot;Authorization: Bearer eyJ...&quot; \
+  -H &quot;X-Firebase-AppCheck: $APP_CHECK_TOKEN&quot; \
+  -H &quot;Content-Type: application/json&quot; \
+  -H &quot;X-Idempotency-Key: attendance-2026-06-06-001&quot; \
+  -d &#39;{&quot;workDate&quot;:&quot;2026-06-06&quot;}&#39;</code></pre>
+          </div>
+          <h4>Successful response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>200 response</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;workDate&quot;: &quot;2026-06-06&quot;,
+  &quot;branchId&quot;: &quot;branch_123&quot;,
+  &quot;employeeUserId&quot;: &quot;emp_1&quot;,
+  &quot;totalCount&quot;: 2,
+  &quot;closedCount&quot;: 2,
+  &quot;alreadyClosedCount&quot;: 0,
+  &quot;attendances&quot;: [
+    {
+      &quot;id&quot;: &quot;att_1&quot;,
+      &quot;workDate&quot;: &quot;2026-06-06&quot;,
+      &quot;branchId&quot;: &quot;branch_123&quot;,
+      &quot;branchName&quot;: &quot;Cửa hàng Bình Thạnh&quot;,
+      &quot;status&quot;: &quot;closed&quot;,
+      &quot;services&quot;: [
+        {
+          &quot;id&quot;: &quot;svc_1&quot;,
+          &quot;type&quot;: &quot;predefined&quot;,
+          &quot;name&quot;: &quot;Gel manicure&quot;,
+          &quot;price&quot;: 45,
+          &quot;employees&quot;: [
+            {
+              &quot;employeeUserId&quot;: &quot;emp_1&quot;,
+              &quot;employeeName&quot;: &quot;Hải&quot;,
+              &quot;percentage&quot;: 100,
+              &quot;shareAmount&quot;: 45
+            }
+          ]
+        }
+      ],
+      &quot;assignees&quot;: [
+        {
+          &quot;employeeUserId&quot;: &quot;emp_1&quot;,
+          &quot;employeeName&quot;: &quot;Hải&quot;,
+          &quot;percentage&quot;: 100,
+          &quot;shareAmount&quot;: 45
+        }
+      ],
+      &quot;subtotalAmount&quot;: 45,
+      &quot;discount&quot;: {
+        &quot;type&quot;: &quot;amount&quot;,
+        &quot;value&quot;: 5,
+        &quot;amount&quot;: 5
+      },
+      &quot;totalAmount&quot;: 40
+    }
+  ],
+  &quot;items&quot;: [
+    {
+      &quot;id&quot;: &quot;att_1&quot;,
+      &quot;workDate&quot;: &quot;2026-06-06&quot;,
+      &quot;status&quot;: &quot;closed&quot;
+    }
+  ]
+}</code></pre>
+          </div>
+          <h4>Response fields</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>closedCount</code></td>
+                <td>number</td>
+                <td>Số attendance vừa đóng.</td>
+              </tr>
+              <tr>
+                <td><code>alreadyClosedCount</code></td>
+                <td>number</td>
+                <td>Idempotent count.</td>
+              </tr>
+              <tr>
+                <td><code>invalidAttendanceIds</code></td>
+                <td>string[]?</td>
+                <td>Chỉ có trong error incomplete.</td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Failed response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>409 error</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;type&quot;: &quot;/employee/attendance-incomplete&quot;,
+  &quot;message&quot;: &quot;Some attendance entries are missing services, assignees, or full allocation&quot;,
+  &quot;invalidAttendanceIds&quot;: [
+    &quot;att_1&quot;
+  ]
+}</code></pre>
+          </div>
+          <h4>Notes</h4>
+          <ul>
+            <li>Flow chính mới.</li>
+            <li>All-or-nothing: có lỗi thì không đóng attendance nào.</li>
+            <li>Nếu tất cả đã closed, trả 200 với closedCount 0.</li>
+          </ul>
+        </article>
+        <article
+          class="endpoint"
+          id="post-employee-attendance-attendanceid-close"
+        >
+          <div class="endpoint-title">
+            <span class="method post">POST</span
+            ><code>/api/v1/employee/attendance/:attendanceId/close</code>
+          </div>
+          <p>Legacy close một attendance.</p>
+          <div class="meta-row">
+            <span>Auth: Backend access token</span
+            ><span>Scope: legacy owner/creator</span
+            ><span>Used by: Legacy tests/backward compatibility</span>
+          </div>
+          <h4>Headers</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>Authorization</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Bearer accessToken sau signin/refresh-token.</td>
+                <td><code>Bearer eyJ...</code></td>
+              </tr>
+              <tr>
+                <td><code>X-Firebase-AppCheck</code></td>
+                <td>string</td>
+                <td>Prod</td>
+                <td>Firebase App Check token. Monitoring không cần.</td>
+                <td><code>eyJ...</code></td>
+              </tr>
+              <tr>
+                <td><code>Content-Type</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>application/json.</td>
+                <td><code>application/json</code></td>
+              </tr>
+              <tr>
+                <td><code>X-Idempotency-Key</code></td>
+                <td>string</td>
+                <td>Recommended</td>
+                <td>Key ổn định cho POST/PATCH/DELETE để tránh ghi trùng.</td>
+                <td><code>attendance-2026-06-06-001</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Query params</h4>
+          <p class="muted">Không có query params.</p>
+          <h4>Request body</h4>
+          <p class="muted">Không có body.</p>
+          <div class="codebox">
+            <div class="codebar">
+              <span>request.json</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{}</code></pre>
+          </div>
+          <h4>cURL</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>curl</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>curl -X POST &quot;$API_BASE/employee/attendance/:attendanceId/close&quot; \
+  -H &quot;Authorization: Bearer eyJ...&quot; \
+  -H &quot;X-Firebase-AppCheck: $APP_CHECK_TOKEN&quot; \
+  -H &quot;Content-Type: application/json&quot; \
+  -H &quot;X-Idempotency-Key: attendance-2026-06-06-001&quot; \
+  -d &#39;{}&#39;</code></pre>
+          </div>
+          <h4>Successful response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>200 response</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;attendance&quot;: {
+    &quot;id&quot;: &quot;att_1&quot;,
+    &quot;workDate&quot;: &quot;2026-06-06&quot;,
+    &quot;branchId&quot;: &quot;branch_123&quot;,
+    &quot;branchName&quot;: &quot;Cửa hàng Bình Thạnh&quot;,
+    &quot;status&quot;: &quot;closed&quot;,
+    &quot;services&quot;: [
+      {
+        &quot;id&quot;: &quot;svc_1&quot;,
+        &quot;type&quot;: &quot;predefined&quot;,
+        &quot;name&quot;: &quot;Gel manicure&quot;,
+        &quot;price&quot;: 45,
+        &quot;employees&quot;: [
+          {
+            &quot;employeeUserId&quot;: &quot;emp_1&quot;,
+            &quot;employeeName&quot;: &quot;Hải&quot;,
+            &quot;percentage&quot;: 100,
+            &quot;shareAmount&quot;: 45
+          }
+        ]
+      }
+    ],
+    &quot;assignees&quot;: [
+      {
+        &quot;employeeUserId&quot;: &quot;emp_1&quot;,
+        &quot;employeeName&quot;: &quot;Hải&quot;,
+        &quot;percentage&quot;: 100,
+        &quot;shareAmount&quot;: 45
+      }
+    ],
+    &quot;subtotalAmount&quot;: 45,
+    &quot;discount&quot;: {
+      &quot;type&quot;: &quot;amount&quot;,
+      &quot;value&quot;: 5,
+      &quot;amount&quot;: 5
+    },
+    &quot;totalAmount&quot;: 40
+  },
+  &quot;item&quot;: {
+    &quot;id&quot;: &quot;att_1&quot;,
+    &quot;status&quot;: &quot;closed&quot;
+  }
+}</code></pre>
+          </div>
+          <h4>Response fields</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>attendance</code></td>
+                <td>Attendance</td>
+                <td>Attendance đã đóng.</td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Failed response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>409 error</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;type&quot;: &quot;/employee/attendance-incomplete&quot;,
+  &quot;message&quot;: &quot;Attendance is incomplete&quot;
+}</code></pre>
+          </div>
+          <h4>Notes</h4>
+          <ul>
+            <li>UI mới không dùng endpoint này.</li>
+          </ul>
+        </article>
+        <article
+          class="endpoint"
+          id="get-employee-attendance-correction-requests"
+        >
+          <div class="endpoint-title">
+            <span class="method get">GET</span
+            ><code>/api/v1/employee/attendance/correction-requests</code>
+          </div>
+          <p>List correction requests.</p>
+          <div class="meta-row">
+            <span>Auth: Backend access token</span
+            ><span>Scope: owner hoặc employee mine</span
+            ><span>Used by: Correction request list/history</span>
+          </div>
+          <h4>Headers</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>Authorization</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Bearer accessToken sau signin/refresh-token.</td>
+                <td><code>Bearer eyJ...</code></td>
+              </tr>
+              <tr>
+                <td><code>X-Firebase-AppCheck</code></td>
+                <td>string</td>
+                <td>Prod</td>
+                <td>Firebase App Check token. Monitoring không cần.</td>
+                <td><code>eyJ...</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Query params</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>mine</code></td>
+                <td>boolean</td>
+                <td>No</td>
+                <td>Employee chỉ lấy request của mình.</td>
+                <td><code>true</code></td>
+              </tr>
+              <tr>
+                <td><code>branchId</code></td>
+                <td>string</td>
+                <td>No</td>
+                <td>Owner branch filter.</td>
+                <td><code>branch_123</code></td>
+              </tr>
+              <tr>
+                <td><code>status</code></td>
+                <td>enum</td>
+                <td>No</td>
+                <td>pending|approved|rejected|cancelled.</td>
+                <td><code>pending</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Request body</h4>
+          <p class="muted">GET không có body.</p>
+
+          <h4>cURL</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>curl</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>curl -X GET &quot;$API_BASE/employee/attendance/correction-requests?mine=true&quot; \
+  -H &quot;Authorization: Bearer eyJ...&quot; \
+  -H &quot;X-Firebase-AppCheck: $APP_CHECK_TOKEN&quot;</code></pre>
+          </div>
+          <h4>Successful response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>200 response</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;items&quot;: [
+    {
+      &quot;id&quot;: &quot;corr_1&quot;,
+      &quot;attendanceId&quot;: &quot;att_1&quot;,
+      &quot;employeeUserId&quot;: &quot;emp_1&quot;,
+      &quot;reason&quot;: &quot;Sai giờ&quot;,
+      &quot;status&quot;: &quot;pending&quot;,
+      &quot;requestedChanges&quot;: {
+        &quot;customerName&quot;: &quot;Khách B&quot;
+      },
+      &quot;createdAt&quot;: &quot;2026-06-06T10:00:00.000Z&quot;
+    }
+  ]
+}</code></pre>
+          </div>
+          <h4>Response fields</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>items[]</code></td>
+                <td>CorrectionRequest[]</td>
+                <td>Danh sách request.</td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Failed response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>403 error</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;type&quot;: &quot;/employee/forbidden-branch&quot;,
+  &quot;message&quot;: &quot;Forbidden: branch access denied&quot;
+}</code></pre>
+          </div>
+          <h4>Notes</h4>
+          <ul>
+            <li>
+              Owner currently may fanout attendance detail in FE; future API can
+              include summary.
+            </li>
+          </ul>
+        </article>
+        <article
+          class="endpoint"
+          id="post-employee-attendance-attendanceid-correction-requests"
+        >
+          <div class="endpoint-title">
+            <span class="method post">POST</span
+            ><code
+              >/api/v1/employee/attendance/:attendanceId/correction-requests</code
+            >
+          </div>
+          <p>Employee tạo request sửa attendance.</p>
+          <div class="meta-row">
+            <span>Auth: Backend access token</span
+            ><span>Scope: employee creator/assignee</span
+            ><span>Used by: Request edit screen</span>
+          </div>
+          <h4>Headers</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>Authorization</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Bearer accessToken sau signin/refresh-token.</td>
+                <td><code>Bearer eyJ...</code></td>
+              </tr>
+              <tr>
+                <td><code>X-Firebase-AppCheck</code></td>
+                <td>string</td>
+                <td>Prod</td>
+                <td>Firebase App Check token. Monitoring không cần.</td>
+                <td><code>eyJ...</code></td>
+              </tr>
+              <tr>
+                <td><code>Content-Type</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>application/json.</td>
+                <td><code>application/json</code></td>
+              </tr>
+              <tr>
+                <td><code>X-Idempotency-Key</code></td>
+                <td>string</td>
+                <td>Recommended</td>
+                <td>Key ổn định cho POST/PATCH/DELETE để tránh ghi trùng.</td>
+                <td><code>attendance-2026-06-06-001</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Query params</h4>
+          <p class="muted">Không có query params.</p>
+          <h4>Request body</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>reason</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>1..500.</td>
+                <td><code>Sai giờ</code></td>
+              </tr>
+              <tr>
+                <td><code>requestedChanges</code></td>
+                <td>object</td>
+                <td>Yes</td>
+                <td>Ít nhất một thay đổi.</td>
+                <td>
+                  <code
+                    >{customerName,date,startTimestamp,endTimestamp,discountAmount,note,services}</code
+                  >
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="codebox">
+            <div class="codebar">
+              <span>request.json</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;reason&quot;: &quot;Sai giờ&quot;,
+  &quot;requestedChanges&quot;: {
+    &quot;customerName&quot;: &quot;Khách B&quot;,
+    &quot;note&quot;: &quot;Cập nhật tên khách&quot;
+  }
+}</code></pre>
+          </div>
+          <h4>cURL</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>curl</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>curl -X POST &quot;$API_BASE/employee/attendance/:attendanceId/correction-requests&quot; \
+  -H &quot;Authorization: Bearer eyJ...&quot; \
+  -H &quot;X-Firebase-AppCheck: $APP_CHECK_TOKEN&quot; \
+  -H &quot;Content-Type: application/json&quot; \
+  -H &quot;X-Idempotency-Key: attendance-2026-06-06-001&quot; \
+  -d &#39;{&quot;reason&quot;:&quot;Sai giờ&quot;,&quot;requestedChanges&quot;:{&quot;customerName&quot;:&quot;Khách B&quot;,&quot;note&quot;:&quot;Cập nhật tên khách&quot;}}&#39;</code></pre>
+          </div>
+          <h4>Successful response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>201 response</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;id&quot;: &quot;corr_1&quot;,
+  &quot;attendanceId&quot;: &quot;att_1&quot;,
+  &quot;employeeUserId&quot;: &quot;emp_1&quot;,
+  &quot;reason&quot;: &quot;Sai giờ&quot;,
+  &quot;status&quot;: &quot;pending&quot;,
+  &quot;requestedChanges&quot;: {
+    &quot;customerName&quot;: &quot;Khách B&quot;
+  }
+}</code></pre>
+          </div>
+          <h4>Response fields</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>id</code></td>
+                <td>string</td>
+                <td>Request id.</td>
+              </tr>
+              <tr>
+                <td><code>status</code></td>
+                <td>pending</td>
+                <td>Trạng thái ban đầu.</td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Failed response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>400 error</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;type&quot;: &quot;/employee/invalid-request&quot;,
+  &quot;message&quot;: &quot;Invalid request&quot;
+}</code></pre>
+          </div>
+          <h4>Notes</h4>
+          <ul>
+            <li>
+              Nếu request ảnh hưởng settlement đã chốt, review approved sẽ
+              recalculate closing nếu hợp lệ.
+            </li>
+          </ul>
+        </article>
+        <article
+          class="endpoint"
+          id="post-employee-attendance-correction-requests-requestid-cancel"
+        >
+          <div class="endpoint-title">
+            <span class="method post">POST</span
+            ><code
+              >/api/v1/employee/attendance/correction-requests/:requestId/cancel</code
+            >
+          </div>
+          <p>Employee huỷ correction request của mình.</p>
+          <div class="meta-row">
+            <span>Auth: Backend access token</span
+            ><span>Scope: employee owner of request</span
+            ><span>Used by: Correction history</span>
+          </div>
+          <h4>Headers</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>Authorization</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Bearer accessToken sau signin/refresh-token.</td>
+                <td><code>Bearer eyJ...</code></td>
+              </tr>
+              <tr>
+                <td><code>X-Firebase-AppCheck</code></td>
+                <td>string</td>
+                <td>Prod</td>
+                <td>Firebase App Check token. Monitoring không cần.</td>
+                <td><code>eyJ...</code></td>
+              </tr>
+              <tr>
+                <td><code>Content-Type</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>application/json.</td>
+                <td><code>application/json</code></td>
+              </tr>
+              <tr>
+                <td><code>X-Idempotency-Key</code></td>
+                <td>string</td>
+                <td>Recommended</td>
+                <td>Key ổn định cho POST/PATCH/DELETE để tránh ghi trùng.</td>
+                <td><code>attendance-2026-06-06-001</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Query params</h4>
+          <p class="muted">Không có query params.</p>
+          <h4>Request body</h4>
+          <p class="muted">Không có body.</p>
+          <div class="codebox">
+            <div class="codebar">
+              <span>request.json</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{}</code></pre>
+          </div>
+          <h4>cURL</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>curl</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>curl -X POST &quot;$API_BASE/employee/attendance/correction-requests/:requestId/cancel&quot; \
+  -H &quot;Authorization: Bearer eyJ...&quot; \
+  -H &quot;X-Firebase-AppCheck: $APP_CHECK_TOKEN&quot; \
+  -H &quot;Content-Type: application/json&quot; \
+  -H &quot;X-Idempotency-Key: attendance-2026-06-06-001&quot; \
+  -d &#39;{}&#39;</code></pre>
+          </div>
+          <h4>Successful response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>200 response</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;id&quot;: &quot;corr_1&quot;,
+  &quot;status&quot;: &quot;cancelled&quot;
+}</code></pre>
+          </div>
+          <h4>Response fields</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>status</code></td>
+                <td>cancelled</td>
+                <td>Đã huỷ.</td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Failed response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>403 error</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;type&quot;: &quot;/employee/forbidden-role&quot;,
+  &quot;message&quot;: &quot;Forbidden: insufficient permissions&quot;
+}</code></pre>
+          </div>
+          <h4>Notes</h4>
+          <ul>
+            <li>Chỉ request còn huỷ được theo rule backend.</li>
+          </ul>
+        </article>
+        <article
+          class="endpoint"
+          id="post-employee-attendance-correction-requests-requestid-review"
+        >
+          <div class="endpoint-title">
+            <span class="method post">POST</span
+            ><code
+              >/api/v1/employee/attendance/correction-requests/:requestId/review</code
+            >
+          </div>
+          <p>Owner approve/reject correction request.</p>
+          <div class="meta-row">
+            <span>Auth: Backend access token</span
+            ><span>Scope: owner + branch access</span
+            ><span>Used by: Owner correction review</span>
+          </div>
+          <h4>Headers</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>Authorization</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Bearer accessToken sau signin/refresh-token.</td>
+                <td><code>Bearer eyJ...</code></td>
+              </tr>
+              <tr>
+                <td><code>X-Firebase-AppCheck</code></td>
+                <td>string</td>
+                <td>Prod</td>
+                <td>Firebase App Check token. Monitoring không cần.</td>
+                <td><code>eyJ...</code></td>
+              </tr>
+              <tr>
+                <td><code>Content-Type</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>application/json.</td>
+                <td><code>application/json</code></td>
+              </tr>
+              <tr>
+                <td><code>X-Idempotency-Key</code></td>
+                <td>string</td>
+                <td>Recommended</td>
+                <td>Key ổn định cho POST/PATCH/DELETE để tránh ghi trùng.</td>
+                <td><code>attendance-2026-06-06-001</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Query params</h4>
+          <p class="muted">Không có query params.</p>
+          <h4>Request body</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>status</code></td>
+                <td>enum</td>
+                <td>Yes</td>
+                <td>approved|rejected.</td>
+                <td><code>approved</code></td>
+              </tr>
+              <tr>
+                <td><code>reviewerNote</code></td>
+                <td>string</td>
+                <td>No</td>
+                <td>Max 1000.</td>
+                <td><code>Đã kiểm tra</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="codebox">
+            <div class="codebar">
+              <span>request.json</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;status&quot;: &quot;approved&quot;,
+  &quot;reviewerNote&quot;: &quot;Đã kiểm tra&quot;
+}</code></pre>
+          </div>
+          <h4>cURL</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>curl</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>curl -X POST &quot;$API_BASE/employee/attendance/correction-requests/:requestId/review&quot; \
+  -H &quot;Authorization: Bearer eyJ...&quot; \
+  -H &quot;X-Firebase-AppCheck: $APP_CHECK_TOKEN&quot; \
+  -H &quot;Content-Type: application/json&quot; \
+  -H &quot;X-Idempotency-Key: attendance-2026-06-06-001&quot; \
+  -d &#39;{&quot;status&quot;:&quot;approved&quot;,&quot;reviewerNote&quot;:&quot;Đã kiểm tra&quot;}&#39;</code></pre>
+          </div>
+          <h4>Successful response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>200 response</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;id&quot;: &quot;corr_1&quot;,
+  &quot;status&quot;: &quot;approved&quot;,
+  &quot;applyStatus&quot;: &quot;applied&quot;,
+  &quot;affectedSettlementDates&quot;: [
+    &quot;2026-06-06&quot;
+  ],
+  &quot;recalculatedSettlementDates&quot;: [
+    &quot;2026-06-06&quot;
+  ]
+}</code></pre>
+          </div>
+          <h4>Response fields</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>applyStatus</code></td>
+                <td>applied|not_applicable</td>
+                <td>Kết quả apply.</td>
+              </tr>
+              <tr>
+                <td><code>recalculatedSettlementDates</code></td>
+                <td>string[]</td>
+                <td>Closing được recalculate nếu có.</td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Failed response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>409 error</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;type&quot;: &quot;/employee/invalid-settlement-state&quot;,
+  &quot;message&quot;: &quot;Correction would create an invalid settlement state&quot;
+}</code></pre>
+          </div>
+          <h4>Notes</h4>
+          <ul>
+            <li>
+              Recalculation dùng revenue_share và giữ ownerDiscountCoverageRate
+              của closing cũ.
+            </li>
+          </ul>
+        </article>
+      </main>
+    </div>
+    <script src="../assets/app.js"></script>
+  </body>
+</html>

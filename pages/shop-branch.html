@@ -1,0 +1,643 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Shop Branch API - Timmo API</title>
+    <link rel="stylesheet" href="../assets/styles.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <aside class="sidebar">
+        <a class="brand" href="../index.html"
+          ><span class="logo">T</span
+          ><span
+            ><strong>Timmo API v1</strong
+            ><small>Nail Salon Management System</small></span
+          ></a
+        ><input class="search" data-search placeholder="Tìm trong trang..." />
+        <nav>
+          <a class="nav-link" href="../index.html">Tổng quan</a
+          ><a class="nav-link" href="../pages/auth.html">Auth</a
+          ><a class="nav-link" href="../pages/account.html">Account</a
+          ><a class="nav-link active" href="../pages/shop-branch.html">Branch</a
+          ><a class="nav-link" href="../pages/shop-service.html">Service</a
+          ><a class="nav-link" href="../pages/employee.html">Employee</a
+          ><a class="nav-link" href="../pages/attendance.html">Attendance</a
+          ><a class="nav-link" href="../pages/settlement.html">Settlement</a
+          ><a class="nav-link" href="../pages/reports-salary.html"
+            >Reports &amp; Salary</a
+          ><a class="nav-link" href="../pages/notifications-monitoring.html"
+            >Notifications &amp; Monitoring</a
+          ><a class="nav-link" href="../pages/schemas-errors.html"
+            >Schemas &amp; Errors</a
+          >
+        </nav>
+      </aside>
+      <main class="content">
+        <header class="page-head">
+          <p class="eyebrow">API Documentation</p>
+          <h1>Shop Branch API</h1>
+          <p>Quản lý chi nhánh/store trong shop owner.</p>
+        </header>
+        <section class="card">
+          <h2>Endpoints</h2>
+          <div class="endpoint-list">
+            <a href="#get-shop-branch"
+              ><span class="method get">GET</span
+              ><code>/api/v1/shop/branch</code></a
+            ><a href="#get-shop-branch-branchid"
+              ><span class="method get">GET</span
+              ><code>/api/v1/shop/branch/:branchId</code></a
+            ><a href="#post-shop-branch"
+              ><span class="method post">POST</span
+              ><code>/api/v1/shop/branch</code></a
+            ><a href="#patch-shop-branch-branchid"
+              ><span class="method patch">PATCH</span
+              ><code>/api/v1/shop/branch/:branchId</code></a
+            >
+          </div>
+        </section>
+        <article class="endpoint" id="get-shop-branch">
+          <div class="endpoint-title">
+            <span class="method get">GET</span><code>/api/v1/shop/branch</code>
+          </div>
+          <p>Danh sách branch trong shop.</p>
+          <div class="meta-row">
+            <span>Auth: Backend access token</span><span>Scope: owner shop</span
+            ><span>Used by: Home store selector, store system</span>
+          </div>
+          <h4>Headers</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>Authorization</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Bearer accessToken sau signin/refresh-token.</td>
+                <td><code>Bearer eyJ...</code></td>
+              </tr>
+              <tr>
+                <td><code>X-Firebase-AppCheck</code></td>
+                <td>string</td>
+                <td>Prod</td>
+                <td>Firebase App Check token. Monitoring không cần.</td>
+                <td><code>eyJ...</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Query params</h4>
+          <p class="muted">Không có query params.</p>
+          <h4>Request body</h4>
+          <p class="muted">GET không có body.</p>
+
+          <h4>cURL</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>curl</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>curl -X GET &quot;$API_BASE/shop/branch&quot; \
+  -H &quot;Authorization: Bearer eyJ...&quot; \
+  -H &quot;X-Firebase-AppCheck: $APP_CHECK_TOKEN&quot;</code></pre>
+          </div>
+          <h4>Successful response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>200 response</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;items&quot;: [
+    {
+      &quot;id&quot;: &quot;branch_123&quot;,
+      &quot;shopId&quot;: &quot;shop_123&quot;,
+      &quot;name&quot;: &quot;Cửa hàng Bình Thạnh&quot;,
+      &quot;settlementCutoffTime&quot;: &quot;04:00&quot;,
+      &quot;status&quot;: &quot;active&quot;,
+      &quot;storeId&quot;: &quot;branch_123&quot;,
+      &quot;addressText&quot;: &quot;Bình Thạnh, HCM&quot;,
+      &quot;label&quot;: &quot;Cửa hàng Bình Thạnh&quot;,
+      &quot;value&quot;: &quot;branch_123&quot;
+    }
+  ]
+}</code></pre>
+          </div>
+          <h4>Response fields</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>items[]</code></td>
+                <td>Branch[]</td>
+                <td>Danh sách branch.</td>
+              </tr>
+              <tr>
+                <td><code>storeId</code></td>
+                <td>string|number</td>
+                <td>FE compatibility.</td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Failed response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>403 error</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;type&quot;: &quot;/shop/forbidden-role&quot;,
+  &quot;message&quot;: &quot;Forbidden: insufficient permissions&quot;
+}</code></pre>
+          </div>
+          <h4>Notes</h4>
+          <ul>
+            <li>Owner thấy toàn bộ branch trong shop.</li>
+          </ul>
+        </article>
+        <article class="endpoint" id="get-shop-branch-branchid">
+          <div class="endpoint-title">
+            <span class="method get">GET</span
+            ><code>/api/v1/shop/branch/:branchId</code>
+          </div>
+          <p>Chi tiết một branch.</p>
+          <div class="meta-row">
+            <span>Auth: Backend access token</span
+            ><span>Scope: owner + branch access</span
+            ><span>Used by: Store detail/edit</span>
+          </div>
+          <h4>Headers</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>Authorization</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Bearer accessToken sau signin/refresh-token.</td>
+                <td><code>Bearer eyJ...</code></td>
+              </tr>
+              <tr>
+                <td><code>X-Firebase-AppCheck</code></td>
+                <td>string</td>
+                <td>Prod</td>
+                <td>Firebase App Check token. Monitoring không cần.</td>
+                <td><code>eyJ...</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Query params</h4>
+          <p class="muted">Không có query params.</p>
+          <h4>Request body</h4>
+          <p class="muted">GET không có body.</p>
+
+          <h4>cURL</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>curl</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>curl -X GET &quot;$API_BASE/shop/branch/:branchId&quot; \
+  -H &quot;Authorization: Bearer eyJ...&quot; \
+  -H &quot;X-Firebase-AppCheck: $APP_CHECK_TOKEN&quot;</code></pre>
+          </div>
+          <h4>Successful response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>200 response</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;id&quot;: &quot;branch_123&quot;,
+  &quot;shopId&quot;: &quot;shop_123&quot;,
+  &quot;name&quot;: &quot;Cửa hàng Bình Thạnh&quot;,
+  &quot;settlementCutoffTime&quot;: &quot;04:00&quot;,
+  &quot;status&quot;: &quot;active&quot;,
+  &quot;storeId&quot;: &quot;branch_123&quot;,
+  &quot;addressText&quot;: &quot;Bình Thạnh, HCM&quot;,
+  &quot;label&quot;: &quot;Cửa hàng Bình Thạnh&quot;,
+  &quot;value&quot;: &quot;branch_123&quot;
+}</code></pre>
+          </div>
+          <h4>Response fields</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>id</code></td>
+                <td>string</td>
+                <td>Branch id.</td>
+              </tr>
+              <tr>
+                <td><code>settlementCutoffTime</code></td>
+                <td>HH:mm</td>
+                <td>Cutoff workDate.</td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Failed response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>403 error</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;type&quot;: &quot;/shop/forbidden-branch&quot;,
+  &quot;message&quot;: &quot;Forbidden: branch access denied&quot;
+}</code></pre>
+          </div>
+          <h4>Notes</h4>
+          <ul>
+            <li>
+              Dùng id backend, không dùng store display code làm path nếu khác
+              id.
+            </li>
+          </ul>
+        </article>
+        <article class="endpoint" id="post-shop-branch">
+          <div class="endpoint-title">
+            <span class="method post">POST</span
+            ><code>/api/v1/shop/branch</code>
+          </div>
+          <p>Tạo branch mới.</p>
+          <div class="meta-row">
+            <span>Auth: Backend access token</span><span>Scope: owner</span
+            ><span>Used by: Store system create</span>
+          </div>
+          <h4>Headers</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>Authorization</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Bearer accessToken sau signin/refresh-token.</td>
+                <td><code>Bearer eyJ...</code></td>
+              </tr>
+              <tr>
+                <td><code>X-Firebase-AppCheck</code></td>
+                <td>string</td>
+                <td>Prod</td>
+                <td>Firebase App Check token. Monitoring không cần.</td>
+                <td><code>eyJ...</code></td>
+              </tr>
+              <tr>
+                <td><code>Content-Type</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>application/json.</td>
+                <td><code>application/json</code></td>
+              </tr>
+              <tr>
+                <td><code>X-Idempotency-Key</code></td>
+                <td>string</td>
+                <td>Recommended</td>
+                <td>Key ổn định cho POST/PATCH/DELETE để tránh ghi trùng.</td>
+                <td><code>attendance-2026-06-06-001</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Query params</h4>
+          <p class="muted">Không có query params.</p>
+          <h4>Request body</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>name</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>1..100 ký tự.</td>
+                <td><code>Cửa hàng Bình Thạnh</code></td>
+              </tr>
+              <tr>
+                <td><code>code</code></td>
+                <td>string</td>
+                <td>No</td>
+                <td>Max 30.</td>
+                <td><code>BT01</code></td>
+              </tr>
+              <tr>
+                <td><code>phone/email/manager</code></td>
+                <td>string</td>
+                <td>No</td>
+                <td>Thông tin liên hệ.</td>
+                <td><code>090...</code></td>
+              </tr>
+              <tr>
+                <td><code>openTime/closeTime</code></td>
+                <td>string</td>
+                <td>No</td>
+                <td>Giờ hiển thị.</td>
+                <td><code>09:00</code></td>
+              </tr>
+              <tr>
+                <td><code>settlementCutoffTime</code></td>
+                <td>HH:mm</td>
+                <td>No</td>
+                <td>Cutoff work day.</td>
+                <td><code>04:00</code></td>
+              </tr>
+              <tr>
+                <td><code>address</code></td>
+                <td>object</td>
+                <td>No</td>
+                <td>line1/city/state/zipCode/country.</td>
+                <td><code>{}</code></td>
+              </tr>
+              <tr>
+                <td><code>status</code></td>
+                <td>enum</td>
+                <td>No</td>
+                <td>Default active.</td>
+                <td><code>active</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="codebox">
+            <div class="codebar">
+              <span>request.json</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;name&quot;: &quot;Cửa hàng Bình Thạnh&quot;,
+  &quot;code&quot;: &quot;BT01&quot;,
+  &quot;settlementCutoffTime&quot;: &quot;04:00&quot;,
+  &quot;status&quot;: &quot;active&quot;
+}</code></pre>
+          </div>
+          <h4>cURL</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>curl</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>curl -X POST &quot;$API_BASE/shop/branch&quot; \
+  -H &quot;Authorization: Bearer eyJ...&quot; \
+  -H &quot;X-Firebase-AppCheck: $APP_CHECK_TOKEN&quot; \
+  -H &quot;Content-Type: application/json&quot; \
+  -H &quot;X-Idempotency-Key: attendance-2026-06-06-001&quot; \
+  -d &#39;{&quot;name&quot;:&quot;Cửa hàng Bình Thạnh&quot;,&quot;code&quot;:&quot;BT01&quot;,&quot;settlementCutoffTime&quot;:&quot;04:00&quot;,&quot;status&quot;:&quot;active&quot;}&#39;</code></pre>
+          </div>
+          <h4>Successful response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>201 response</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;id&quot;: &quot;branch_123&quot;,
+  &quot;shopId&quot;: &quot;shop_123&quot;,
+  &quot;name&quot;: &quot;Cửa hàng Bình Thạnh&quot;,
+  &quot;settlementCutoffTime&quot;: &quot;04:00&quot;,
+  &quot;status&quot;: &quot;active&quot;,
+  &quot;storeId&quot;: &quot;branch_123&quot;,
+  &quot;addressText&quot;: &quot;Bình Thạnh, HCM&quot;,
+  &quot;label&quot;: &quot;Cửa hàng Bình Thạnh&quot;,
+  &quot;value&quot;: &quot;branch_123&quot;
+}</code></pre>
+          </div>
+          <h4>Response fields</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>id</code></td>
+                <td>string</td>
+                <td>Branch id mới.</td>
+              </tr>
+              <tr>
+                <td><code>status</code></td>
+                <td>string</td>
+                <td>active/pending...</td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Failed response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>400 error</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;type&quot;: &quot;/shop/invalid-request&quot;,
+  &quot;message&quot;: &quot;Invalid request&quot;
+}</code></pre>
+          </div>
+          <h4>Notes</h4>
+          <ul>
+            <li>settlementCutoffTime sai format sẽ bị 400.</li>
+          </ul>
+        </article>
+        <article class="endpoint" id="patch-shop-branch-branchid">
+          <div class="endpoint-title">
+            <span class="method patch">PATCH</span
+            ><code>/api/v1/shop/branch/:branchId</code>
+          </div>
+          <p>Cập nhật branch.</p>
+          <div class="meta-row">
+            <span>Auth: Backend access token</span
+            ><span>Scope: owner + branch access</span
+            ><span>Used by: Store detail/edit</span>
+          </div>
+          <h4>Headers</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>Authorization</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Bearer accessToken sau signin/refresh-token.</td>
+                <td><code>Bearer eyJ...</code></td>
+              </tr>
+              <tr>
+                <td><code>X-Firebase-AppCheck</code></td>
+                <td>string</td>
+                <td>Prod</td>
+                <td>Firebase App Check token. Monitoring không cần.</td>
+                <td><code>eyJ...</code></td>
+              </tr>
+              <tr>
+                <td><code>Content-Type</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>application/json.</td>
+                <td><code>application/json</code></td>
+              </tr>
+              <tr>
+                <td><code>X-Idempotency-Key</code></td>
+                <td>string</td>
+                <td>Recommended</td>
+                <td>Key ổn định cho POST/PATCH/DELETE để tránh ghi trùng.</td>
+                <td><code>attendance-2026-06-06-001</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Query params</h4>
+          <p class="muted">Không có query params.</p>
+          <h4>Request body</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>name/code/phone/email</code></td>
+                <td>string</td>
+                <td>No</td>
+                <td>Partial update.</td>
+                <td><code>BT01</code></td>
+              </tr>
+              <tr>
+                <td><code>settlementCutoffTime</code></td>
+                <td>HH:mm</td>
+                <td>No</td>
+                <td>HH:mm.</td>
+                <td><code>04:00</code></td>
+              </tr>
+              <tr>
+                <td><code>status</code></td>
+                <td>enum</td>
+                <td>No</td>
+                <td>Branch status.</td>
+                <td><code>active</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="codebox">
+            <div class="codebar">
+              <span>request.json</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;name&quot;: &quot;Cửa hàng Bình Thạnh&quot;,
+  &quot;settlementCutoffTime&quot;: &quot;04:00&quot;
+}</code></pre>
+          </div>
+          <h4>cURL</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>curl</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>curl -X PATCH &quot;$API_BASE/shop/branch/:branchId&quot; \
+  -H &quot;Authorization: Bearer eyJ...&quot; \
+  -H &quot;X-Firebase-AppCheck: $APP_CHECK_TOKEN&quot; \
+  -H &quot;Content-Type: application/json&quot; \
+  -H &quot;X-Idempotency-Key: attendance-2026-06-06-001&quot; \
+  -d &#39;{&quot;name&quot;:&quot;Cửa hàng Bình Thạnh&quot;,&quot;settlementCutoffTime&quot;:&quot;04:00&quot;}&#39;</code></pre>
+          </div>
+          <h4>Successful response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>200 response</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;id&quot;: &quot;branch_123&quot;,
+  &quot;shopId&quot;: &quot;shop_123&quot;,
+  &quot;name&quot;: &quot;Cửa hàng Bình Thạnh&quot;,
+  &quot;settlementCutoffTime&quot;: &quot;04:00&quot;,
+  &quot;status&quot;: &quot;active&quot;,
+  &quot;storeId&quot;: &quot;branch_123&quot;,
+  &quot;addressText&quot;: &quot;Bình Thạnh, HCM&quot;,
+  &quot;label&quot;: &quot;Cửa hàng Bình Thạnh&quot;,
+  &quot;value&quot;: &quot;branch_123&quot;
+}</code></pre>
+          </div>
+          <h4>Response fields</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>id</code></td>
+                <td>string</td>
+                <td>Branch id.</td>
+              </tr>
+              <tr>
+                <td><code>updatedAt</code></td>
+                <td>number?</td>
+                <td>Timestamp nếu có.</td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Failed response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>400 error</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;type&quot;: &quot;/shop/invalid-request&quot;,
+  &quot;message&quot;: &quot;Invalid request&quot;
+}</code></pre>
+          </div>
+          <h4>Notes</h4>
+          <ul>
+            <li>Body phải có ít nhất một field.</li>
+          </ul>
+        </article>
+      </main>
+    </div>
+    <script src="../assets/app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,1094 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Shop Service API - Timmo API</title>
+    <link rel="stylesheet" href="../assets/styles.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <aside class="sidebar">
+        <a class="brand" href="../index.html"
+          ><span class="logo">T</span
+          ><span
+            ><strong>Timmo API v1</strong
+            ><small>Nail Salon Management System</small></span
+          ></a
+        ><input class="search" data-search placeholder="Tìm trong trang..." />
+        <nav>
+          <a class="nav-link" href="../index.html">Tổng quan</a
+          ><a class="nav-link" href="../pages/auth.html">Auth</a
+          ><a class="nav-link" href="../pages/account.html">Account</a
+          ><a class="nav-link" href="../pages/shop-branch.html">Branch</a
+          ><a class="nav-link active" href="../pages/shop-service.html"
+            >Service</a
+          ><a class="nav-link" href="../pages/employee.html">Employee</a
+          ><a class="nav-link" href="../pages/attendance.html">Attendance</a
+          ><a class="nav-link" href="../pages/settlement.html">Settlement</a
+          ><a class="nav-link" href="../pages/reports-salary.html"
+            >Reports &amp; Salary</a
+          ><a class="nav-link" href="../pages/notifications-monitoring.html"
+            >Notifications &amp; Monitoring</a
+          ><a class="nav-link" href="../pages/schemas-errors.html"
+            >Schemas &amp; Errors</a
+          >
+        </nav>
+      </aside>
+      <main class="content">
+        <header class="page-head">
+          <p class="eyebrow">API Documentation</p>
+          <h1>Shop Service API</h1>
+          <p>Quản lý dịch vụ, service catalog, ảnh và groupService inline.</p>
+        </header>
+        <section class="card">
+          <h2>Endpoints</h2>
+          <div class="endpoint-list">
+            <a href="#get-shop-service-bootstrap"
+              ><span class="method get">GET</span
+              ><code>/api/v1/shop/service/bootstrap</code></a
+            ><a href="#get-shop-service-catalog"
+              ><span class="method get">GET</span
+              ><code>/api/v1/shop/service-catalog</code></a
+            ><a href="#get-shop-service"
+              ><span class="method get">GET</span
+              ><code>/api/v1/shop/service</code></a
+            ><a href="#post-shop-service"
+              ><span class="method post">POST</span
+              ><code>/api/v1/shop/service</code></a
+            ><a href="#patch-shop-service-serviceid"
+              ><span class="method patch">PATCH</span
+              ><code>/api/v1/shop/service/:serviceId</code></a
+            ><a href="#delete-shop-service-serviceid"
+              ><span class="method delete">DELETE</span
+              ><code>/api/v1/shop/service/:serviceId</code></a
+            ><a href="#post-shop-service-image"
+              ><span class="method post">POST</span
+              ><code>/api/v1/shop/service/image</code></a
+            >
+          </div>
+        </section>
+        <article class="endpoint" id="get-shop-service-bootstrap">
+          <div class="endpoint-title">
+            <span class="method get">GET</span
+            ><code>/api/v1/shop/service/bootstrap</code>
+          </div>
+          <p>Bootstrap dữ liệu cho màn dịch vụ.</p>
+          <div class="meta-row">
+            <span>Auth: Backend access token</span><span>Scope: owner</span
+            ><span>Used by: Services/add-service/search</span>
+          </div>
+          <h4>Headers</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>Authorization</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Bearer accessToken sau signin/refresh-token.</td>
+                <td><code>Bearer eyJ...</code></td>
+              </tr>
+              <tr>
+                <td><code>X-Firebase-AppCheck</code></td>
+                <td>string</td>
+                <td>Prod</td>
+                <td>Firebase App Check token. Monitoring không cần.</td>
+                <td><code>eyJ...</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Query params</h4>
+          <p class="muted">Không có query params.</p>
+          <h4>Request body</h4>
+          <p class="muted">GET không có body.</p>
+
+          <h4>cURL</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>curl</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>curl -X GET &quot;$API_BASE/shop/service/bootstrap&quot; \
+  -H &quot;Authorization: Bearer eyJ...&quot; \
+  -H &quot;X-Firebase-AppCheck: $APP_CHECK_TOKEN&quot;</code></pre>
+          </div>
+          <h4>Successful response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>200 response</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;branches&quot;: [
+    {
+      &quot;id&quot;: &quot;branch_123&quot;,
+      &quot;shopId&quot;: &quot;shop_123&quot;,
+      &quot;name&quot;: &quot;Cửa hàng Bình Thạnh&quot;,
+      &quot;settlementCutoffTime&quot;: &quot;04:00&quot;,
+      &quot;status&quot;: &quot;active&quot;,
+      &quot;storeId&quot;: &quot;branch_123&quot;,
+      &quot;addressText&quot;: &quot;Bình Thạnh, HCM&quot;,
+      &quot;label&quot;: &quot;Cửa hàng Bình Thạnh&quot;,
+      &quot;value&quot;: &quot;branch_123&quot;
+    }
+  ],
+  &quot;services&quot;: [
+    {
+      &quot;id&quot;: &quot;svc_1&quot;,
+      &quot;branchId&quot;: &quot;branch_123&quot;,
+      &quot;name&quot;: &quot;Gel manicure&quot;,
+      &quot;price&quot;: 45,
+      &quot;amount&quot;: &quot;45&quot;,
+      &quot;category&quot;: &quot;manicure&quot;,
+      &quot;groupService&quot;: &quot;Gel&quot;,
+      &quot;durationMin&quot;: 60,
+      &quot;durationMax&quot;: 60,
+      &quot;duration&quot;: &quot;60&quot;,
+      &quot;images&quot;: []
+    }
+  ],
+  &quot;catalog&quot;: {
+    &quot;groups&quot;: [
+      &quot;Gel&quot;,
+      &quot;Pedicure&quot;
+    ]
+  }
+}</code></pre>
+          </div>
+          <h4>Response fields</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>branches[]</code></td>
+                <td>Branch[]</td>
+                <td>Store options.</td>
+              </tr>
+              <tr>
+                <td><code>services[]</code></td>
+                <td>Service[]</td>
+                <td>Dịch vụ hiện có.</td>
+              </tr>
+              <tr>
+                <td><code>catalog.groups[]</code></td>
+                <td>string[]</td>
+                <td>Nhóm dịch vụ hiện có.</td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Failed response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>403 error</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;type&quot;: &quot;/shop/forbidden-role&quot;,
+  &quot;message&quot;: &quot;Forbidden: insufficient permissions&quot;
+}</code></pre>
+          </div>
+          <h4>Notes</h4>
+          <ul>
+            <li>
+              Dùng endpoint này trước màn tạo service để có dropdown group.
+            </li>
+          </ul>
+        </article>
+        <article class="endpoint" id="get-shop-service-catalog">
+          <div class="endpoint-title">
+            <span class="method get">GET</span
+            ><code>/api/v1/shop/service-catalog</code>
+          </div>
+          <p>Lấy service catalog/group aggregate.</p>
+          <div class="meta-row">
+            <span>Auth: Backend access token</span><span>Scope: owner</span
+            ><span>Used by: Service group dropdown</span>
+          </div>
+          <h4>Headers</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>Authorization</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Bearer accessToken sau signin/refresh-token.</td>
+                <td><code>Bearer eyJ...</code></td>
+              </tr>
+              <tr>
+                <td><code>X-Firebase-AppCheck</code></td>
+                <td>string</td>
+                <td>Prod</td>
+                <td>Firebase App Check token. Monitoring không cần.</td>
+                <td><code>eyJ...</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Query params</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>branchId</code></td>
+                <td>string</td>
+                <td>No</td>
+                <td>Lọc branch nếu cần.</td>
+                <td><code>branch_123</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Request body</h4>
+          <p class="muted">GET không có body.</p>
+
+          <h4>cURL</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>curl</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>curl -X GET &quot;$API_BASE/shop/service-catalog?branchId=branch_123&quot; \
+  -H &quot;Authorization: Bearer eyJ...&quot; \
+  -H &quot;X-Firebase-AppCheck: $APP_CHECK_TOKEN&quot;</code></pre>
+          </div>
+          <h4>Successful response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>200 response</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;groups&quot;: [
+    {
+      &quot;id&quot;: &quot;gel&quot;,
+      &quot;name&quot;: &quot;Gel&quot;,
+      &quot;category&quot;: &quot;manicure&quot;,
+      &quot;serviceCount&quot;: 4
+    }
+  ]
+}</code></pre>
+          </div>
+          <h4>Response fields</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>groups[]</code></td>
+                <td>object[]</td>
+                <td>Group/category đã tổng hợp.</td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Failed response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>403 error</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;type&quot;: &quot;/shop/forbidden-branch&quot;,
+  &quot;message&quot;: &quot;Forbidden: branch access denied&quot;
+}</code></pre>
+          </div>
+          <h4>Notes</h4>
+          <ul>
+            <li>Nếu UI chỉ cần group, ưu tiên bootstrap để giảm request.</li>
+          </ul>
+        </article>
+        <article class="endpoint" id="get-shop-service">
+          <div class="endpoint-title">
+            <span class="method get">GET</span><code>/api/v1/shop/service</code>
+          </div>
+          <p>Danh sách service.</p>
+          <div class="meta-row">
+            <span>Auth: Backend access token</span><span>Scope: owner</span
+            ><span>Used by: Service list/search</span>
+          </div>
+          <h4>Headers</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>Authorization</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Bearer accessToken sau signin/refresh-token.</td>
+                <td><code>Bearer eyJ...</code></td>
+              </tr>
+              <tr>
+                <td><code>X-Firebase-AppCheck</code></td>
+                <td>string</td>
+                <td>Prod</td>
+                <td>Firebase App Check token. Monitoring không cần.</td>
+                <td><code>eyJ...</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Query params</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>branchId</code></td>
+                <td>string</td>
+                <td>No</td>
+                <td>Lọc theo branch.</td>
+                <td><code>branch_123</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Request body</h4>
+          <p class="muted">GET không có body.</p>
+
+          <h4>cURL</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>curl</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>curl -X GET &quot;$API_BASE/shop/service?branchId=branch_123&quot; \
+  -H &quot;Authorization: Bearer eyJ...&quot; \
+  -H &quot;X-Firebase-AppCheck: $APP_CHECK_TOKEN&quot;</code></pre>
+          </div>
+          <h4>Successful response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>200 response</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;items&quot;: [
+    {
+      &quot;id&quot;: &quot;svc_1&quot;,
+      &quot;branchId&quot;: &quot;branch_123&quot;,
+      &quot;name&quot;: &quot;Gel manicure&quot;,
+      &quot;price&quot;: 45,
+      &quot;amount&quot;: &quot;45&quot;,
+      &quot;category&quot;: &quot;manicure&quot;,
+      &quot;groupService&quot;: &quot;Gel&quot;,
+      &quot;durationMin&quot;: 60,
+      &quot;durationMax&quot;: 60,
+      &quot;duration&quot;: &quot;60&quot;,
+      &quot;images&quot;: []
+    }
+  ]
+}</code></pre>
+          </div>
+          <h4>Response fields</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>items[]</code></td>
+                <td>Service[]</td>
+                <td>Danh sách dịch vụ.</td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Failed response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>403 error</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;type&quot;: &quot;/shop/forbidden-branch&quot;,
+  &quot;message&quot;: &quot;Forbidden: branch access denied&quot;
+}</code></pre>
+          </div>
+          <h4>Notes</h4>
+          <ul>
+            <li>
+              Response service có field compatibility: amount, time, duration,
+              images, image.
+            </li>
+          </ul>
+        </article>
+        <article class="endpoint" id="post-shop-service">
+          <div class="endpoint-title">
+            <span class="method post">POST</span
+            ><code>/api/v1/shop/service</code>
+          </div>
+          <p>Tạo service mới, gồm cả tạo nhóm inline qua groupService.</p>
+          <div class="meta-row">
+            <span>Auth: Backend access token</span
+            ><span>Scope: owner + branch access</span
+            ><span>Used by: Add service</span>
+          </div>
+          <h4>Headers</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>Authorization</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Bearer accessToken sau signin/refresh-token.</td>
+                <td><code>Bearer eyJ...</code></td>
+              </tr>
+              <tr>
+                <td><code>X-Firebase-AppCheck</code></td>
+                <td>string</td>
+                <td>Prod</td>
+                <td>Firebase App Check token. Monitoring không cần.</td>
+                <td><code>eyJ...</code></td>
+              </tr>
+              <tr>
+                <td><code>Content-Type</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>application/json.</td>
+                <td><code>application/json</code></td>
+              </tr>
+              <tr>
+                <td><code>X-Idempotency-Key</code></td>
+                <td>string</td>
+                <td>Recommended</td>
+                <td>Key ổn định cho POST/PATCH/DELETE để tránh ghi trùng.</td>
+                <td><code>attendance-2026-06-06-001</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Query params</h4>
+          <p class="muted">Không có query params.</p>
+          <h4>Request body</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>branchId</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Branch id.</td>
+                <td><code>branch_123</code></td>
+              </tr>
+              <tr>
+                <td><code>name</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>1..100 ký tự.</td>
+                <td><code>Gel manicure</code></td>
+              </tr>
+              <tr>
+                <td><code>price/amount</code></td>
+                <td>money</td>
+                <td>Yes</td>
+                <td>Một trong hai field.</td>
+                <td><code>45</code></td>
+              </tr>
+              <tr>
+                <td><code>category/groupService</code></td>
+                <td>enum|string</td>
+                <td>Yes</td>
+                <td>Một trong hai field; groupService cho nhóm mới/hiện có.</td>
+                <td><code>Gel</code></td>
+              </tr>
+              <tr>
+                <td><code>duration or durationMin+durationMax</code></td>
+                <td>number|string</td>
+                <td>Yes</td>
+                <td>Positive integer.</td>
+                <td><code>60</code></td>
+              </tr>
+              <tr>
+                <td><code>description</code></td>
+                <td>string</td>
+                <td>No</td>
+                <td>Max 500.</td>
+                <td><code>Gel polish</code></td>
+              </tr>
+              <tr>
+                <td><code>imageUrls/images/image</code></td>
+                <td>url[]|url</td>
+                <td>No</td>
+                <td>Tối đa 10 URL.</td>
+                <td><code>https://...</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="codebox">
+            <div class="codebar">
+              <span>request.json</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;branchId&quot;: &quot;branch_123&quot;,
+  &quot;name&quot;: &quot;Gel manicure&quot;,
+  &quot;groupService&quot;: &quot;Gel&quot;,
+  &quot;price&quot;: 45,
+  &quot;duration&quot;: 60,
+  &quot;description&quot;: &quot;Gel polish&quot;
+}</code></pre>
+          </div>
+          <h4>cURL</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>curl</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>curl -X POST &quot;$API_BASE/shop/service&quot; \
+  -H &quot;Authorization: Bearer eyJ...&quot; \
+  -H &quot;X-Firebase-AppCheck: $APP_CHECK_TOKEN&quot; \
+  -H &quot;Content-Type: application/json&quot; \
+  -H &quot;X-Idempotency-Key: attendance-2026-06-06-001&quot; \
+  -d &#39;{&quot;branchId&quot;:&quot;branch_123&quot;,&quot;name&quot;:&quot;Gel manicure&quot;,&quot;groupService&quot;:&quot;Gel&quot;,&quot;price&quot;:45,&quot;duration&quot;:60,&quot;description&quot;:&quot;Gel polish&quot;}&#39;</code></pre>
+          </div>
+          <h4>Successful response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>201 response</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;id&quot;: &quot;svc_1&quot;,
+  &quot;branchId&quot;: &quot;branch_123&quot;,
+  &quot;name&quot;: &quot;Gel manicure&quot;,
+  &quot;price&quot;: 45,
+  &quot;amount&quot;: &quot;45&quot;,
+  &quot;category&quot;: &quot;manicure&quot;,
+  &quot;groupService&quot;: &quot;Gel&quot;,
+  &quot;durationMin&quot;: 60,
+  &quot;durationMax&quot;: 60,
+  &quot;duration&quot;: &quot;60&quot;,
+  &quot;images&quot;: []
+}</code></pre>
+          </div>
+          <h4>Response fields</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>id</code></td>
+                <td>string</td>
+                <td>Service id.</td>
+              </tr>
+              <tr>
+                <td><code>groupService</code></td>
+                <td>string</td>
+                <td>Group hiển thị.</td>
+              </tr>
+              <tr>
+                <td><code>category</code></td>
+                <td>enum</td>
+                <td>Category đã map từ groupService nếu không gửi.</td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Failed response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>400 error</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;type&quot;: &quot;/shop/invalid-request&quot;,
+  &quot;message&quot;: &quot;Invalid request&quot;
+}</code></pre>
+          </div>
+          <h4>Notes</h4>
+          <ul>
+            <li>Không cần màn tạo group riêng.</li>
+            <li>Nếu thiếu price/category/duration backend trả 400.</li>
+          </ul>
+        </article>
+        <article class="endpoint" id="patch-shop-service-serviceid">
+          <div class="endpoint-title">
+            <span class="method patch">PATCH</span
+            ><code>/api/v1/shop/service/:serviceId</code>
+          </div>
+          <p>Cập nhật service.</p>
+          <div class="meta-row">
+            <span>Auth: Backend access token</span
+            ><span>Scope: owner + branch access</span
+            ><span>Used by: Edit service</span>
+          </div>
+          <h4>Headers</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>Authorization</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Bearer accessToken sau signin/refresh-token.</td>
+                <td><code>Bearer eyJ...</code></td>
+              </tr>
+              <tr>
+                <td><code>X-Firebase-AppCheck</code></td>
+                <td>string</td>
+                <td>Prod</td>
+                <td>Firebase App Check token. Monitoring không cần.</td>
+                <td><code>eyJ...</code></td>
+              </tr>
+              <tr>
+                <td><code>Content-Type</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>application/json.</td>
+                <td><code>application/json</code></td>
+              </tr>
+              <tr>
+                <td><code>X-Idempotency-Key</code></td>
+                <td>string</td>
+                <td>Recommended</td>
+                <td>Key ổn định cho POST/PATCH/DELETE để tránh ghi trùng.</td>
+                <td><code>attendance-2026-06-06-001</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Query params</h4>
+          <p class="muted">Không có query params.</p>
+          <h4>Request body</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>name/description</code></td>
+                <td>string</td>
+                <td>No</td>
+                <td>Partial update.</td>
+                <td><code>Gel manicure</code></td>
+              </tr>
+              <tr>
+                <td><code>price/amount</code></td>
+                <td>money</td>
+                <td>No</td>
+                <td>Positive money.</td>
+                <td><code>50</code></td>
+              </tr>
+              <tr>
+                <td><code>category/groupService</code></td>
+                <td>enum|string</td>
+                <td>No</td>
+                <td>Group/category.</td>
+                <td><code>Gel</code></td>
+              </tr>
+              <tr>
+                <td><code>duration/durationMin/durationMax</code></td>
+                <td>number|string</td>
+                <td>No</td>
+                <td>Positive integer.</td>
+                <td><code>75</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="codebox">
+            <div class="codebar">
+              <span>request.json</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;price&quot;: 50,
+  &quot;groupService&quot;: &quot;Gel cao cấp&quot;
+}</code></pre>
+          </div>
+          <h4>cURL</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>curl</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>curl -X PATCH &quot;$API_BASE/shop/service/:serviceId&quot; \
+  -H &quot;Authorization: Bearer eyJ...&quot; \
+  -H &quot;X-Firebase-AppCheck: $APP_CHECK_TOKEN&quot; \
+  -H &quot;Content-Type: application/json&quot; \
+  -H &quot;X-Idempotency-Key: attendance-2026-06-06-001&quot; \
+  -d &#39;{&quot;price&quot;:50,&quot;groupService&quot;:&quot;Gel cao cấp&quot;}&#39;</code></pre>
+          </div>
+          <h4>Successful response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>200 response</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;id&quot;: &quot;svc_1&quot;,
+  &quot;branchId&quot;: &quot;branch_123&quot;,
+  &quot;name&quot;: &quot;Gel manicure&quot;,
+  &quot;price&quot;: 50,
+  &quot;amount&quot;: &quot;50&quot;,
+  &quot;category&quot;: &quot;manicure&quot;,
+  &quot;groupService&quot;: &quot;Gel cao cấp&quot;,
+  &quot;durationMin&quot;: 60,
+  &quot;durationMax&quot;: 60,
+  &quot;duration&quot;: &quot;60&quot;,
+  &quot;images&quot;: []
+}</code></pre>
+          </div>
+          <h4>Response fields</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>id</code></td>
+                <td>string</td>
+                <td>Service id.</td>
+              </tr>
+              <tr>
+                <td><code>updatedAt</code></td>
+                <td>number?</td>
+                <td>Timestamp nếu có.</td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Failed response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>400 error</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;type&quot;: &quot;/shop/invalid-request&quot;,
+  &quot;message&quot;: &quot;Invalid request&quot;
+}</code></pre>
+          </div>
+          <h4>Notes</h4>
+          <ul>
+            <li>Body phải có ít nhất một field.</li>
+          </ul>
+        </article>
+        <article class="endpoint" id="delete-shop-service-serviceid">
+          <div class="endpoint-title">
+            <span class="method delete">DELETE</span
+            ><code>/api/v1/shop/service/:serviceId</code>
+          </div>
+          <p>Xoá service.</p>
+          <div class="meta-row">
+            <span>Auth: Backend access token</span
+            ><span>Scope: owner + branch access</span
+            ><span>Used by: Service management</span>
+          </div>
+          <h4>Headers</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>Authorization</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Bearer accessToken sau signin/refresh-token.</td>
+                <td><code>Bearer eyJ...</code></td>
+              </tr>
+              <tr>
+                <td><code>X-Firebase-AppCheck</code></td>
+                <td>string</td>
+                <td>Prod</td>
+                <td>Firebase App Check token. Monitoring không cần.</td>
+                <td><code>eyJ...</code></td>
+              </tr>
+              <tr>
+                <td><code>Content-Type</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>application/json.</td>
+                <td><code>application/json</code></td>
+              </tr>
+              <tr>
+                <td><code>X-Idempotency-Key</code></td>
+                <td>string</td>
+                <td>Recommended</td>
+                <td>Key ổn định cho POST/PATCH/DELETE để tránh ghi trùng.</td>
+                <td><code>attendance-2026-06-06-001</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Query params</h4>
+          <p class="muted">Không có query params.</p>
+          <h4>Request body</h4>
+          <p class="muted">Không có body.</p>
+
+          <h4>cURL</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>curl</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>curl -X DELETE &quot;$API_BASE/shop/service/:serviceId&quot; \
+  -H &quot;Authorization: Bearer eyJ...&quot; \
+  -H &quot;X-Firebase-AppCheck: $APP_CHECK_TOKEN&quot; \
+  -H &quot;Content-Type: application/json&quot; \
+  -H &quot;X-Idempotency-Key: attendance-2026-06-06-001&quot;</code></pre>
+          </div>
+          <h4>Successful response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>200 response</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;success&quot;: true,
+  &quot;id&quot;: &quot;svc_1&quot;
+}</code></pre>
+          </div>
+          <h4>Response fields</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>success</code></td>
+                <td>boolean</td>
+                <td>Xoá thành công.</td>
+              </tr>
+              <tr>
+                <td><code>id</code></td>
+                <td>string</td>
+                <td>Service id đã xoá.</td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Failed response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>404 error</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;type&quot;: &quot;/shop/service-not-found&quot;,
+  &quot;message&quot;: &quot;Service not found&quot;
+}</code></pre>
+          </div>
+          <h4>Notes</h4>
+          <ul>
+            <li>
+              Không dùng cho service đã bị attendance lịch sử tham chiếu nếu
+              policy tương lai khoá.
+            </li>
+          </ul>
+        </article>
+        <article class="endpoint" id="post-shop-service-image">
+          <div class="endpoint-title">
+            <span class="method post">POST</span
+            ><code>/api/v1/shop/service/image</code>
+          </div>
+          <p>Upload ảnh service.</p>
+          <div class="meta-row">
+            <span>Auth: Backend access token</span><span>Scope: owner</span
+            ><span>Used by: Service image upload</span>
+          </div>
+          <h4>Headers</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>Authorization</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Bearer accessToken sau signin/refresh-token.</td>
+                <td><code>Bearer eyJ...</code></td>
+              </tr>
+              <tr>
+                <td><code>X-Firebase-AppCheck</code></td>
+                <td>string</td>
+                <td>Prod</td>
+                <td>Firebase App Check token. Monitoring không cần.</td>
+                <td><code>eyJ...</code></td>
+              </tr>
+              <tr>
+                <td><code>Content-Type</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>application/json.</td>
+                <td><code>application/json</code></td>
+              </tr>
+              <tr>
+                <td><code>X-Idempotency-Key</code></td>
+                <td>string</td>
+                <td>Recommended</td>
+                <td>Key ổn định cho POST/PATCH/DELETE để tránh ghi trùng.</td>
+                <td><code>attendance-2026-06-06-001</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Query params</h4>
+          <p class="muted">Không có query params.</p>
+          <h4>Request body</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>image</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Data URL/base64/url theo UI.</td>
+                <td><code>data:image/png;base64,...</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="codebox">
+            <div class="codebar">
+              <span>request.json</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;image&quot;: &quot;data:image/png;base64,...&quot;
+}</code></pre>
+          </div>
+          <h4>cURL</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>curl</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>curl -X POST &quot;$API_BASE/shop/service/image&quot; \
+  -H &quot;Authorization: Bearer eyJ...&quot; \
+  -H &quot;X-Firebase-AppCheck: $APP_CHECK_TOKEN&quot; \
+  -H &quot;Content-Type: application/json&quot; \
+  -H &quot;X-Idempotency-Key: attendance-2026-06-06-001&quot; \
+  -d &#39;{&quot;image&quot;:&quot;data:image/png;base64,...&quot;}&#39;</code></pre>
+          </div>
+          <h4>Successful response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>200 response</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;imageUrl&quot;: &quot;https://storage.example/service.png&quot;
+}</code></pre>
+          </div>
+          <h4>Response fields</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>imageUrl</code></td>
+                <td>string</td>
+                <td>URL dùng trong imageUrls.</td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Failed response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>413 error</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;type&quot;: &quot;/request/payload-too-large&quot;,
+  &quot;message&quot;: &quot;Request payload is too large&quot;
+}</code></pre>
+          </div>
+          <h4>Notes</h4>
+          <ul>
+            <li>Route còn tồn tại dù UI hiện có thể ẩn upload.</li>
+          </ul>
+        </article>
+      </main>
+    </div>
+    <script src="../assets/app.js"></script>
+  </body>
+</html>

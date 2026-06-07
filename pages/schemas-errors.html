@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Schemas &amp; Errors - Timmo API</title>
+    <link rel="stylesheet" href="../assets/styles.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <aside class="sidebar">
+        <a class="brand" href="../index.html"
+          ><span class="logo">T</span
+          ><span
+            ><strong>Timmo API v1</strong
+            ><small>Nail Salon Management System</small></span
+          ></a
+        ><input class="search" data-search placeholder="Tìm trong trang..." />
+        <nav>
+          <a class="nav-link" href="../index.html">Tổng quan</a
+          ><a class="nav-link" href="../pages/auth.html">Auth</a
+          ><a class="nav-link" href="../pages/account.html">Account</a
+          ><a class="nav-link" href="../pages/shop-branch.html">Branch</a
+          ><a class="nav-link" href="../pages/shop-service.html">Service</a
+          ><a class="nav-link" href="../pages/employee.html">Employee</a
+          ><a class="nav-link" href="../pages/attendance.html">Attendance</a
+          ><a class="nav-link" href="../pages/settlement.html">Settlement</a
+          ><a class="nav-link" href="../pages/reports-salary.html"
+            >Reports &amp; Salary</a
+          ><a class="nav-link" href="../pages/notifications-monitoring.html"
+            >Notifications &amp; Monitoring</a
+          ><a class="nav-link active" href="../pages/schemas-errors.html"
+            >Schemas &amp; Errors</a
+          >
+        </nav>
+      </aside>
+      <main class="content">
+        <header class="page-head">
+          <p class="eyebrow">API Documentation</p>
+          <h1>Schemas &amp; Errors</h1>
+          <p>
+            Quy ước request/response, currency, role, error và settlement money
+            rule.
+          </p>
+        </header>
+        <section class="card">
+          <h2>Base URLs</h2>
+          <table>
+            <tr>
+              <th>Env</th>
+              <th>URL</th>
+            </tr>
+            <tr>
+              <td>Production</td>
+              <td>
+                <code
+                  >https://nail-salon-backend-jqg7kfo5vq-as.a.run.app/api/v1</code
+                >
+              </td>
+            </tr>
+            <tr>
+              <td>Development</td>
+              <td>
+                <code
+                  >https://nail-salon-backend-dev-jqg7kfo5vq-as.a.run.app/api/v1</code
+                >
+              </td>
+            </tr>
+            <tr>
+              <td>Local</td>
+              <td><code>http://localhost:8090/api/v1</code></td>
+            </tr>
+          </table>
+        </section>
+        <section class="card">
+          <h2>Common rules</h2>
+          <table>
+            <tr>
+              <th>Topic</th>
+              <th>Rule</th>
+            </tr>
+            <tr>
+              <td>Currency</td>
+              <td>
+                Backend currency <code>EUR</code>; frontend có thể render ký
+                hiệu <code>đ</code>.
+              </td>
+            </tr>
+            <tr>
+              <td>Roles</td>
+              <td>
+                Private app dùng <code>owner|employee</code>;
+                <code>admin</code> chỉ platform.
+              </td>
+            </tr>
+            <tr>
+              <td>Money</td>
+              <td>Money là number theo money scale backend.</td>
+            </tr>
+            <tr>
+              <td>workDate</td>
+              <td>
+                <code>YYYY-MM-DD</code>, có thể phụ thuộc branch
+                <code>settlementCutoffTime</code>.
+              </td>
+            </tr>
+            <tr>
+              <td>Compensation</td>
+              <td>
+                Canonical backend
+                <code>compensationModel: commission|hourly</code>; UI
+                compatibility <code>payType: commission|fixed</code>.
+              </td>
+            </tr>
+          </table>
+        </section>
+        <section class="card">
+          <h2>Standard error</h2>
+          <div class="codebox">
+            <div class="codebar">
+              <span>error.json</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;type&quot;: &quot;/employee/invalid-request&quot;,
+  &quot;message&quot;: &quot;Invalid request&quot;
+}</code></pre>
+          </div>
+          <table>
+            <tr>
+              <th>Status</th>
+              <th>Meaning</th>
+              <th>Client action</th>
+            </tr>
+            <tr>
+              <td>400</td>
+              <td>Invalid request</td>
+              <td>Sửa body/query.</td>
+            </tr>
+            <tr>
+              <td>401</td>
+              <td>Unauthenticated</td>
+              <td>Refresh token hoặc sign-in lại.</td>
+            </tr>
+            <tr>
+              <td>403</td>
+              <td>Forbidden scope/role</td>
+              <td>Không retry nguyên trạng.</td>
+            </tr>
+            <tr>
+              <td>409</td>
+              <td>Business conflict</td>
+              <td>Refresh màn và hiển thị lý do.</td>
+            </tr>
+            <tr>
+              <td>429</td>
+              <td>Rate limited</td>
+              <td>Chờ Retry-After.</td>
+            </tr>
+          </table>
+        </section>
+        <section class="card">
+          <h2>Settlement V2 money rule</h2>
+          <ol>
+            <li>
+              <code
+                >ownerBaseDiscount = totalDiscount * ownerDiscountCoverageRate /
+                100</code
+              >
+            </li>
+            <li>
+              <code>employeePool = totalDiscount - ownerBaseDiscount</code>
+            </li>
+            <li>
+              Chia employeePool theo
+              <code>employee.totalRevenue / totalRevenue</code> toàn ngày.
+            </li>
+            <li>
+              Commission: ghi <code>discountAllocated</code>, trừ
+              <code>employeeEarning</code>.
+            </li>
+            <li>
+              Hourly/fixed: ghi <code>ownerDiscountSupported</code>, cộng vào
+              chủ chịu.
+            </li>
+            <li>
+              <code
+                >totalOwnerDiscount = ownerBaseDiscount +
+                sum(ownerDiscountSupported)</code
+              >.
+            </li>
+          </ol>
+        </section>
+      </main>
+    </div>
+    <script src="../assets/app.js"></script>
+  </body>
+</html>

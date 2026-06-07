@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Notifications &amp; Monitoring API - Timmo API</title>
+    <link rel="stylesheet" href="../assets/styles.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <aside class="sidebar">
+        <a class="brand" href="../index.html"
+          ><span class="logo">T</span
+          ><span
+            ><strong>Timmo API v1</strong
+            ><small>Nail Salon Management System</small></span
+          ></a
+        ><input class="search" data-search placeholder="Tìm trong trang..." />
+        <nav>
+          <a class="nav-link" href="../index.html">Tổng quan</a
+          ><a class="nav-link" href="../pages/auth.html">Auth</a
+          ><a class="nav-link" href="../pages/account.html">Account</a
+          ><a class="nav-link" href="../pages/shop-branch.html">Branch</a
+          ><a class="nav-link" href="../pages/shop-service.html">Service</a
+          ><a class="nav-link" href="../pages/employee.html">Employee</a
+          ><a class="nav-link" href="../pages/attendance.html">Attendance</a
+          ><a class="nav-link" href="../pages/settlement.html">Settlement</a
+          ><a class="nav-link" href="../pages/reports-salary.html"
+            >Reports &amp; Salary</a
+          ><a
+            class="nav-link active"
+            href="../pages/notifications-monitoring.html"
+            >Notifications &amp; Monitoring</a
+          ><a class="nav-link" href="../pages/schemas-errors.html"
+            >Schemas &amp; Errors</a
+          >
+        </nav>
+      </aside>
+      <main class="content">
+        <header class="page-head">
+          <p class="eyebrow">API Documentation</p>
+          <h1>Notifications &amp; Monitoring API</h1>
+          <p>Notification feed và monitoring probes/metrics.</p>
+        </header>
+        <section class="card">
+          <h2>Endpoints</h2>
+          <div class="endpoint-list">
+            <a href="#get-notifications"
+              ><span class="method get">GET</span
+              ><code>/api/v1/notifications</code></a
+            ><a href="#get-monitoring-health"
+              ><span class="method get">GET</span
+              ><code>/api/v1/monitoring/health</code></a
+            ><a href="#get-monitoring-ready"
+              ><span class="method get">GET</span
+              ><code>/api/v1/monitoring/ready</code></a
+            ><a href="#get-monitoring-metrics"
+              ><span class="method get">GET</span
+              ><code>/api/v1/monitoring/metrics</code></a
+            >
+          </div>
+        </section>
+        <article class="endpoint" id="get-notifications">
+          <div class="endpoint-title">
+            <span class="method get">GET</span
+            ><code>/api/v1/notifications</code>
+          </div>
+          <p>Notification feed cho user hiện tại.</p>
+          <div class="meta-row">
+            <span>Auth: Backend access token</span
+            ><span>Scope: owner|employee</span
+            ><span>Used by: Notifications pages</span>
+          </div>
+          <h4>Headers</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Rule</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>Authorization</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Bearer accessToken sau signin/refresh-token.</td>
+                <td><code>Bearer eyJ...</code></td>
+              </tr>
+              <tr>
+                <td><code>X-Firebase-AppCheck</code></td>
+                <td>string</td>
+                <td>Prod</td>
+                <td>Firebase App Check token. Monitoring không cần.</td>
+                <td><code>eyJ...</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Query params</h4>
+          <p class="muted">Không có query params.</p>
+          <h4>Request body</h4>
+          <p class="muted">GET không có body.</p>
+
+          <h4>cURL</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>curl</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>curl -X GET &quot;$API_BASE/notifications&quot; \
+  -H &quot;Authorization: Bearer eyJ...&quot; \
+  -H &quot;X-Firebase-AppCheck: $APP_CHECK_TOKEN&quot;</code></pre>
+          </div>
+          <h4>Successful response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>200 response</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;items&quot;: [
+    {
+      &quot;id&quot;: &quot;noti_1&quot;,
+      &quot;type&quot;: &quot;correction_request&quot;,
+      &quot;title&quot;: &quot;Yêu cầu sửa chấm công&quot;,
+      &quot;read&quot;: false,
+      &quot;createdAt&quot;: 1780000000000
+    }
+  ]
+}</code></pre>
+          </div>
+          <h4>Response fields</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>items[]</code></td>
+                <td>Notification[]</td>
+                <td>Feed notifications.</td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Failed response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>401 error</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;type&quot;: &quot;/auth/invalid-token&quot;,
+  &quot;message&quot;: &quot;Invalid authorization token&quot;
+}</code></pre>
+          </div>
+          <h4>Notes</h4>
+          <ul>
+            <li>Read-only feed hiện tại.</li>
+          </ul>
+        </article>
+        <article class="endpoint" id="get-monitoring-health">
+          <div class="endpoint-title">
+            <span class="method get">GET</span
+            ><code>/api/v1/monitoring/health</code>
+          </div>
+          <p>Liveness probe.</p>
+          <div class="meta-row">
+            <span>Auth: None</span><span>Scope: Public infra</span
+            ><span>Used by: Cloud Run health</span>
+          </div>
+          <h4>Headers</h4>
+          <p class="muted">Không cần header đặc biệt.</p>
+          <h4>Query params</h4>
+          <p class="muted">Không có query params.</p>
+          <h4>Request body</h4>
+          <p class="muted">GET không có body.</p>
+
+          <h4>cURL</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>curl</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>curl -X GET &quot;$API_BASE/monitoring/health&quot;</code></pre>
+          </div>
+          <h4>Successful response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>200 response</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;status&quot;: &quot;ok&quot;,
+  &quot;service&quot;: &quot;nail-salon-backend&quot;
+}</code></pre>
+          </div>
+          <h4>Response fields</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>status</code></td>
+                <td>string</td>
+                <td>ok nếu process live.</td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Failed response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>500 error</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;type&quot;: &quot;/internal-server-error&quot;,
+  &quot;message&quot;: &quot;Internal Server Error&quot;
+}</code></pre>
+          </div>
+          <h4>Notes</h4>
+          <ul>
+            <li>Mounted trước AppCheck.</li>
+          </ul>
+        </article>
+        <article class="endpoint" id="get-monitoring-ready">
+          <div class="endpoint-title">
+            <span class="method get">GET</span
+            ><code>/api/v1/monitoring/ready</code>
+          </div>
+          <p>Readiness probe.</p>
+          <div class="meta-row">
+            <span>Auth: None</span><span>Scope: Public infra</span
+            ><span>Used by: Cloud Run readiness</span>
+          </div>
+          <h4>Headers</h4>
+          <p class="muted">Không cần header đặc biệt.</p>
+          <h4>Query params</h4>
+          <p class="muted">Không có query params.</p>
+          <h4>Request body</h4>
+          <p class="muted">GET không có body.</p>
+
+          <h4>cURL</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>curl</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>curl -X GET &quot;$API_BASE/monitoring/ready&quot;</code></pre>
+          </div>
+          <h4>Successful response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>200 response</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;status&quot;: &quot;ready&quot;,
+  &quot;dependencies&quot;: {
+    &quot;firestore&quot;: &quot;ok&quot;
+  }
+}</code></pre>
+          </div>
+          <h4>Response fields</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>status</code></td>
+                <td>string</td>
+                <td>ready nếu dependencies chính OK.</td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Failed response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>503 error</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;status&quot;: &quot;not_ready&quot;
+}</code></pre>
+          </div>
+          <h4>Notes</h4>
+          <ul>
+            <li>Dùng cho deploy/probe.</li>
+          </ul>
+        </article>
+        <article class="endpoint" id="get-monitoring-metrics">
+          <div class="endpoint-title">
+            <span class="method get">GET</span
+            ><code>/api/v1/monitoring/metrics</code>
+          </div>
+          <p>Prometheus metrics.</p>
+          <div class="meta-row">
+            <span>Auth: None</span><span>Scope: Infra network</span
+            ><span>Used by: Monitoring/observability</span>
+          </div>
+          <h4>Headers</h4>
+          <p class="muted">Không cần header đặc biệt.</p>
+          <h4>Query params</h4>
+          <p class="muted">Không có query params.</p>
+          <h4>Request body</h4>
+          <p class="muted">GET không có body.</p>
+
+          <h4>cURL</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>curl</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>curl -X GET &quot;$API_BASE/monitoring/metrics&quot;</code></pre>
+          </div>
+          <h4>Successful response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>200 response</span><button class="copy">Copy</button>
+            </div>
+            <pre><code># HELP http_requests_total Total HTTP requests
+# TYPE http_requests_total counter</code></pre>
+          </div>
+          <h4>Response fields</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>text/plain</code></td>
+                <td>Prometheus</td>
+                <td>Metrics format.</td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Failed response</h4>
+          <div class="codebox">
+            <div class="codebar">
+              <span>500 error</span><button class="copy">Copy</button>
+            </div>
+            <pre><code>{
+  &quot;type&quot;: &quot;/internal-server-error&quot;,
+  &quot;message&quot;: &quot;Internal Server Error&quot;
+}</code></pre>
+          </div>
+          <h4>Notes</h4>
+          <ul>
+            <li>Không trả JSON.</li>
+          </ul>
+        </article>
+      </main>
+    </div>
+    <script src="../assets/app.js"></script>
+  </body>
+</html>

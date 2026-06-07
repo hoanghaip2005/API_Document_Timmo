@@ -1,28 +1,130 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="vi">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Timmo API Documentation</title>
-    <meta
-      http-equiv="refresh"
-      content="0; url=backend-api-documentation.html"
-    />
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        margin: 40px;
-        color: #1f2937;
-      }
-      a {
-        color: #0f766e;
-      }
-    </style>
+    <title>Timmo API v1 - Timmo API</title>
+    <link rel="stylesheet" href="assets/styles.css" />
   </head>
   <body>
-    <p>
-      Đang mở
-      <a href="backend-api-documentation.html">Timmo API v1 Documentation</a>...
-    </p>
+    <div class="shell">
+      <aside class="sidebar">
+        <a class="brand" href="index.html"
+          ><span class="logo">T</span
+          ><span
+            ><strong>Timmo API v1</strong
+            ><small>Nail Salon Management System</small></span
+          ></a
+        ><input class="search" data-search placeholder="Tìm trong trang..." />
+        <nav>
+          <a class="nav-link active" href="index.html">Tổng quan</a
+          ><a class="nav-link" href="pages/auth.html">Auth</a
+          ><a class="nav-link" href="pages/account.html">Account</a
+          ><a class="nav-link" href="pages/shop-branch.html">Branch</a
+          ><a class="nav-link" href="pages/shop-service.html">Service</a
+          ><a class="nav-link" href="pages/employee.html">Employee</a
+          ><a class="nav-link" href="pages/attendance.html">Attendance</a
+          ><a class="nav-link" href="pages/settlement.html">Settlement</a
+          ><a class="nav-link" href="pages/reports-salary.html"
+            >Reports &amp; Salary</a
+          ><a class="nav-link" href="pages/notifications-monitoring.html"
+            >Notifications &amp; Monitoring</a
+          ><a class="nav-link" href="pages/schemas-errors.html"
+            >Schemas &amp; Errors</a
+          >
+        </nav>
+      </aside>
+      <main class="content">
+        <header class="page-head">
+          <p class="eyebrow">API Documentation</p>
+          <h1>Timmo API v1</h1>
+          <p>
+            Multi-page API documentation for owner, employee, shop, attendance,
+            settlement and reporting.
+          </p>
+        </header>
+        <section class="card">
+          <h2>Timmo Backend API v1</h2>
+          <p>
+            Static API reference cho private owner + employee app. Tài liệu này
+            tổ chức theo nhiều trang, mỗi endpoint có request, response, lỗi và
+            ghi chú triển khai.
+          </p>
+          <div class="grid">
+            <a class="tile" href="pages/auth.html"
+              ><strong>Auth API</strong
+              ><span
+                >Đăng nhập, session, refresh token, đổi mật khẩu, OTP và admin
+                onboarding.</span
+              ></a
+            ><a class="tile" href="pages/account.html"
+              ><strong>Account API</strong
+              ><span
+                >Hồ sơ tài khoản, avatar và bảo mật người dùng hiện tại.</span
+              ></a
+            ><a class="tile" href="pages/shop-branch.html"
+              ><strong>Shop Branch API</strong
+              ><span>Quản lý chi nhánh/store trong shop owner.</span></a
+            ><a class="tile" href="pages/shop-service.html"
+              ><strong>Shop Service API</strong
+              ><span
+                >Quản lý dịch vụ, service catalog, ảnh và groupService
+                inline.</span
+              ></a
+            ><a class="tile" href="pages/employee.html"
+              ><strong>Employee API</strong
+              ><span
+                >Nhân viên owner quản lý và employee portal
+                bootstrap/report.</span
+              ></a
+            ><a class="tile" href="pages/attendance.html"
+              ><strong>Attendance API</strong
+              ><span
+                >Chấm công, employee close-day, legacy close và correction
+                requests.</span
+              ></a
+            ><a class="tile" href="pages/settlement.html"
+              ><strong>Settlement API</strong
+              ><span
+                >Owner chốt sổ V2 với revenue_share và owner discount
+                coverage.</span
+              ></a
+            ><a class="tile" href="pages/reports-salary.html"
+              ><strong>Reports &amp; Salary API</strong
+              ><span
+                >Owner report, salary monthly và weekly report precompute.</span
+              ></a
+            ><a class="tile" href="pages/notifications-monitoring.html"
+              ><strong>Notifications &amp; Monitoring API</strong
+              ><span>Notification feed và monitoring probes/metrics.</span></a
+            ><a class="tile" href="pages/schemas-errors.html"
+              ><strong>Schemas & Errors</strong
+              ><span
+                >Base URL, headers, money/currency, error semantics.</span
+              ></a
+            >
+          </div>
+        </section>
+        <section class="card">
+          <h2>Quick start</h2>
+          <ol>
+            <li>
+              Signin bằng Firebase ID token qua
+              <code>POST /api/v1/auth/signin</code>.
+            </li>
+            <li>
+              Lưu <code>accessToken</code>, <code>refreshToken</code>,
+              <code>scope</code>.
+            </li>
+            <li>
+              Gọi business API với
+              <code>Authorization: Bearer &lt;accessToken&gt;</code>.
+            </li>
+            <li>Write request thêm <code>X-Idempotency-Key</code>.</li>
+          </ol>
+        </section>
+      </main>
+    </div>
+    <script src="assets/app.js"></script>
   </body>
 </html>
