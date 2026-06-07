@@ -1828,6 +1828,707 @@
             <div class="endpoint-body"><p>Prometheus metrics.</p></div>
           </div>
         </section>
+        <section id="contract-reference" class="section">
+          <h3>Contract reference</h3>
+          <p>
+            Phần này dùng như tài liệu tích hợp nhanh: header, success body, lỗi
+            cần xử lý, field canonical.
+          </p>
+          <table>
+            <tr>
+              <th>Header</th>
+              <th>Áp dụng</th>
+              <th>Chi tiết</th>
+            </tr>
+            <tr>
+              <td><code>Authorization</code></td>
+              <td>Hầu hết API</td>
+              <td>
+                <code>Bearer &lt;accessToken&gt;</code>. Riêng
+                signin/change-password dùng Firebase ID token.
+              </td>
+            </tr>
+            <tr>
+              <td><code>Content-Type</code></td>
+              <td>Write JSON</td>
+              <td><code>application/json</code>.</td>
+            </tr>
+            <tr>
+              <td><code>X-Firebase-AppCheck</code></td>
+              <td>Production</td>
+              <td>
+                Bắt buộc theo môi trường production. Monitoring route không cần.
+              </td>
+            </tr>
+            <tr>
+              <td><code>X-Idempotency-Key</code></td>
+              <td>POST/PATCH/DELETE</td>
+              <td>
+                Nên dùng key ổn định theo hành động; replay thành công trả
+                <code>X-Idempotency-Replayed</code>.
+              </td>
+            </tr>
+            <tr>
+              <td><code>If-None-Match</code></td>
+              <td>GET cacheable</td>
+              <td>Dùng với <code>ETag</code> nếu client tự quản cache.</td>
+            </tr>
+          </table>
+          <div class="split">
+            <div>
+              <h4>Success envelope</h4>
+              <p>
+                API không bọc chung trong <code>{ data }</code>. Mỗi route trả
+                object domain trực tiếp: signin trả session, settlement list trả
+                <code>{ branchId, items }</code>, close-day trả
+                <code>{ workDate, items }</code>.
+              </p>
+              <h4>Error envelope</h4>
+              <p>
+                Error luôn có <code>type</code> và <code>message</code>. Một số
+                lỗi nghiệp vụ có field bổ sung, ví dụ close-day incomplete có
+                <code>invalidAttendanceIds</code>.
+              </p>
+            </div>
+            <div class="codebox">
+              <div class="codebar">
+                <span>close-day-incomplete.json</span
+                ><button class="copy">Copy</button>
+              </div>
+              <pre><code>{
+  "type": "/employee/attendance-incomplete",
+  "message": "Some attendance entries are missing services, assignees, or full allocation",
+  "invalidAttendanceIds": ["attendance_1", "attendance_2"]
+}</code></pre>
+            </div>
+          </div>
+          <table>
+            <tr>
+              <th>HTTP</th>
+              <th>Client xử lý</th>
+            </tr>
+            <tr>
+              <td>400</td>
+              <td>Sửa request/body/query, không retry nguyên trạng.</td>
+            </tr>
+            <tr>
+              <td>401</td>
+              <td>Refresh token hoặc buộc đăng nhập lại.</td>
+            </tr>
+            <tr>
+              <td>403</td>
+              <td>Không retry; role/scope không đủ quyền.</td>
+            </tr>
+            <tr>
+              <td>409</td>
+              <td>Refresh dữ liệu màn hiện tại rồi hiển thị lý do.</td>
+            </tr>
+            <tr>
+              <td>429</td>
+              <td>Chờ theo <code>Retry-After</code>, không spam retry.</td>
+            </tr>
+          </table>
+        </section>
+
+        <section id="object-schemas" class="section">
+          <h3>Object schemas</h3>
+          <h4>SigninResponse</h4>
+          <div class="split">
+            <table>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Ghi chú</th>
+              </tr>
+              <tr>
+                <td><code>jwtToken</code>, <code>accessToken</code></td>
+                <td>string</td>
+                <td>Access token dùng cho business API.</td>
+              </tr>
+              <tr>
+                <td><code>refreshToken</code></td>
+                <td>string</td>
+                <td>Dùng với <code>/auth/refresh-token</code>.</td>
+              </tr>
+              <tr>
+                <td><code>sessionId</code></td>
+                <td>string</td>
+                <td>Session backend phát hành.</td>
+              </tr>
+              <tr>
+                <td>
+                  <code>expiresAt</code>, <code>accessTokenExpiresAt</code>,
+                  <code>refreshTokenExpiresAt</code>
+                </td>
+                <td>number</td>
+                <td>Unix ms timestamp.</td>
+              </tr>
+              <tr>
+                <td><code>permissions</code></td>
+                <td>string[]</td>
+                <td>Phụ thuộc role.</td>
+              </tr>
+              <tr>
+                <td><code>user</code></td>
+                <td>UserSession</td>
+                <td>
+                  <code>uid</code>, <code>email</code>, <code>shopId</code>,
+                  <code>role</code>, optional <code>branchId</code>,
+                  <code>name</code>, <code>avatarUrl</code>.
+                </td>
+              </tr>
+              <tr>
+                <td><code>scope</code></td>
+                <td>object</td>
+                <td><code>{ shopId, branchId? }</code>.</td>
+              </tr>
+            </table>
+            <div class="codebox">
+              <div class="codebar">
+                <span>signin-response.json</span
+                ><button class="copy">Copy</button>
+              </div>
+              <pre><code>{
+  "accessToken": "Bearer eyJ...",
+  "refreshToken": "Bearer eyJ...",
+  "tokenType": "Bearer",
+  "sessionId": "session_123",
+  "accessTokenExpiresAt": 1780000000000,
+  "user": { "uid": "user_123", "email": "owner@example.com", "shopId": "shop_123", "role": "owner", "name": "Owner" },
+  "scope": { "shopId": "shop_123" }
+}</code></pre>
+            </div>
+          </div>
+          <h4>Branch</h4>
+          <table>
+            <tr>
+              <th>Field</th>
+              <th>Type</th>
+              <th>Ghi chú</th>
+            </tr>
+            <tr>
+              <td><code>id</code>, <code>shopId</code>, <code>name</code></td>
+              <td>string</td>
+              <td>Canonical backend fields.</td>
+            </tr>
+            <tr>
+              <td><code>storeId</code></td>
+              <td>string|number</td>
+              <td>
+                Frontend compatibility, lấy từ <code>code</code> nếu có,
+                fallback <code>id</code>.
+              </td>
+            </tr>
+            <tr>
+              <td><code>settlementCutoffTime</code></td>
+              <td>string</td>
+              <td>Chuẩn hoá HH:mm; ảnh hưởng workDate.</td>
+            </tr>
+            <tr>
+              <td><code>status</code></td>
+              <td>string</td>
+              <td>Thường <code>active</code>.</td>
+            </tr>
+            <tr>
+              <td><code>address</code>, <code>addressText</code></td>
+              <td>object|string</td>
+              <td>Address object + text đã format.</td>
+            </tr>
+            <tr>
+              <td><code>label</code>, <code>value</code></td>
+              <td>string</td>
+              <td>Helper cho select UI.</td>
+            </tr>
+          </table>
+          <h4>Service</h4>
+          <table>
+            <tr>
+              <th>Field</th>
+              <th>Type</th>
+              <th>Ghi chú</th>
+            </tr>
+            <tr>
+              <td><code>id</code>, <code>branchId</code>, <code>name</code></td>
+              <td>string</td>
+              <td>Service identity.</td>
+            </tr>
+            <tr>
+              <td><code>price</code></td>
+              <td>number</td>
+              <td>Canonical money number.</td>
+            </tr>
+            <tr>
+              <td><code>amount</code></td>
+              <td>string</td>
+              <td>Frontend compatibility từ <code>price.toString()</code>.</td>
+            </tr>
+            <tr>
+              <td><code>category</code></td>
+              <td>enum</td>
+              <td><code>nail|pedicure|manicure|design|other</code>.</td>
+            </tr>
+            <tr>
+              <td><code>groupService</code></td>
+              <td>string</td>
+              <td>Nhóm hiển thị; nếu không có thì map từ category.</td>
+            </tr>
+            <tr>
+              <td><code>duration</code>, <code>time</code></td>
+              <td>string</td>
+              <td>Frontend compatibility từ duration min/max.</td>
+            </tr>
+            <tr>
+              <td>
+                <code>imageUrls</code>, <code>images</code>, <code>image</code>
+              </td>
+              <td>string[]|string</td>
+              <td>Ảnh service.</td>
+            </tr>
+          </table>
+          <h4>Employee</h4>
+          <table>
+            <tr>
+              <th>Field</th>
+              <th>Type</th>
+              <th>Ghi chú</th>
+            </tr>
+            <tr>
+              <td>
+                <code>id</code>, <code>uid</code>, <code>email</code>,
+                <code>name</code>
+              </td>
+              <td>string</td>
+              <td><code>id</code> và <code>uid</code> cùng là Firebase uid.</td>
+            </tr>
+            <tr>
+              <td><code>role</code></td>
+              <td>string</td>
+              <td>Private app dùng <code>employee</code>.</td>
+            </tr>
+            <tr>
+              <td>
+                <code>branchId</code>, <code>storeId</code>,
+                <code>branchName</code>, <code>storeName</code>
+              </td>
+              <td>mixed</td>
+              <td>Branch assignment + frontend compatibility.</td>
+            </tr>
+            <tr>
+              <td><code>status</code></td>
+              <td>enum</td>
+              <td><code>active|pending|inactive</code>.</td>
+            </tr>
+            <tr>
+              <td><code>compensationModel</code></td>
+              <td>enum</td>
+              <td>
+                <code>commission|hourly</code>. UI fixed salary map sang
+                <code>hourly</code>.
+              </td>
+            </tr>
+            <tr>
+              <td><code>hourlyRate</code></td>
+              <td>number</td>
+              <td>Chỉ có ý nghĩa khi hourly/fixed.</td>
+            </tr>
+            <tr>
+              <td><code>label</code>, <code>value</code></td>
+              <td>string</td>
+              <td>Helper cho select UI.</td>
+            </tr>
+          </table>
+          <h4>Attendance</h4>
+          <table>
+            <tr>
+              <th>Field</th>
+              <th>Type</th>
+              <th>Ghi chú</th>
+            </tr>
+            <tr>
+              <td>
+                <code>id</code>, <code>branchId</code>, <code>branchName</code>,
+                <code>workDate</code>
+              </td>
+              <td>string</td>
+              <td>Identity + work day.</td>
+            </tr>
+            <tr>
+              <td><code>status</code></td>
+              <td>enum</td>
+              <td>
+                <code>open|closed</code>; nếu thiếu status nhưng có closedAt thì
+                normalize thành closed.
+              </td>
+            </tr>
+            <tr>
+              <td><code>services[]</code></td>
+              <td>AttendanceService[]</td>
+              <td>Service trong bill, có employees/share.</td>
+            </tr>
+            <tr>
+              <td><code>assignees[]</code></td>
+              <td>Assignee[]</td>
+              <td>Backend merge từ services theo doanh thu/share.</td>
+            </tr>
+            <tr>
+              <td><code>subtotalAmount</code>, <code>totalAmount</code></td>
+              <td>number</td>
+              <td>Trước/sau discount khách được giảm.</td>
+            </tr>
+            <tr>
+              <td><code>discount</code></td>
+              <td>object</td>
+              <td>
+                <code>{ type, value, amount }</code>; settlement quyết định ai
+                chịu.
+              </td>
+            </tr>
+          </table>
+          <h4>Settlement preview</h4>
+          <table>
+            <tr>
+              <th>Field</th>
+              <th>Type</th>
+              <th>Ghi chú</th>
+            </tr>
+            <tr>
+              <td><code>preview.totalRevenue</code></td>
+              <td>number</td>
+              <td>Tổng doanh thu trước discount.</td>
+            </tr>
+            <tr>
+              <td><code>preview.totalDiscount</code></td>
+              <td>number</td>
+              <td>Khách được giảm.</td>
+            </tr>
+            <tr>
+              <td><code>preview.totalOwnerDiscount</code></td>
+              <td>number</td>
+              <td>Phần chủ chịu gồm base + fixed/hourly supported.</td>
+            </tr>
+            <tr>
+              <td><code>preview.totalOwnerNetAfterDiscount</code></td>
+              <td>number</td>
+              <td>Chủ thực nhận sau phần giảm giá chủ chịu.</td>
+            </tr>
+            <tr>
+              <td><code>preview.employeeSummaries[]</code></td>
+              <td>EmployeeSettlementSummary[]</td>
+              <td>
+                Doanh thu, earning, discountAllocated, ownerDiscountSupported.
+              </td>
+            </tr>
+            <tr>
+              <td><code>pendingEmployees[]</code></td>
+              <td>Employee[]</td>
+              <td>Nhân viên chưa chốt ngày/submit trong ngày đó.</td>
+            </tr>
+            <tr>
+              <td><code>closing</code></td>
+              <td>WorkDayClosing|null</td>
+              <td>Có nếu ngày đã owner chốt sổ.</td>
+            </tr>
+          </table>
+        </section>
+
+        <section id="endpoint-details" class="section">
+          <h3>Endpoint detail matrix</h3>
+          <h4>Auth</h4>
+          <table>
+            <tr>
+              <th>Endpoint</th>
+              <th>Input</th>
+              <th>Success</th>
+              <th>Lỗi chính</th>
+            </tr>
+            <tr>
+              <td><code>POST /auth/signin</code></td>
+              <td>Firebase ID token header</td>
+              <td>201 SigninResponse</td>
+              <td>
+                <code>/auth/forbidden-role</code>,
+                <code>/auth/user-disabled</code>,
+                <code>/auth/branch-not-configured</code>
+              </td>
+            </tr>
+            <tr>
+              <td><code>POST /auth/refresh-token</code></td>
+              <td><code>{ refreshToken }</code></td>
+              <td>200 access session mới</td>
+              <td>
+                <code>/auth/invalid-refresh-token</code>,
+                <code>/auth/refresh-token-expired</code>,
+                <code>/auth/refresh-token-revoked</code>
+              </td>
+            </tr>
+            <tr>
+              <td><code>POST /auth/change-password</code></td>
+              <td>Firebase recent auth + <code>{ newPassword }</code></td>
+              <td>200 <code>{ success: true }</code></td>
+              <td>
+                <code>/auth/recent-signin-required</code>,
+                <code>/auth/user-disabled</code>
+              </td>
+            </tr>
+            <tr>
+              <td><code>POST /auth/forgot-password/*</code></td>
+              <td>Email/OTP/resetToken/password</td>
+              <td>OTP/reset response</td>
+              <td>OTP rate limit, invalid OTP/token</td>
+            </tr>
+          </table>
+          <h4>Shop & service</h4>
+          <table>
+            <tr>
+              <th>Endpoint</th>
+              <th>Input</th>
+              <th>Success</th>
+              <th>Lỗi chính</th>
+            </tr>
+            <tr>
+              <td><code>GET /shop/branch</code></td>
+              <td>Owner token</td>
+              <td>Branch[]</td>
+              <td>403 role/scope</td>
+            </tr>
+            <tr>
+              <td><code>POST /shop/branch</code></td>
+              <td>CreateBranch body</td>
+              <td>201 Branch</td>
+              <td>invalid request, forbidden role</td>
+            </tr>
+            <tr>
+              <td><code>PATCH /shop/branch/:branchId</code></td>
+              <td>Partial Branch body</td>
+              <td>200 Branch</td>
+              <td>403 branch access, 400 no fields</td>
+            </tr>
+            <tr>
+              <td><code>GET /shop/service/bootstrap</code></td>
+              <td>Owner token</td>
+              <td>Branches + services + catalog</td>
+              <td>403 role/scope</td>
+            </tr>
+            <tr>
+              <td><code>POST /shop/service</code></td>
+              <td>
+                <code>branchId</code>, <code>name</code>, money, group/category,
+                duration
+              </td>
+              <td>201 Service</td>
+              <td>400 missing price/category/duration, 403 branch</td>
+            </tr>
+            <tr>
+              <td><code>PATCH /shop/service/:serviceId</code></td>
+              <td>Partial Service body</td>
+              <td>200 Service</td>
+              <td>400 no fields, 404 service, 403 branch</td>
+            </tr>
+            <tr>
+              <td><code>DELETE /shop/service/:serviceId</code></td>
+              <td>Path id</td>
+              <td>Delete result</td>
+              <td>404 service, 403 branch</td>
+            </tr>
+          </table>
+          <h4>Employee & attendance</h4>
+          <table>
+            <tr>
+              <th>Endpoint</th>
+              <th>Input</th>
+              <th>Success</th>
+              <th>Lỗi chính</th>
+            </tr>
+            <tr>
+              <td><code>GET /employee/attendance/bootstrap</code></td>
+              <td>Owner token</td>
+              <td>Owner bootstrap data</td>
+              <td>403 forbidden role</td>
+            </tr>
+            <tr>
+              <td><code>GET /employee/me/bootstrap</code></td>
+              <td>Employee token</td>
+              <td>Employee portal data</td>
+              <td>403 nếu không branch-scoped/không active assignment</td>
+            </tr>
+            <tr>
+              <td><code>POST /employee/employees</code></td>
+              <td>CreateEmployee body</td>
+              <td>201 Employee</td>
+              <td>400 invalid, 409 email exists, 403 branch/role</td>
+            </tr>
+            <tr>
+              <td><code>PATCH /employee/employees/:employeeUserId</code></td>
+              <td>Partial employee body</td>
+              <td>200 Employee</td>
+              <td>400 invalid, 404 employee, 403 branch/role</td>
+            </tr>
+            <tr>
+              <td><code>POST /employee/attendance</code></td>
+              <td>AttendancePayload</td>
+              <td>201 Attendance + item</td>
+              <td>400 invalid service/assignee/discount, 403 branch</td>
+            </tr>
+            <tr>
+              <td><code>PATCH /employee/attendance/:attendanceId</code></td>
+              <td>AttendancePayload</td>
+              <td>200 Attendance + item</td>
+              <td>409 locked/closed settlement, 403 owner/creator scope</td>
+            </tr>
+            <tr>
+              <td><code>POST /employee/me/attendance/close-day</code></td>
+              <td><code>{ workDate }</code></td>
+              <td>200 close-day result</td>
+              <td>
+                <code>/employee/attendance-incomplete</code>,
+                <code>/employee/attendance-locked</code>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>POST /employee/attendance/:attendanceId/close</code>
+              </td>
+              <td>Path id</td>
+              <td>200 legacy close result</td>
+              <td>Legacy only; UI mới không dùng</td>
+            </tr>
+          </table>
+          <h4>Settlement, report, notification</h4>
+          <table>
+            <tr>
+              <th>Endpoint</th>
+              <th>Input</th>
+              <th>Success</th>
+              <th>Lỗi chính</th>
+            </tr>
+            <tr>
+              <td><code>GET /employee/session/settlements</code></td>
+              <td>
+                <code>branchId/storeId</code>, <code>fromWorkDate</code>,
+                <code>toWorkDate</code>
+              </td>
+              <td>200 list tối đa 31 ngày</td>
+              <td>400 range invalid, 403 branch/role</td>
+            </tr>
+            <tr>
+              <td><code>GET /employee/session/settlement-preview</code></td>
+              <td>
+                <code>branchId/storeId</code>, <code>workDate/date</code>,
+                optional owner rate
+              </td>
+              <td>200 preview</td>
+              <td>400 invalid, 403 branch/role</td>
+            </tr>
+            <tr>
+              <td><code>POST /employee/session/close</code></td>
+              <td>
+                <code>branchId/storeId</code>, <code>workDate/date</code>, owner
+                rate
+              </td>
+              <td>200 closing summary</td>
+              <td>
+                <code>/employee/work-day-already-closed</code>,
+                <code>/employee/invalid-settlement-state</code>
+              </td>
+            </tr>
+            <tr>
+              <td><code>GET /employee/report/owner-summary</code></td>
+              <td>branch + date range</td>
+              <td>200 owner report summary</td>
+              <td>400 range invalid, 403 branch/role</td>
+            </tr>
+            <tr>
+              <td><code>GET /employee/salary/monthly</code></td>
+              <td>
+                <code>branchId</code>, <code>year</code>, <code>month</code>
+              </td>
+              <td>200 monthly salary</td>
+              <td>400 invalid month/year, 403 branch/role</td>
+            </tr>
+            <tr>
+              <td><code>GET /notifications</code></td>
+              <td>User token</td>
+              <td>200 notification feed</td>
+              <td>401/403 auth scope</td>
+            </tr>
+            <tr>
+              <td><code>GET /monitoring/*</code></td>
+              <td>Không cần auth/appcheck</td>
+              <td>Health/ready/metrics</td>
+              <td>500 nếu dependency unhealthy</td>
+            </tr>
+          </table>
+        </section>
+
+        <section id="business-flows" class="section">
+          <h3>Business flows</h3>
+          <h4>Owner settlement V2</h4>
+          <ol>
+            <li>
+              Owner chọn store ở Home; <code>/daily-settlement</code> dùng
+              branch đó, không chọn store lại.
+            </li>
+            <li>
+              List gọi <code>GET /employee/session/settlements</code> trong
+              tháng hiện tại, tối đa 31 ngày.
+            </li>
+            <li>
+              Ngày <code>ready</code> khi có attendance, tất cả đã closed, không
+              incomplete.
+            </li>
+            <li>
+              Detail gọi <code>GET /employee/session/settlement-preview</code>;
+              backend preview là source tiền duy nhất.
+            </li>
+            <li>
+              Owner chỉ chỉnh <code>ownerDiscountCoverageRate</code> 0/50/100;
+              không chọn method, không chọn nhân viên chịu discount.
+            </li>
+            <li>
+              Confirm gọi <code>POST /employee/session/close</code>. Sau close
+              detail read-only, list dùng
+              <code>totalOwnerNetAfterDiscount</code> làm số chủ thực nhận.
+            </li>
+          </ol>
+          <h4>Employee close-day</h4>
+          <ol>
+            <li>
+              Employee portal guard gọi <code>GET /employee/me/bootstrap</code>.
+            </li>
+            <li>
+              Nhân viên tạo attendance bằng
+              <code>POST /employee/attendance</code>; nếu có chia việc thì
+              assignee percentage phải đủ rule.
+            </li>
+            <li>
+              Nhân viên bấm <strong>Chốt ngày</strong>, gọi
+              <code>POST /employee/me/attendance/close-day</code>.
+            </li>
+            <li>
+              Backend đóng all-or-nothing toàn bộ attendance trong ngày mà
+              employee được assign.
+            </li>
+            <li>
+              Nếu ngày đã owner chốt sổ, backend trả locked; UI phải refresh
+              cache và không cho sửa.
+            </li>
+          </ol>
+          <h4>Service group inline</h4>
+          <ol>
+            <li>
+              Màn tạo service load <code>/shop/service/bootstrap</code> để có
+              group hiện có.
+            </li>
+            <li>
+              User chọn group từ dropdown; nếu chưa có thì chọn tạo nhóm mới
+              inline.
+            </li>
+            <li>
+              Submit dùng cùng <code>POST /shop/service</code>, gửi
+              <code>groupService</code>; không cần màn tạo group riêng.
+            </li>
+          </ol>
+        </section>
         <section id="examples" class="section">
           <h3>Mẫu tích hợp</h3>
           <div class="split">
@@ -1896,8 +2597,9 @@
           <h3>Ghi chú phiên bản</h3>
           <ul class="tight">
             <li>
-              <strong>2026-06-07:</strong> Viết lại docs theo layout sidebar/API
-              guide, xoá nội dung stale/mojibake.
+              <strong>2026-06-07:</strong> Mở rộng contract reference, object
+              schemas, endpoint detail matrix. Trước đó viết lại docs theo
+              layout sidebar/API guide, xoá nội dung stale/mojibake.
             </li>
             <li>
               <strong>Settlement V2:</strong> Default
