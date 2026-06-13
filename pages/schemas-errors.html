@@ -98,6 +98,15 @@
               <td>Money là number theo money scale backend.</td>
             </tr>
             <tr>
+              <td>Role migration</td>
+              <td>
+                Role nhân viên chuẩn là <code>employee</code>. Giá trị cũ
+                <code>staff</code>/<code>employees</code> không còn được nhận ở input
+                và không còn được xử lý ở tầng đọc. Chạy
+                <code>src/scripts/migrate-legacy-roles.ts</code> trước khi deploy DB thật.
+              </td>
+            </tr>
+            <tr>
               <td>workDate</td>
               <td>
                 <code>YYYY-MM-DD</code>, có thể phụ thuộc branch
@@ -115,6 +124,106 @@
           </table>
         </section>
         <section class="card">
+          <h2>Input validation boundaries</h2>
+          <p>
+            Backend validate body bằng Zod schema trong
+            <code>src/business/*/*-shared.ts</code>. Phần lớn text được trim trước
+            khi đo độ dài. Password dùng chung
+            <code>passwordPolicySchema</code>: <strong>8..50 ký tự</strong>, chỉ kiểm
+            tra độ dài, không bắt buộc chữ hoa/số/ký tự đặc biệt.
+          </p>
+          <table>
+            <tr>
+              <th>Group</th>
+              <th>Boundary</th>
+            </tr>
+            <tr>
+              <td>Auth/register/reset</td>
+              <td>
+                <code>email</code> phải đúng định dạng nhưng chưa chặn max length;
+                <code>name</code> 2..100; <code>password</code> 8..50;
+                <code>otp</code> đúng 6 chữ số. Signin không nhận username/password
+                trong body, chỉ dùng Firebase ID token trong header.
+              </td>
+            </tr>
+            <tr>
+              <td>Account/profile</td>
+              <td>
+                PATCH body phải có ít nhất 1 field. <code>name/displayName</code>
+                1..100; <code>phone</code> max 30; <code>address</code> max 255;
+                <code>avatarUrl</code> phải là URL hợp lệ hoặc chuỗi rỗng.
+                Avatar upload: <code>fileName</code> 1..255,
+                <code>contentType</code> bắt đầu bằng <code>image/</code>, file decode tối đa
+                5MB.
+              </td>
+            </tr>
+            <tr>
+              <td>Employee</td>
+              <td>
+                <code>name</code> 2..100; <code>password</code> 8..50 khi tạo hoặc đổi;
+                <code>branchId</code> không rỗng; <code>role</code> chỉ nhận
+                <code>employee</code>; <code>phone</code> max 20; money field phải đúng
+                scale tối đa 2 chữ số thập phân.
+              </td>
+            </tr>
+            <tr>
+              <td>Branch/service</td>
+              <td>
+                Branch <code>name</code> 1..100, <code>code</code> max 30,
+                <code>settlementCutoffTime</code> dạng <code>HH:mm</code>. Service
+                <code>amount/price</code> có thể là string hoặc number nhưng phải parse
+                được money scale backend.
+              </td>
+            </tr>
+          </table>
+        </section>
+        <section class='card'>
+          <h2>Rate limits</h2>
+          <table>
+            <tr>
+              <th>Group</th>
+              <th>Limit</th>
+              <th>Applies to</th>
+            </tr>
+            <tr>
+              <td>All API</td>
+              <td>180/min by IP</td>
+              <td><code>/api/*</code></td>
+            </tr>
+            <tr>
+              <td>Signin/register owner</td>
+              <td>8/min by IP and 8/min by email</td>
+              <td><code>/auth/signin</code>, <code>/admin/signin</code>, register owner</td>
+            </tr>
+            <tr>
+              <td>OTP request</td>
+              <td>10/10min by IP and 3/10min by email</td>
+              <td><code>/auth/forgot-password/request-otp</code></td>
+            </tr>
+            <tr>
+              <td>OTP verify/reset</td>
+              <td>20/10min by IP and 6/10min by email</td>
+              <td>verify OTP, reset password</td>
+            </tr>
+            <tr>
+              <td>Session/token</td>
+              <td>15/min</td>
+              <td>logout, change password, refresh token</td>
+            </tr>
+            <tr>
+              <td>Read/write/upload</td>
+              <td>Read 90/min, heavy read 24/min, write 24/min, upload 6/10min</td>
+              <td>Profile, branch, service, employee, attendance, report, avatar</td>
+            </tr>
+          </table>
+          <p>
+            Khi bị chặn backend trả <code>429</code> kèm <code>Retry-After</code>,
+            <code>X-RateLimit-Limit</code>, <code>X-RateLimit-Remaining</code>,
+            <code>X-RateLimit-Window-Ms</code> và body
+            <code>type=/request/rate-limit</code>.
+          </p>
+        </section>
+        <section class='card'>
           <h2>Standard error</h2>
           <div class="codebox">
             <div class="codebar">
